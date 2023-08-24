@@ -1,4 +1,4 @@
 venv/
-dbsqlite3
+db.sqlite3
 migrations/
-.env/
+.env
