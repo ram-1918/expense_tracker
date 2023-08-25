@@ -3,6 +3,8 @@ Django==4.2.4
 djangorestframework==3.14.0
 numpy==1.25.2
 pandas==2.0.3
+phonenumbers==8.13.19
+Pillow==10.0.0
 psycopg2-binary==2.9.7
 python-dateutil==2.8.2
 python-decouple==3.8
