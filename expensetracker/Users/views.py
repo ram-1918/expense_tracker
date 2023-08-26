@@ -3,7 +3,7 @@ from django.shortcuts import HttpResponse
 
 from rest_framework.decorators import APIView
 from rest_framework.response import Response
-from rest_framework import generics
+from rest_framework import generics, status
 
 from .models import Users, Login
 from .serializers import UserSerializers, LoginSerializer
@@ -20,42 +20,24 @@ def testing(request):
 
 class RegisterAPI(APIView):
     def get(self, request):
-        return Response("Get HTTP")
+        return Response("Get HTTP", status=status.HTTP_200_OK)
     
     def post(self, request):
         userdata = request.data
         serializer = UserSerializers(data=userdata)
         serializer.is_valid(raise_exception=True)
         print("data is serialized and validated against custom conditions!!!")
-        # user = Users.objects.filter(email=serializer.data['email'], phone=serializer.data['phone'])
-        # if not user:
-        #     print(f'There is no user with this email, so lets create one!!!')
-        #     Users.objects.create_user(
-        #         email=serializer.data['email'], 
-        #         password=serializer.data['password'], 
-        #         phone=serializer.data['phone'],
-        #         firstname=userdata['firstname'].strip().lower(), 
-        #         lastname=userdata['lastname'].strip().lower())
-        serializer.save()
-        return Response('New User Created!')
-
-    # def post(self, request):
-    #     userdata = request.data
-    #     serializer = UserSerializers(data=userdata)
-    #     serializer.is_valid(raise_exception=True)
-    #     print("data is serialized and validated against custom conditions!!!")
-    #     user = Users.objects.filter(email=serializer.data['email'], phone=serializer.data['phone'])
-    #     if not user:
-    #         print(f'There is no user with this email, so lets create one!!!')
-    #         Users.objects.create_user(
-    #             email=serializer.data['email'], 
-    #             password=serializer.data['password'], 
-    #             phone=serializer.data['phone'],
-    #             firstname=userdata['firstname'].strip().lower(), 
-    #             lastname=userdata['lastname'].strip().lower())
-    #         return Response('New User Created!')
-    #     return Response("User already exists!")
-        
+        user = Users.objects.filter(email=serializer.data['email'], phone=serializer.data['phone'])
+        if not user:
+            print(f'There is no user with this email, so lets create one!!!')
+            Users.objects.create_user(
+                email=serializer.data['email'], 
+                password=serializer.data['password'], 
+                phone=serializer.data['phone'],
+                firstname=userdata['firstname'].strip().lower(), 
+                lastname=userdata['lastname'].strip().lower())
+            return Response('New User Created!', status=status.HTTP_201_CREATED)        
+        return Response('User Already Exists!', status=status.HTTP_409_CONFLICT)        
 
 class UpdateAPI(APIView):
     def get(self, request, pk):
@@ -69,12 +51,22 @@ class LoginAPI(APIView):
     def post(self, request):
         handleobj = HandleService()
         email = handleobj.handleEmail(request.data['email'])
-        password = handleobj.handlePassword(request.data['password'])
+        if not email: return Response("enter a valid email", status=status.HTTP_401_UNAUTHORIZED)
+        password = request.data['password']
         user = Users.objects.filter(email=email).first()
         if user:
             authobj = AuthenticationService()
-            if authobj.handler('auth', {"user":user, "email":email, "password":password}):
-                return Response(f'Verified')
-            return Response('Password incorrect!')
-        return Response('No user this email!!')
+            token = authobj.handler('auth', {"user":user, "email":email, "password":password})
+            if token:
+                # print(f'{token} inside loginAPI')
+                loggedinuser = Login.objects.filter(email=email).first()
+                if loggedinuser:
+                    loggedinuser.token = token
+                else:
+                    loggedinuser = LoginSerializer(data={"email":email, "token": token })
+                    loggedinuser.is_valid(raise_exception=True)
+                loggedinuser.save()
+                return Response(token, status=status.HTTP_200_OK)
+            return Response(f'Password incorrect!', status=status.HTTP_401_UNAUTHORIZED)
+        return Response(f'No user with this email!!', status=status.HTTP_401_UNAUTHORIZED)
 

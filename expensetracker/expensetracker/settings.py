@@ -10,9 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+# from django.core.management.utils import get_random_secret_key
 import os
 from pathlib import Path
 from decouple import config
+from datetime import timedelta
 
 dev_mode = config('DEVELOPMENT')
 
@@ -23,7 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
+# print(get_random_secret_key()) # Generate new secret periodically
 SECRET_KEY = config('SECRET_KEY')
+print(type(SECRET_KEY), " settings")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default="False", cast=bool)
@@ -41,9 +46,21 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework_simplejwt",
     "Users",
     "Expenses",
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ]
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

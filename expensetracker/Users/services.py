@@ -1,6 +1,10 @@
 from .models import Users, Login
 import re
-import phonenumbers
+import time
+import jwt
+import base64
+from django.conf import settings
+from datetime import datetime, timedelta
 
 # Utilized Factory Patterns
 class HandleService():
@@ -32,7 +36,7 @@ class HandleService():
                 if any(sym_check):
                     if password[0] != '-':
                         print(f'Password Handled!')
-                        return password.strip().lower()
+                        return password.strip()
                     return 'firstchar'
                 return 'symbol!'
             return 'upper!'
@@ -61,14 +65,44 @@ class AuthenticationService():
             return self.isAuthenticated
         elif type == 'expense_requests':
             return self.handleExpenseRequest
+        elif type == 'token_expiry':
+            return self.handleTokenExpiry
     
+    def generateJWTToken(self, payload):
+        expiry_days = datetime.now() + timedelta(days=1)
+        payload['exp'] = int(expiry_days.strftime('%s'))
+        payload['iss'] = 'et_backend'
+        payload['iat'] = datetime.now()
+        token = jwt.encode(payload, key=settings.SECRET_KEY, algorithm='HS256')
+        return token
+
+
     def isAuthenticated(self, userdata):
-        user, email, password = userdata['user'], userdata['email'], userdata['password']
+        user, _, password = userdata['user'], userdata['email'], userdata['password']
         if user.check_password(password):
-            print(f'{user} is authenticated against the Users DB and its password')
-            return True
+            payload = {"sub":str(user.id)}
+            token = self.generateJWTToken(payload)
+            self.handleTokenExpiry(token)
+            return token
         return False
     
+    def handleTokenExpiry(self, token):
+        try:
+            decoded_token = jwt.decode(jwt=token, key=settings.SECRET_KEY, algorithms=['HS256'])
+            expiry_epoch = decoded_token['exp']
+            timeleft = datetime.fromtimestamp(expiry_epoch) - datetime.now()
+            print(timeleft)
+            return True
+        except jwt.ExpiredSignatureError as e:
+            # Signature has expired
+            # redirect user to login page again
+            print('Expired err ', e)
+            return e
+        except jwt.DecodeError as e:
+            # invalid token - Not enough segments
+            print("Token error", e)
+            return e
+
     def handleExpenseRequest(self, request):
         print(f'{request} has been approved!')
         return True

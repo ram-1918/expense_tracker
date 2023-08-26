@@ -60,7 +60,6 @@ class Login(models.Model):
     loginobjects = loginManager()
     
     email = models.CharField(max_length=255, unique=True)
-    firstname = models.CharField(max_length=255)
     last_login = models.DateTimeField(auto_now=True)
     token = models.CharField(max_length=255, default=loginobjects.generate_jwt())
 

@@ -8,6 +8,8 @@
 6. .schema --indent app_tablename -> schema
 7. Exceptional handling
 8. file storage system - images/year/month/day
+9. learn abour decorators
+10. use asyncio
 
 when a user create event is triggered,
 1. generate UUID
@@ -17,7 +19,7 @@ when a user create event is triggered,
 
 Tables
 1. user porfiles
-2. Login with jwt
+2. Login with jwt - if jwt token expired, delete it from the DB
 3. reset password
 4. invitations to register
 
@@ -28,5 +30,5 @@ Tables
 
 Validations
 1. Email - other choice => from email_validator import validate_email, EmailNotValidError
-2. password - 
-3. phone - 
+2. password - used builtin method for now, but later on hashpassword manully by storing its salt and key
+3. phone - used regular expressions
