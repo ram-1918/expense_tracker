@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.shortcuts import HttpResponse
+from django.http import HttpResponse
 
 from rest_framework.decorators import APIView
 from rest_framework.response import Response
@@ -36,8 +36,8 @@ class RegisterAPI(APIView):
                 phone=serializer.data['phone'],
                 firstname=userdata['firstname'].strip().lower(), 
                 lastname=userdata['lastname'].strip().lower())
-            return Response('New User Created!', status=status.HTTP_201_CREATED)        
-        return Response('User Already Exists!', status=status.HTTP_409_CONFLICT)        
+            return Response('created', status=status.HTTP_201_CREATED)        
+        return Response('exists', status=status.HTTP_409_CONFLICT)        
 
 class UpdateAPI(APIView):
     def get(self, request, pk):
@@ -51,7 +51,7 @@ class LoginAPI(APIView):
     def post(self, request):
         handleobj = HandleService()
         email = handleobj.handleEmail(request.data['email'])
-        if not email: return Response("enter a valid email", status=status.HTTP_401_UNAUTHORIZED)
+        if not email: return Response("Enter a valid email address.", status=status.HTTP_401_UNAUTHORIZED)
         password = request.data['password']
         user = Users.objects.filter(email=email).first()
         if user:
@@ -66,7 +66,9 @@ class LoginAPI(APIView):
                     loggedinuser = LoginSerializer(data={"email":email, "token": token })
                     loggedinuser.is_valid(raise_exception=True)
                 loggedinuser.save()
-                return Response(token, status=status.HTTP_200_OK)
-            return Response(f'Password incorrect!', status=status.HTTP_401_UNAUTHORIZED)
-        return Response(f'No user with this email!!', status=status.HTTP_401_UNAUTHORIZED)
+                response = HttpResponse(status=status.HTTP_201_CREATED)
+                response.set_cookie('jwt', token, httponly=True)
+                return response
+            return Response('Incorrect password.', status=status.HTTP_401_UNAUTHORIZED)
+        return Response('No user with this email address.', status=status.HTTP_401_UNAUTHORIZED)
 

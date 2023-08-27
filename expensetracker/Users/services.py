@@ -36,11 +36,11 @@ class HandleService():
                 if any(sym_check):
                     if password[0] != '-':
                         print(f'Password Handled!')
-                        return password.strip()
-                    return 'firstchar'
-                return 'symbol!'
-            return 'upper!'
-        return 'length!'
+                        return password
+                    return 'The firstchar of the password should not be -'
+                return 'Password should have atleast one of the symbols !@#$%^&*+-'
+            return 'Password should have atleast one capital letter.'
+        return 'Password should be atleast of 7 charecter long.'
 
     def handlePhone(self, phone):
         phone = phone.strip()

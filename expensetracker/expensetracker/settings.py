@@ -33,7 +33,7 @@ print(type(SECRET_KEY), " settings")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default="False", cast=bool)
 
-ALLOWED_HOSTS = [] if DEBUG else ["*"]
+ALLOWED_HOSTS = ['*'] if DEBUG else ["*"]
 
 
 # Application definition
@@ -45,12 +45,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
     "rest_framework",
     "Users",
     "Expenses",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware", # CORS
+    "corsheaders.middleware.CorsPostCsrfMiddleware", # CORS for 3.2 or higher
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -59,6 +62,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True # CORS
 
 ROOT_URLCONF = "expensetracker.urls"
 

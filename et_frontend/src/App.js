@@ -6,12 +6,10 @@ function App(){
 
 
   return (
-    <div className="bg-red-400">
+    <div className="h-screen">
       <HomePage />
     </div>
   );
 }
-
-
 
 export default App;

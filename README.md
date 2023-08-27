@@ -10,6 +10,7 @@
 8. file storage system - images/year/month/day
 9. learn abour decorators - use decorators to log times and cache data for ex: when user requests for his expenses in the month of april twice
 10. use asyncio
+11. Each time a request is made to the backend for a resource, the server should check for JWT token, its expiry(ask for login again), its legitimacy(if it got tampered)(ask for login again).
 
 when a user create event is triggered,
 1. generate UUID

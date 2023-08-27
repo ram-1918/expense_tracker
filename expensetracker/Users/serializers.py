@@ -12,20 +12,20 @@ class UserSerializers(serializers.ModelSerializer):
     def validate_email(self, email):
         handleObj = HandleService()
         email = handleObj.handler('email', email)
-        if not email: raise serializers.ValidationError('Enter Valid Email!')
+        if not email: raise serializers.ValidationError('Enter a valid email address.')
         return email
     
     def validate_password(self, password):
         handleObj = HandleService()
-        password = handleObj.handler('password', password)
-        if not password or password in ['symbol!', 'upper!', 'letternumber!', 'length!', 'firstchar']: 
-            raise serializers.ValidationError(password)
+        handledpassword = handleObj.handler('password', password)
+        if password != handledpassword: #not password or password in ['symbol!', 'upper!', 'letternumber!', 'length!', 'firstchar']: 
+            raise serializers.ValidationError(handledpassword)
         return password
     
     def validate_phone(self, phone):
         handleObj = HandleService()
         phone = handleObj.handler('phone', phone)
-        if not phone: raise serializers.ValidationError('Enter Valid phone number!')
+        if not phone: raise serializers.ValidationError('Enter a valid phone number.')
         return phone
 
 class LoginSerializer(serializers.ModelSerializer):
