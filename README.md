@@ -8,7 +8,7 @@
 6. .schema --indent app_tablename -> schema
 7. Exceptional handling
 8. file storage system - images/year/month/day
-9. learn abour decorators
+9. learn abour decorators - use decorators to log times and cache data for ex: when user requests for his expenses in the month of april twice
 10. use asyncio
 
 when a user create event is triggered,
@@ -32,3 +32,29 @@ Validations
 1. Email - other choice => from email_validator import validate_email, EmailNotValidError
 2. password - used builtin method for now, but later on hashpassword manully by storing its salt and key
 3. phone - used regular expressions
+
+
+
+
+# React
+1. Install React and create react app
+npx create-react-app portfolio2
+2. Install tailwind css and framer-motion
+npm install -D tailwindcss framer-motion
+for tailwind config file - npx tailwindcss init
+add this to content block in tailwindcss.config - "./src/**/*.{js,jsx,ts,tsx}"
+3. add these lines to index.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+::-webkit-scrollbar {
+  width: 0;
+}
+4. To use fa fa- classes for icons
+npm install @fortawesome/fontawesome-free
+5. if we use scrollYprogress with refs, it returns the position of the ref by using scrollYprogress.get()
+6. map, reduce, find, indexOf, forEach, setTimeOut
