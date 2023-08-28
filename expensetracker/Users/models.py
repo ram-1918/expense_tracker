@@ -30,6 +30,8 @@ class Users(AbstractBaseUser):
     email = models.EmailField(max_length=255, unique=True)
     phone = models.CharField(max_length=12, blank=True)
     password = models.CharField(max_length=255)
+    company = models.CharField(max_length=255, blank=True)
+    employee_id = models.CharField(max_length=255, blank=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)

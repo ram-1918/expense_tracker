@@ -27,6 +27,16 @@ class UserSerializers(serializers.ModelSerializer):
         phone = handleObj.handler('phone', phone)
         if not phone: raise serializers.ValidationError('Enter a valid phone number.')
         return phone
+    
+    # def validate_profilepic(self, profilepic):
+    #     print('imgesss ', profilepic)
+    #     print('imagessss: ', profilepic)
+    #     print(profilepic.split('fakepath')[-1][1:])
+    #     handleObj = HandleService()
+    #     profilepic = handleObj.handler('profilepic', profilepic)
+    #     if not profilepic: raise serializers.ValidationError('Enter a valid format.')
+    #     return profilepic
+
 
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:

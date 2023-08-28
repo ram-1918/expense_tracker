@@ -3,6 +3,7 @@ import re
 import time
 import jwt
 import base64
+import os
 from django.conf import settings
 from datetime import datetime, timedelta
 
@@ -19,6 +20,8 @@ class HandleService():
             return self.handlePassword
         elif type == 'phone':
             return self.handlePhone
+        elif type == 'profilepic':
+            return self.handleProfilePic
     
     def handleEmail(self, email):
         email = email.strip()
@@ -52,8 +55,17 @@ class HandleService():
         ]
         for pattern in patterns:
             if re.match(pattern, phone):
+                print("phone handled!")
                 return phone
         return None
+    
+    def handleProfilePic(self, profilepic):
+        # check for the format extensions and resize it and rename it with employeeid
+        print("Image is being processed: ", profilepic)
+        if 'fakepath' in profilepic:
+            return profilepic.split('fakepath')[-1][1:]
+        return profilepic
+
 
 class AuthenticationService():
     def handler(self, type, data):

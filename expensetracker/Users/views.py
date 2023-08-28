@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
 from rest_framework.decorators import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
@@ -10,15 +9,16 @@ from .serializers import UserSerializers, LoginSerializer
 
 from .services import HandleService, AuthenticationService
 
+import os
+
 # Create your views here.
+
 
 def testing(request):
     return HttpResponse('Users app')
 
-
-
-
 class RegisterAPI(APIView):
+
     def get(self, request):
         return Response("Get HTTP", status=status.HTTP_200_OK)
     
@@ -34,8 +34,11 @@ class RegisterAPI(APIView):
                 email=serializer.data['email'], 
                 password=serializer.data['password'], 
                 phone=serializer.data['phone'],
-                firstname=userdata['firstname'].strip().lower(), 
-                lastname=userdata['lastname'].strip().lower())
+                firstname=serializer.data['firstname'].strip().lower(), 
+                lastname=serializer.data['lastname'].strip().lower(),
+                company = serializer.data['company'],
+                employee_id = serializer.data['employee_id']
+            )
             return Response('created', status=status.HTTP_201_CREATED)        
         return Response('exists', status=status.HTTP_409_CONFLICT)        
 
