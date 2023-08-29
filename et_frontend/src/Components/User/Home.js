@@ -13,13 +13,19 @@ const LeftPart = () => {
     )
 }
 
+const RightPart = () => {
+    return (
+        <div className="w-[60%] flex justify-center items-center tablet:w-full mobile:w-full small:w-full">
+            <Outlet />
+        </div>
+    )
+}
+
 function HomePage(){
     return (
         <div className="w-full h-screen flex flex-row">
             <LeftPart />
-            <div className="w-[60%] flex justify-center items-center tablet:w-full mobile:w-full small:w-full">
-                <Outlet />
-            </div>
+            <RightPart />
         </div>
     )
 }

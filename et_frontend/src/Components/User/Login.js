@@ -1,19 +1,23 @@
 import { API_URL } from '../../store/constants';
 import { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import {useSelector} from 'react-redux';
-import { selectLinkStyles, selectResponsiveBGs } from './store/slice';
+import { Link, useNavigate } from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import { selectLinkStyles, selectResponsiveBGs, setActiveUserID } from './store/slice';
 import BaseHeader from '../basepages/BaseHeader';
 
 
 
 function Login(){
+    let navigate = useNavigate();
+    let dispatch = useDispatch();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
     // Error handlers
     const [errorField, setErrfield] = useState('');
-    // const keys = ['email', 'password'];
+    
     const linkStyles = useSelector(selectLinkStyles);
 
     const handleSubmit = (event) => {
@@ -26,26 +30,23 @@ function Login(){
         // API call
         axios.post(`${API_URL}/users/login/`, entered_data)
         .then((response) => {
-          console.log(response.data, response.status)
-          if (response.status === 201){
-            // redirect to Home page
-            const token = response.data;
-            console.log(token);
+            const id = response.data['userid'];
+            const role = response.data['role'];
+            localStorage.setItem('id', JSON.stringify(id));
+            localStorage.setItem('role', role); 
+            dispatch(setActiveUserID(id));
             setEmail('');
             setPassword('');
-          }
+            navigate(`/user/${id}/1/Dashboard`);
         })
         .catch((err) => {
             try{
-                const errors = err.response.data;
-                console.log('errors ', errors);
-                setErrfield(errors);
+                console.log('errors ', err.response.data);
+                setErrfield(err.response.data);
             }
             catch{
                 console.log("except: ", err)
             }
-        //   console.log('fewf', errorField);
-          
         })
       }
     return (

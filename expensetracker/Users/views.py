@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
@@ -9,6 +9,9 @@ from .serializers import UserSerializers, LoginSerializer
 
 from .services import HandleService, AuthenticationService
 
+from django.conf import settings
+import jwt 
+import json
 import os
 
 # Create your views here.
@@ -57,21 +60,41 @@ class LoginAPI(APIView):
         if not email: return Response("Enter a valid email address.", status=status.HTTP_401_UNAUTHORIZED)
         password = request.data['password']
         user = Users.objects.filter(email=email).first()
+        print(user, "login1")
         if user:
+            roles = {"superadmin":user.is_superuser, "admin":user.is_staff, "employee":user.is_employee}
+            role = ''
+            for k,v in roles.items():
+                if v:
+                    role = k
+                    break
             authobj = AuthenticationService()
             token = authobj.handler('auth', {"user":user, "email":email, "password":password})
+            print(token, "  login2")
             if token:
-                # print(f'{token} inside loginAPI')
+                print(f'{token} inside loginAPI')
                 loggedinuser = Login.objects.filter(email=email).first()
                 if loggedinuser:
                     loggedinuser.token = token
                 else:
-                    loggedinuser = LoginSerializer(data={"email":email, "token": token })
+                    loggedinuser = LoginSerializer(data={"userid": user.id, "email":email, "token": token })
                     loggedinuser.is_valid(raise_exception=True)
                 loggedinuser.save()
-                response = HttpResponse(status=status.HTTP_201_CREATED)
+                data = {"userid":str(user.id), "role":role}
+                print("login3 ", user.id,data )
+                response = HttpResponse(json.dumps(data), status=status.HTTP_201_CREATED)
                 response.set_cookie('jwt', token, httponly=True)
                 return response
             return Response('Incorrect password.', status=status.HTTP_401_UNAUTHORIZED)
         return Response('No user with this email address.', status=status.HTTP_401_UNAUTHORIZED)
 
+class LogoutAPI(APIView):
+    def post(self, request):
+        response = JsonResponse({"message": "Logged out successfully", "status": True})
+        response.delete_cookie('jwt')  # Clear the JWT cookie
+        try: 
+            print(Login.objects.all(), request.data)
+            print(request.data['id'])
+            Login.objects.filter(userid=request.data['id']).first().delete()
+        except: return Response('issue occured')
+        return response

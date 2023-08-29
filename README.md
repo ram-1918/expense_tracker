@@ -59,3 +59,14 @@ html {
 npm install @fortawesome/fontawesome-free
 5. if we use scrollYprogress with refs, it returns the position of the ref by using scrollYprogress.get()
 6. map, reduce, find, indexOf, forEach, setTimeOut
+
+React router
+1. BrowserRouter, route for each component like users, expenses
+2. <Outlet /> - for displaying child components
+3. <Outlet context /> - context for passing props to child comps - useOutletContext() is used to retrieve props data
+4. <Link to='' /> - internal routing just like <a href=''>
+5. useNavigate() - redirection
+6. useParams() - to get parameters in the url
+7. useHistory(), useLocation() - different routing options
+
+ - Prop drilling, dirty checks

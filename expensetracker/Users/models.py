@@ -60,11 +60,14 @@ class loginManager():
 class Login(models.Model):
 
     loginobjects = loginManager()
-    
+    userid = models.OneToOneField(Users, on_delete=models.DO_NOTHING, default=uuid.uuid4)
     email = models.CharField(max_length=255, unique=True)
     last_login = models.DateTimeField(auto_now=True)
     token = models.CharField(max_length=255, default=loginobjects.generate_jwt())
 
     class Meta:
         verbose_name_plural = 'Login'
+    
+    def __str__(self):
+        return self.email
     

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from 'axios';
 import { API_URL } from "../../store/constants";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {useSelector} from 'react-redux';
 import { selectLinkStyles, selectResponsiveBGs } from './store/slice';
 import BaseHeader from "../basepages/BaseHeader";
@@ -28,6 +28,8 @@ function Register(){
   const keys = ['firstname', 'lastname', 'email', 'phone', 'password'];
 
   const linkStyles = useSelector(selectLinkStyles);
+
+  let navigate = useNavigate();
 
 
   const handleSubmit = (event) => {
@@ -58,6 +60,7 @@ function Register(){
         setCompany('');
         setEmployeeid('');
       }
+      navigate('/users/login');
     })
     .catch((err) => {
       const errors = err.response.data;
