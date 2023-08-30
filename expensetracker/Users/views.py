@@ -80,7 +80,7 @@ class LoginAPI(APIView):
                     loggedinuser = LoginSerializer(data={"userid": user.id, "email":email, "token": token })
                     loggedinuser.is_valid(raise_exception=True)
                 loggedinuser.save()
-                data = {"userid":str(user.id), "role":role}
+                data = {"userid":str(user.id), "role":role, "username": user.firstname.title()+' '+user.lastname.title()}
                 print("login3 ", user.id,data )
                 response = HttpResponse(json.dumps(data), status=status.HTTP_201_CREATED)
                 response.set_cookie('jwt', token, httponly=True)

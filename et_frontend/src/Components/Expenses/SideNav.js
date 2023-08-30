@@ -1,7 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectSidenavLinkStyles } from './store/slice';
-import { selectActiveUserID, selectUserRole } from '../User/store/slice';
+import { selectActiveUserID, selectUsername, selectUserRole } from '../User/store/slice';
 import axios from 'axios';
 import { API_URL } from '../../store/constants';
 
@@ -12,6 +12,7 @@ const SideNav = () => {
     const sidenavLinkStyles = useSelector(selectSidenavLinkStyles);
     const activeUserID = useSelector(selectActiveUserID);
     const userRole = useSelector(selectUserRole);
+    const username = useSelector(selectUsername);
     const activeStyles = 'bg-cyan-300 hover:opacity-100';
 
     const logout = (event) => {
@@ -21,6 +22,8 @@ const SideNav = () => {
         .then((response) => {
             console.log(response.data, response.status)
             localStorage.removeItem('id');
+            localStorage.removeItem('role');
+            localStorage.removeItem('uname');
             navigate(`/user/${activeUserID}/Dashboard`);
             window.location.reload();
         })
@@ -28,6 +31,7 @@ const SideNav = () => {
             console.log(err);
         })
     }
+
 
     // NEEDS OPTIMIZATION USE FORLOOP FOR BELOW NAV BUTTONS
     const navButtons = [
@@ -81,10 +85,11 @@ const SideNav = () => {
                     </button>
                     }
                 )
-                : <button>hi</button>
+                : <span></span>
             }
             </div>
             <div className='w-full flex flex-col justify-between items-center'>
+                <button type='disable' className={`${sidenavLinkStyles} border-t border-t-cyan-200`}>{username}</button>
             {
                 userNavButtons.map((obj, index) => {
                     const idx = index + navButtons.length + adminStuff.length + 1
@@ -98,13 +103,6 @@ const SideNav = () => {
                     }
                 )
             }
-
-                {/* <button onClick={() => {dispatch(setActiveSection('9'))}}
-                className={`${sidenavLinkStyles} ${activeSection === '9' ? activeStyles : ''}`}> <Link to=''>Update profile</Link>
-                </button>
-                <button onClick={() => {dispatch(setActiveSection('10'))}}
-                className={`${sidenavLinkStyles} ${activeSection === '10' ? activeStyles : ''}`}> <Link to=''>Credit line increase</Link>
-                </button> */}
                 <button type='submit' onClick={logout} className='bg-red-800 text-white hover:opacity-80 w-full p-2'>Logout</button>
             </div>
         </div>

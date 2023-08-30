@@ -3,7 +3,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
-import { selectLinkStyles, selectResponsiveBGs, setActiveUserID } from './store/slice';
+import { selectLinkStyles, selectResponsiveBGs, setActiveUserID, setUsername, setUserRole } from './store/slice';
 import BaseHeader from '../basepages/BaseHeader';
 
 
@@ -32,9 +32,13 @@ function Login(){
         .then((response) => {
             const id = response.data['userid'];
             const role = response.data['role'];
+            const username = response.data['username'];
             localStorage.setItem('id', JSON.stringify(id));
-            localStorage.setItem('role', role); 
+            localStorage.setItem('role', btoa(role)); 
+            localStorage.setItem('uname', btoa(username));
             dispatch(setActiveUserID(id));
+            dispatch(setUserRole(role));
+            dispatch(setUsername(username));
             setEmail('');
             setPassword('');
             navigate(`/user/${id}/1/Dashboard`);

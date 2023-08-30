@@ -27,7 +27,7 @@ function ExpenseHome(){
             <div className='w-[20%]'>
                 <SideNav />
             </div>
-            <div className="w-[80%] tablet:w-full mobile:w-full small:w-full">
+            <div className="w-[80%] h-full tablet:w-full mobile:w-full small:w-full">
                 <Varying />
             </div>
         </div>

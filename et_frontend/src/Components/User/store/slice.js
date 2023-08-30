@@ -5,8 +5,9 @@ export const userSlice = createSlice({
     name: 'user',
     initialState: {
         // User related
-        activeUserID: localStorage.getItem('id', null) ? JSON.parse(localStorage.getItem('id')) : null,
-        userRole: localStorage.getItem('role', "employee") ? localStorage.getItem('role') : "employee",
+        activeUserID: localStorage.getItem('id', null) ? JSON.parse(localStorage.getItem('id', null)): null,
+        userRole: localStorage.getItem('role', "employee") ? atob(localStorage.getItem('role', null)) : "employee",
+        username: localStorage.getItem('uname', null) ? atob(localStorage.getItem('uname', null)) : null,
 
         // Style related
         linkStyles: 'text-blue-700 text-[0.8rem]',
@@ -19,14 +20,18 @@ export const userSlice = createSlice({
         setUserRole: (state, action) => {
             state.userRole = action.payload;
         },
+        setUsername: (state, action) => {
+            state.username = action.payload;
+        },
     }
 })
 
-export const {setActiveUserID, setUserRole} = userSlice.actions;
+export const {setActiveUserID, setUserRole, setUsername} = userSlice.actions;
 
 // User export
 export const selectActiveUserID = (state) => state.user.activeUserID;
 export const selectUserRole = (state) => state.user.userRole;
+export const selectUsername = (state) => state.user.username;
 
 // Style export
 export const selectLinkStyles = (state) => state.user.linkStyles;
