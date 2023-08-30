@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users, Login
+from .models import Users, Login, Company, RegisterationRequests
 
 
 from .services import HandleService, AuthenticationService
@@ -27,6 +27,7 @@ class UserSerializers(serializers.ModelSerializer):
         phone = handleObj.handler('phone', phone)
         if not phone: raise serializers.ValidationError('Enter a valid phone number.')
         return phone
+
     
     # def validate_profilepic(self, profilepic):
     #     print('imgesss ', profilepic)
@@ -41,4 +42,9 @@ class UserSerializers(serializers.ModelSerializer):
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = Login
+        fields = '__all__'
+
+class RegistrationRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegisterationRequests
         fields = '__all__'

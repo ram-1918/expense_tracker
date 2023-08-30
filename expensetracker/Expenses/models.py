@@ -25,6 +25,7 @@ class Expenses(models.Model):
     last_modified = models.DateTimeField(auto_now_add=True)
     proof = models.ImageField(upload_to=upload_to, blank=True)
     status = models.BooleanField(default=False)
+    # payment = models.CharField(choices = )
 
     class Meta:
         verbose_name_plural = 'Expenses'
