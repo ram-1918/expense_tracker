@@ -26,29 +26,6 @@ class AuthorizedUsers(models.Model):
     class Meta:
         verbose_name_plural = 'AuthorizedUsers'
 
-# while user is being created, create a record for him in this table
-class SuperAdmins(models.Model):
-    name = models.CharField(max_length=255, default='Subba rao')
-    empid = models.CharField(max_length=255, unique=True, default='empid')
-
-    class Meta:
-        verbose_name_plural = 'SuperAdmins'
-
-    def __str__(self):
-        return self.name + ' ' + self.empid
-
-# while user is being created, create a record for him in this table
-class Admins(models.Model):
-    name = models.CharField(max_length=255, default='Billu')
-    empid = models.CharField(max_length=255, unique=True, default='empid')
-    is_employee = models.ForeignKey(SuperAdmins, on_delete=models.CASCADE, null=True, blank=True)
-
-    class Meta:
-        verbose_name_plural = 'Admins'
-
-    def __str__(self):
-        return self.name + ' ' + self.empid + ' ' + str(self.is_employee.name)
-
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -61,10 +38,12 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_employee', False)
         return self.create_user(email, password, **extra_fields)
     
     def create_staff(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_employee', False)
         return self.create_user(email, password, **extra_fields)
 
 class Users(AbstractBaseUser):
@@ -77,10 +56,11 @@ class Users(AbstractBaseUser):
     datecreated = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     employee_id = models.CharField(max_length=255, blank=True)
     is_active = models.BooleanField(default=True)
-    is_superuser = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    is_employee = models.ForeignKey(Admins, on_delete=models.CASCADE, null=True, blank=True)
+    is_superadmin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+    is_employee = models.BooleanField(default=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    # is_employee = models.ForeignKey(Admins, on_delete=models.CASCADE, null=True, blank=True)
 
     objects = UserManager()
 
@@ -92,30 +72,6 @@ class Users(AbstractBaseUser):
     
     class Meta:
         verbose_name_plural = 'Users'
-
-class ProvidedPayments(models.Model):
-    paymenttypes = [('creditcard', 'Credit Card'), ('debitcard', 'Debit Card'), ('cash', 'Cash'), ('cheque', 'Cheque'), ('others', 'Others')]
-    email = models.EmailField(max_length=255, default='example@gmail.com')
-    empid = models.CharField(max_length=255, default='empid')
-    type = models.CharField(choices=paymenttypes, max_length=10, default='cash')
-    limit = models.CharField(max_length=255, default='500')
-    dateadded = models.DateField(auto_now_add=True, blank=True, null=True)
-
-    def __str__(self):
-        return self.user + ' ' + self.type
-
-    class Meta:
-        verbose_name_plural = 'ProvidedPayments'
-
-class UserToProvidedPayments(models.Model):
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    payment = models.ForeignKey(ProvidedPayments, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.user.firstname + ' ' + self.payment.type
-
-    class Meta:
-        verbose_name_plural = 'UserToProvidedPayments'
 
 class loginManager():
     def generate_jwt(self):
@@ -149,15 +105,14 @@ class RegisterationRequests(models.Model):
     password = models.CharField(max_length=255)
     datecreated = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     employee_id = models.CharField(max_length=255, blank=True)
-    comment = models.TextField(default='Please register me with this email')
     is_active = models.BooleanField(default=True)
-    is_superuser = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    is_employee = models.ForeignKey(Admins, on_delete=models.CASCADE, null=True, blank=True)
+    is_superadmin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+    is_employee = models.BooleanField(default=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.email
     
     class Meta:
-        verbose_name_plural = 'RegistrationRequests'
+        verbose_name_plural = 'Registration Requests'
