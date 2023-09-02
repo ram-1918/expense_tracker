@@ -1,19 +1,19 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { selectSidenavLinkStyles } from './store/slice';
+import { selectSidenavLinkStyles, selectTotalRegiRequests } from './store/slice';
 import { selectActiveUserID, selectUsername, selectUserRole } from '../User/store/slice';
 import axios from 'axios';
 import { API_URL } from '../../store/constants';
 
 const SideNav = () => {
-    const navigate = useNavigate();
     const {section} = useParams();
 
     const sidenavLinkStyles = useSelector(selectSidenavLinkStyles);
     const activeUserID = useSelector(selectActiveUserID);
     const userRole = useSelector(selectUserRole);
     const username = useSelector(selectUsername);
-    const activeStyles = 'bg-cyan-300 hover:opacity-100';
+    const totalRequests = useSelector(selectTotalRegiRequests);
+    const activeStyles = 'bg-neutral-300 hover:opacity-100';
 
     const logout = (event) => {
         event.preventDefault();
@@ -22,9 +22,7 @@ const SideNav = () => {
         .then((response) => {
             console.log(response.data, response.status)
             localStorage.removeItem('id');
-            localStorage.removeItem('role');
-            localStorage.removeItem('uname');
-            navigate(`/user/${activeUserID}/Dashboard`);
+            localStorage.removeItem('prevroute');
             window.location.reload();
         })
         .catch((err) => {
@@ -34,19 +32,19 @@ const SideNav = () => {
 
 
     // NEEDS OPTIMIZATION USE FORLOOP FOR BELOW NAV BUTTONS
-    const navButtons = [
+    const commonOptions = [
         {'displayname':'Dashboard', 'path':'Dashboard'},
-        {'displayname':'Submit your expense', 'path':'submityourexpense'},
-        {'displayname':'View Submissions', 'path':'viewsubmissions'},
-        {'displayname':'Make a request', 'path':'makearequest'},
-        {'displayname':'Track request', 'path':'trackrequest'},
-        {'displayname':'View Requests', 'path':'viewrequests'},
-        {'displayname':'Expense Forecast', 'path':'expenseforecast'},
+        {'displayname':'Submit your expense', 'path':'submityourexpense'}, // Form
+        {'displayname':'My expenses', 'path':'myexpenses'}, // All submissions like leetcode
+        {'displayname':'Make a request', 'path':'makearequest'}, // Request for an out-of-company expense by filling a form
+        {'displayname':'Expense Forecast', 'path':'expenseforecast'}
     ]
 
     const adminStuff = [
         {'displayname':'View Users', 'path': 'viewusers'},
-        {'displayname':'Process Requests', 'path': 'processrequests'},
+        {'displayname':'Expense Requests', 'path': 'expenserequests'},
+        {'displayname':'Registration Requests', 'path':'viewrequests'},
+        {'displayname':'All Requests', 'path':'allrequests'} // approvals, rejections and pending filters; merge registration and expense requests
     ]
 
     const userNavButtons = [
@@ -54,14 +52,14 @@ const SideNav = () => {
         {'displayname': 'Credit line increase', 'path': 'creditlineincrease'},
     ]
     return (
-        <div className="sticky top-0 left-0 w-full h-full text-center flex flex-col justify-between items-center bg-gradient-to-r from-cyan-100 to-cyan-200 shadow-3xl mobile:hidden small:hidden">
+        <div className="sticky top-0 left-0 w-full h-full text-center flex flex-col justify-between items-center bg-gradient-to-r from-neutral-100 to-neutral-200 mobile:hidden small:hidden">
             <div className='w-full flex flex-col space-y-[-13px] text-left pl-8'>
                 <span className='text-[1.2rem] font-light'>Siri info's</span>
                 <span className='text-[2rem] font-light'>Expense Tracker</span>
             </div>
             <div className="w-full flex flex-col justify-center items-center">
             {
-                navButtons.map((obj, index) => {
+                commonOptions.map((obj, index) => {
                     return <button 
                         id={index+1} 
                         key={index+1}
@@ -73,15 +71,17 @@ const SideNav = () => {
                 )
             }
             {
-                userRole !== "admin" || userRole !== 'superadmin' ? 
+                userRole === "admin" || userRole === 'superadmin' ? 
                 adminStuff.map((obj, index) => {
-                    const idx = index + navButtons.length + 1
+                    const idx = index + commonOptions.length + 1
                     return <button 
                         id={idx} 
                         key={idx}
                         className={`${sidenavLinkStyles} ${section === String(idx) ? activeStyles : ''}`}
                         > 
-                        <Link to={`/user/${activeUserID}/${String(idx)}/${obj.path}`}>{obj.displayname}</Link>
+                        <Link to={`/user/${activeUserID}/${String(idx)}/${obj.path}`} className='w-full flex flex-row justify-center items-center space-x-2'>
+                            <span>{obj.displayname} </span>
+                            {obj.path === 'viewrequests' && totalRequests ? <span className='border border-black w-6 h-6 rounded-full flex justify-center items-center bg-neutral-100'> {totalRequests}</span> : ''} </Link>
                     </button>
                     }
                 )
@@ -89,10 +89,10 @@ const SideNav = () => {
             }
             </div>
             <div className='w-full flex flex-col justify-between items-center'>
-                <button type='disable' className={`${sidenavLinkStyles} border-t border-t-cyan-200`}>{username}</button>
+                <button type='disable' className={`${sidenavLinkStyles} border-t border-t-neutral-200`}>{username} - {userRole}</button>
             {
                 userNavButtons.map((obj, index) => {
-                    const idx = index + navButtons.length + adminStuff.length + 1
+                    const idx = index + commonOptions.length + adminStuff.length + 1
                     return <button 
                         id={idx} 
                         key={idx}

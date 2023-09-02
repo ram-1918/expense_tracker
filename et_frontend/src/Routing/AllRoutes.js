@@ -10,14 +10,13 @@ import ExpenseHome from '../Components/Expenses/ExpenseHome';
 import Dashboard from '../Components/Expenses/sections/Dashboard';
 import ViewUsers from '../Components/Expenses/sections/ViewUsers';
 import ViewRequests from '../Components/Expenses/sections/ViewRequests';
-import ViewSubmissions from '../Components/Expenses/sections/ViewSubmissions';
+import MyExpenses from '../Components/Expenses/sections/MyExpenses';
 import SubmitExpense from '../Components/Expenses/sections/SubmitExpense';
 import MakeARequest from '../Components/Expenses/sections/MakeARequest';
-import TrackRequest from '../Components/Expenses/sections/TrackRequest';
 import ExpenseForecast from '../Components/Expenses/sections/ExpenseForecast';
 import CreditLineIncrease from '../Components/Expenses/sections/CreditLineIncrease';
 import UpdateProfile from '../Components/Expenses/sections/UpdateProfile';
-import ProcessRequests from '../Components/Expenses/sections/ProcessRequests';
+import ExpenseRequests from '../Components/Expenses/sections/ExpenseRequests';
 
 // Builtin
 import React from 'react';
@@ -54,13 +53,12 @@ const AllRoutes = () => {
               <Route path='viewusers' element={<ViewUsers />}></Route>
               <Route path='submityourexpense' element={<SubmitExpense />}></Route>
               <Route path='makearequest' element={<MakeARequest />}></Route>
-              <Route path='trackrequest' element={<TrackRequest />} name='Track Requests'></Route>
               <Route path='viewrequests' element={<ViewRequests />}></Route>
-              <Route path='viewsubmissions' element={<ViewSubmissions />}></Route>
+              <Route path='myexpenses' element={<MyExpenses />}></Route>
               <Route path='expenseforecast' element={<ExpenseForecast />}></Route>
               <Route path='updateprofile' element={<UpdateProfile />}></Route>
               <Route path='creditlineincrease' element={<CreditLineIncrease />}></Route>
-              <Route path='processrequests' element={<ProcessRequests />}></Route>
+              <Route path='expenserequests' element={<ExpenseRequests />}></Route>
             </Route>
           </Route>
           <Route path='*' element={<PageNotFound />} />

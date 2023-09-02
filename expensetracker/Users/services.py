@@ -81,7 +81,7 @@ class AuthenticationService():
             return self.handleTokenExpiry
     
     def generateJWTToken(self, payload):
-        expiry_days = datetime.now() + timedelta(days=1)
+        expiry_days = datetime.now() + timedelta(seconds=10)
         payload['exp'] = int(expiry_days.strftime('%s'))
         payload['iss'] = 'et_backend'
         payload['iat'] = datetime.now()

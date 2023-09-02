@@ -15,6 +15,9 @@ function Login(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    let prevroute = useSelector((state) => state.user.prevRoute);
+    console.log('from logged comp ', prevroute);
+
     // Error handlers
     const [errorField, setErrfield] = useState('');
     
@@ -41,7 +44,8 @@ function Login(){
             dispatch(setUsername(username));
             setEmail('');
             setPassword('');
-            navigate(`/user/${id}/1/Dashboard`);
+            // const prevroute = localStorage('prevroute', null)
+            navigate(`user/${id}/1/dashboard`);
         })
         .catch((err) => {
             try{

@@ -46,15 +46,18 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_employee', False)
         return self.create_user(email, password, **extra_fields)
 
+def upload_to(instance, filename):
+    return 'profilepics/{filename}'.format(filename=filename) if filename else 'profilepics/default.png'
+
 class Users(AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
-    firstname = models.CharField(max_length=255)
-    lastname = models.CharField(max_length=255)
+    fullname = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
     phone = models.CharField(max_length=12, blank=True)
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255, blank=True, null=True)
     datecreated = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     employee_id = models.CharField(max_length=255, blank=True)
+    image = models.ImageField(upload_to=upload_to, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_superadmin = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
@@ -65,7 +68,7 @@ class Users(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['firstname', 'lastname', 'phone', 'password']
+    REQUIRED_FIELDS = ['firstname', 'password']
 
     def __str__(self):
         return self.email
@@ -93,13 +96,10 @@ class Login(models.Model):
     
     def __str__(self):
         return self.email
-    
 
-
-class RegisterationRequests(models.Model):
+class RegisterationRequests(AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
-    firstname = models.CharField(max_length=255)
-    lastname = models.CharField(max_length=255)
+    fullname = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
     phone = models.CharField(max_length=12, blank=True)
     password = models.CharField(max_length=255)
@@ -109,7 +109,10 @@ class RegisterationRequests(models.Model):
     is_superadmin = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_employee = models.BooleanField(default=True)
+    comment = models.TextField(default='Could you please validate and register my profile?')
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
+
+    objects = UserManager()
 
     def __str__(self):
         return self.email

@@ -7,7 +7,8 @@ const Logout = () => {
         axios.post(`${API_URL}/logout`, data)
         .then((response) => {
             console.log(response.data, response.status)
-            localStorage.remove('id');
+            localStorage.removeItem('id');
+            // localStorage.removeItem('prevroute');
         })
         .catch((err) => {
             console.log(err);

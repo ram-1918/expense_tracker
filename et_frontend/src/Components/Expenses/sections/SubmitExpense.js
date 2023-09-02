@@ -1,8 +1,10 @@
 import { useSelector } from 'react-redux';
-import { selectActiveUserID } from '../../User/store/slice';
+import { selectActiveUserID, selectPrevRoute } from '../../User/store/slice';
 
 const SubmitExpense = () => {
     let activeUserId = useSelector(selectActiveUserID);
+    let prevroute = useSelector(selectPrevRoute);
+    console.log('from logged comp ', prevroute);
 
     return (
             <div className='flex flex-col h-screen overflow-scroll'>

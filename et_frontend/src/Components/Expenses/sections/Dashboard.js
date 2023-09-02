@@ -13,17 +13,6 @@ const ListExpenses = () => {
         {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
         {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
         {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
-        {'name':'Lights and fans', 'description': 'Purchased lights and fans for guest house 2876', 'category':'Guest House', 'totalamount': '486.12', 'date': '21th Aug 2023', 'paymenttype': 'card 3031', 'status': 'Approved'},
         {'name':'System crashed', 'description': 'Computer in cloud5 crashed, got it repair', 'category':'Repairs', 'totalamount': '112.2', 'date': '20th Aug 2023', 'paymenttype': 'cash', 'status': 'Rejected'}
     ]
     const headings = ['Add to review', 'Title', 'Category', 'Amount', 'Date', 'Payment Method', 'Status']
@@ -67,7 +56,7 @@ const Dashboard = () => {
 
     return (
             <div className='w-full h-full flex flex-col'>
-                <div className='w-full h-[15%] flex flex-row justify-between items-center px-4 border'>
+                {/* <div className='w-full h-[15%] flex flex-row justify-between items-center px-4 border'>
                     <div className='flex flex-col'>
                         <span className='text-xl'>Credit provided</span>
                         <span className='text-xl font-light'>BOFA(card 1) - 1300$</span> 
@@ -77,7 +66,7 @@ const Dashboard = () => {
                         <span className='text-2xl font-light'>Available Balance </span>
                         <span className='text-2xl font-light'>2500$</span>
                     </div>
-                </div>
+                </div> */}
                 <div className='w-full flex flex-row font-light items-center justify-around p-2'>
                     <span className=''>Filter1</span>
                     <span className=''>Filter2</span>

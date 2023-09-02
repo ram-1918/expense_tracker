@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Users, Login, Company, RegisterationRequests
+import os
 
 
 from .services import HandleService, AuthenticationService
@@ -29,14 +30,9 @@ class UserSerializer(serializers.ModelSerializer):
         return phone
 
     
-    # def validate_profilepic(self, profilepic):
-    #     print('imgesss ', profilepic)
-    #     print('imagessss: ', profilepic)
-    #     print(profilepic.split('fakepath')[-1][1:])
-    #     handleObj = HandleService()
-    #     profilepic = handleObj.handler('profilepic', profilepic)
-    #     if not profilepic: raise serializers.ValidationError('Enter a valid format.')
-    #     return profilepic
+    # def validate_image(self, image):
+    #     print(image, '><><><><><><<><><><><><')
+    #     return os.path.join('http://127.0.0.1:8000/ExpenseMedia/', image)
 
 
 class LoginSerializer(serializers.ModelSerializer):
