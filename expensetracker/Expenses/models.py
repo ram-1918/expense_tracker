@@ -20,12 +20,17 @@ def upload_to(instance, filename):
 class Expenses(models.Model):
     userid = models.ForeignKey(Users, on_delete=models.DO_NOTHING)
     categoryid = models.ForeignKey(ExpenseType, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
     amount = models.CharField(max_length=255, blank=False, null=True)
     submitted_date = models.DateTimeField(auto_now=True)
     last_modified = models.DateTimeField(auto_now_add=True)
     proof = models.ImageField(upload_to=upload_to, blank=True)
     status = models.BooleanField(default=False)
+    comment = models.TextField(blank=True, null=True)
     # payment = models.CharField(choices = )
 
     class Meta:
         verbose_name_plural = 'Expenses'
+    
+    def __str__(self):
+        return self.name

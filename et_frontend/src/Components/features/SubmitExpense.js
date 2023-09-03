@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { selectActiveUserID, selectPrevRoute } from '../../User/store/slice';
+import { selectActiveUserID, selectPrevRoute } from '../users/store/slice';
 
 const SubmitExpense = () => {
     let activeUserId = useSelector(selectActiveUserID);

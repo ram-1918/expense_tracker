@@ -47,6 +47,7 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 def upload_to(instance, filename):
+    print(instance, filename, 'ghvhgvh')
     return 'profilepics/{filename}'.format(filename=filename) if filename else 'profilepics/default.png'
 
 class Users(AbstractBaseUser):
@@ -57,7 +58,7 @@ class Users(AbstractBaseUser):
     password = models.CharField(max_length=255, blank=True, null=True)
     datecreated = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     employee_id = models.CharField(max_length=255, blank=True)
-    image = models.ImageField(upload_to=upload_to, blank=True, null=True)
+    image = models.ImageField(upload_to=upload_to, blank=True, null=True, default='profilepics/default.png')
     is_active = models.BooleanField(default=True)
     is_superadmin = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)

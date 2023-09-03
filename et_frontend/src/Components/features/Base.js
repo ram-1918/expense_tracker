@@ -1,17 +1,18 @@
 // Builtins
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { selectActiveUserID } from "../users/store/slice";
 
 // components
 import SideNav from './SideNav';
 
 // Constants and values from redux
-import { Userid } from "../../Services";
 
 const Varying = () => {
     let {userid, section} = useParams();
     let navigate = useNavigate();
-    const user = Userid();
+    const user = useSelector(selectActiveUserID);
     useEffect(() => {
         if ( userid !== user || !userid ) {
             navigate('/PageNotFound');

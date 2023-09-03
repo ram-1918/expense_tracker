@@ -1,12 +1,15 @@
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { setCompany, setEmployeeid, setUsername, setUserRole } from './Components/User/store/slice';
+import { setCompany, setEmployeeid, setUsername, setUserRole } from './Components/users/store/slice';
 import AllRoutes from './Routing/AllRoutes';
 import { API_URL } from './store/constants';
+import Cookies from 'js-cookie';
 
 function App(){
   const dispatch = useDispatch();
+  const token = Cookies.get('jwt');
+  console.log(token, "TEST JWT")
   useEffect(() => {
     const userid = JSON.parse(localStorage.getItem('id', null));
     console.log(userid, 'Pub')

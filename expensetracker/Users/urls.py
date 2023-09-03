@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import testing, RegisterAPI, UpdateAPI, LoginAPI, LogoutAPI, ApproveRequest
-from .readonyviews import get_users, get_users_by_company
+from .readonyviews import get_users, get_users_by_company, get_companies
 
 urlpatterns = [
     path('', testing),
@@ -10,8 +10,9 @@ urlpatterns = [
     path('login/', LoginAPI.as_view()),
     path('logout/', LogoutAPI.as_view()),
 
-    path('users/', get_users),
-    path('users/<int:company>', get_users_by_company),
+    path('list/', get_users),
+    path('list/<str:role>/<int:company>', get_users_by_company),
+    path('companies/<uuid:pk>/<str:role>', get_companies),
 
 
 

@@ -1,17 +1,18 @@
 
 import { useSelector } from 'react-redux';
-import { selectActiveUserID } from '../../User/store/slice';
+import { selectActiveUserID } from '../users/store/slice';
 
-const ExpenseForecast = () => {
+
+const ViewSubmissions = () => {
     let activeUserId = useSelector(selectActiveUserID);
 
     return (
             <div className='flex flex-col h-screen overflow-scroll'>
-                <p>ExpenseForecast Page</p>
+                <p>MyExpenses Page</p>
                 {activeUserId}
             </div>
         )
 
 }
 
-export default ExpenseForecast;
+export default ViewSubmissions;

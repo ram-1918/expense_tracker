@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { selectUserRole } from '../../User/store/slice';
+import { selectUserRole } from '../users/store/slice';
 
 const ListExpenses = () => {
     // display cards provided to him, if not just diplay 0 so if he spends any siri has to reemberse it

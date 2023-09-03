@@ -1,19 +1,16 @@
-import { useState } from "react";
 
-const BaseButton = (props) => {
-    const [classnames, setClassnames] = useState('');
-    // const [type_, setType] = useState(props.type);
-
-    const login_classnames = 'border-0 outline-0 w-16 p-2 bg-green-200 rounded-lg';
-    const other_classnames = 'border-0 outline-0 w-16 p-2 bg-red-200 rounded-lg';
-    if(props.mode === 'login' || props.mode === 'register'){
-        setClassnames(login_classnames);
+const BaseButton = ({text, type, mode, others}) => {
+    let style = '';
+    if(mode === 'user'){
+        style = 'border border-cyan-600 outline-none rounded-lg p-2 transition duration-300 hover:outline-none hover:border-cyan-600 hover:bg-cyan-600 hover:text-white'
     }
-    if (props.mode === 'other'){
-        setClassnames(other_classnames);
-        // setType('button');
+    else if(mode === 'accept'){
+        style = 'border-none outline-none rounded-lg p-2 mx-2 bg-green-200'
     }
-    return <button type={props.type} className={classnames}>{props.text}</button>
+    else if(mode === 'reject'){
+        style = 'border-none outline-none rounded-lg p-2 mx-2 bg-red-200'
+    }
+    return <button type={type} className={`${style} ${others}`}>{text}</button>
 }
 
 export default BaseButton;

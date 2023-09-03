@@ -22,6 +22,16 @@ module.exports = {
       },
       boxShadow: {
         '3xl': '1px 2px 30px 2px rgba(0,0,0,0.2)',
+      },
+      keyframes: {
+        wiggle: {
+          '0%': { top: '8%' },
+          '50%': { top: '10%' },
+          '100%': { top: '0%' }
+        }
+      },
+      animation: {
+        wiggle: 'wiggle 2.8s ease-in-out',
       }
     },
   },

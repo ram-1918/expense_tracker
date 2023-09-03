@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { IsAuthenticated } from "../Services"
+import { IsAuthenticated } from "../services/Services"
 
 const PrivateRoute = () => {
     // const location = useLocation();

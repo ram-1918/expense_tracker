@@ -1,16 +1,16 @@
 import { useSelector } from 'react-redux';
-import { selectActiveUserID } from '../../User/store/slice';
+import { selectActiveUserID } from '../users/store/slice';
 
-const ProcessRequests = () => {
+const CreditLineIncrease = () => {
     let activeUserId = useSelector(selectActiveUserID);
 
     return (
             <div className='flex flex-col h-screen overflow-scroll'>
-                <p>ProcessRequests Page</p>
+                <p>CreditLineIncrease Page</p>
                 {activeUserId}
             </div>
         )
 
 }
 
-export default ProcessRequests;
+export default CreditLineIncrease;

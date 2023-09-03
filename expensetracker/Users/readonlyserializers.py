@@ -9,3 +9,8 @@ class RO_UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = ['id', 'fullname', 'email', 'phone', 'company', 'employee_id']
+
+class RO_CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = ['id', 'name', 'location']

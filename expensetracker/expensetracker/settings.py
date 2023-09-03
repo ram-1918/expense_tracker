@@ -45,11 +45,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework_simplejwt",
     "corsheaders",
     "rest_framework",
     "Users",
     "Expenses",
 ]
+
+REST_FRAMWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware", # CORS
@@ -62,7 +69,20 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# Enable CORS if your frontend is on a different domain
+
 CORS_ORIGIN_ALLOW_ALL = True # CORS
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE"]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+# Enable Django's built-in sessions
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
+# Set your desired session cookie name (optional)
+SESSION_COOKIE_NAME = "jwt"
+
 
 ROOT_URLCONF = "expensetracker.urls"
 

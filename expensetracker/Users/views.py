@@ -5,21 +5,25 @@ from rest_framework.decorators import APIView
 from rest_framework.response import Response
 from rest_framework import generics, status
 
+from rest_framework.permissions import IsAuthenticated
+
 from .models import AuthorizedUsers, Company, Users, RegisterationRequests, Login
 from .serializers import PostSerializerMapper, LoginSerializer, UserSerializer
 
 from .services import HandleService, AuthenticationService
+
 
 import jwt 
 import json
 import os
 import logging
 from django.conf import settings
+from PIL import Image 
 
 # Create your views here.
 
 def testing(request):
-    return HttpResponse('Users app')
+    return Response('Users app')
 
 def modelObjectToDict(obj):
     return obj.__dict__
@@ -31,16 +35,26 @@ def checkAndGetUser(field, value):
         user - Users.objects.filter(id=value).first()
     return user
 
+def getImage(image):
+    defaultimg = os.path.join('http://127.0.0.1:8000/ExpenseMedia/', 'profilepics/default.png')
+    imageurl = os.path.join('http://127.0.0.1:8000/ExpenseMedia/', image)
+    return imageurl if image else defaultimg
+
+def processFormData(data):
+    newData = {}
+    for k,v in dict(data).items():
+        newData[k] = v[0]
+    return newData
+
 class RegisterAPI(APIView):
 
     def get(self, request):
         # for admins - it returns list of all the users under him
         # for superadmins - it returns list of all the admins and users under him
         param = request.GET.get('id')
-        print(param, 'fewbbk')
         userRoleCheck = Users.objects.filter(id=param).first()
         roleCheck = "superadmin" if userRoleCheck.is_superadmin else "admin" if userRoleCheck.is_admin else "employee"
-        if userRoleCheck and roleCheck in ['admin', ['superadmin']]:
+        if userRoleCheck and roleCheck in ['admin', 'superadmin']:
             users = Users.objects.all()
             result = []
             for user in users:
@@ -68,6 +82,7 @@ class RegisterAPI(APIView):
         data['company'] = Company.objects.filter(id=data['company']).first()
         # check if the user is in authorized list of users
         authorized_users_check = AuthorizedUsers.objects.filter(email=data['email']).first()
+        print(data, 'mko,lp')
 
         if authorized_users_check:
             try: Users.objects.create_user(**data) # once created send an email
@@ -90,6 +105,8 @@ class RegisterAPI(APIView):
             return Response('requestsent', status=status.HTTP_201_CREATED)
 
 class ApproveRequest(APIView):
+    # permission_classes = [IsAuthenticated]
+
     def get(self, request):
         print(request.data)
         if request.data and request.data['role'] not in ['admin', 'superadmin']:
@@ -118,6 +135,7 @@ class ApproveRequest(APIView):
             convertedObj = modelObjectToDict(requestObj.first())
             convertedObj.pop('_state')
             convertedObj.pop('comment')
+            convertedObj['image'] = ''
             try: 
                 user = Users(**convertedObj) # once created send an email
                 user.save()
@@ -129,8 +147,12 @@ class ApproveRequest(APIView):
         return Response('rejected', status=status.HTTP_200_OK)
 
 class UpdateAPI(APIView):
+    # permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         # returns the details of individual user, while updateprofile
+        token = request.COOKIES.get('jwt')
+        print(token, request.COOKIES)
         user = Users.objects.get(id=pk)
         if user:
             data = modelObjectToDict(user)
@@ -138,31 +160,29 @@ class UpdateAPI(APIView):
             for k,v in data.items():
                 if k in ['fullname', 'email', 'phone', 'password', 'employee_id', 'company_id', 'image']:
                     filteredData[k] = v
-            role = "superadmin" if user.is_superadmin else "admin" if user.is_admin else "employee"
-            filteredData['role'] = role
-            imageurl = filteredData["image"]
-            filteredData['image'] = os.path.join('http://127.0.0.1:8000/ExpenseMedia/', imageurl)
-            print(filteredData['image'])
-            return Response(filteredData, status=status.HTTP_200_OK)
-        return Response('nouser', status=status.HTTP_400_BAD_REQUEST)
+            filteredData['role'] = "superadmin" if user.is_superadmin else "admin" if user.is_admin else "employee"
+            filteredData['image'] = getImage(filteredData['image'])
+            return JsonResponse(filteredData, status=status.HTTP_200_OK)
+        return JsonResponse('nouser', status=status.HTTP_400_BAD_REQUEST)
     
     def patch(self, request, pk):
+        user = Users.objects.filter(id=pk).first()
+        data = processFormData(request.data)
         handleObj = HandleService()
-        print(request.FILES.get('image'), '_+++++++++_+_+__--____-_---_-__')
-        emailChange = request.data.pop('emailchange')
-        passwordChange = request.data.pop('passwordchange')
+        emailChange = data['emailchange']
+        passwordChange = data['passwordchange']
+        if 'image' in data and not data['image']: data.pop('image')
 
-        if emailChange == True:
+        if emailChange == 'true':
             # check and upadate with out clashes
-            email = handleObj.handler('email', request.data['email'])
+            email = handleObj.handler('email', data['email'])
             userCheck = checkAndGetUser('email', email)
             if userCheck and not userCheck.email == email:
                 return Response('already exists', status=status.HTTP_400_BAD_REQUEST)
-            request.data['email'] = email
+            data['email'] = email
 
-        user = Users.objects.filter(id=pk).first()
-        if passwordChange == True:
-            password = request.data['password']
+        if passwordChange == 'true':
+            password = data['password']
             user.set_password(password)
             user.save()
             return Response('Password updated')
@@ -170,13 +190,9 @@ class UpdateAPI(APIView):
         # phone = handleObj.handler('phone', request.data['phone']) if request.data['phone'] else ''
         # if phone: request.data['phone'] = phone
         # else: return Response('invalidphonenumber',  status=status.HTTP_400_BAD_REQUEST)
-        print(request.data)
-        # request.data['image'] = os.path.join('http://127.0.0.1:8000/ExpenseMedia/', request.data['image'])
-        serializer = UserSerializer(user, data = request.data, partial=True)
+        serializer = UserSerializer(user, data = data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        print(serializer.data, 'serialzied')
-        print("after saving")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 class LoginAPI(APIView):
@@ -199,8 +215,10 @@ class LoginAPI(APIView):
                     loggedinuser.is_valid(raise_exception=True)
                 loggedinuser.save()
                 data = {"userid":str(user.id), "role":role, "username": user.fullname.title()}
-                response = HttpResponse(json.dumps(data), status=status.HTTP_201_CREATED)
+                # set JWT into cookies
+                response = Response(data, status=status.HTTP_201_CREATED)
                 response.set_cookie('jwt', token, httponly=True)
+                print(request.COOKIES, 'COOKIES')
                 return response
             return Response('Incorrect password.', status=status.HTTP_401_UNAUTHORIZED)
         return Response('No user with this email address.', status=status.HTTP_401_UNAUTHORIZED)

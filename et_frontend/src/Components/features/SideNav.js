@@ -1,19 +1,19 @@
 import { Link, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { selectSidenavLinkStyles, selectTotalRegiRequests } from './store/slice';
-import { selectActiveUserID, selectUsername, selectUserRole } from '../User/store/slice';
+import { selectTotalRegiRequests } from './store/slice';
+import { selectActiveUserID, selectUsername, selectUserRole } from '../users/store/slice';
 import axios from 'axios';
 import { API_URL } from '../../store/constants';
+import { sideNavBar } from '../BaseStyles';
 
 const SideNav = () => {
     const {section} = useParams();
 
-    const sidenavLinkStyles = useSelector(selectSidenavLinkStyles);
     const activeUserID = useSelector(selectActiveUserID);
     const userRole = useSelector(selectUserRole);
     const username = useSelector(selectUsername);
     const totalRequests = useSelector(selectTotalRegiRequests);
-    const activeStyles = 'bg-neutral-300 hover:opacity-100';
+    const activeStyles = sideNavBar.active;
 
     const logout = (event) => {
         event.preventDefault();
@@ -44,7 +44,7 @@ const SideNav = () => {
         {'displayname':'View Users', 'path': 'viewusers'},
         {'displayname':'Expense Requests', 'path': 'expenserequests'},
         {'displayname':'Registration Requests', 'path':'viewrequests'},
-        {'displayname':'All Requests', 'path':'allrequests'} // approvals, rejections and pending filters; merge registration and expense requests
+        // {'displayname':'All Requests', 'path':'allrequests'} // approvals, rejections and pending filters; merge registration and expense requests
     ]
 
     const userNavButtons = [
@@ -63,7 +63,7 @@ const SideNav = () => {
                     return <button 
                         id={index+1} 
                         key={index+1}
-                        className={`${sidenavLinkStyles} ${section === String(index+1) ? activeStyles : ''}`}
+                        className={`${sideNavBar.body} ${section === String(index+1) ? activeStyles : ''}`}
                         > 
                         <Link to={`/user/${activeUserID}/${String(index+1)}/${obj.path}`}>{obj.displayname}</Link>
                     </button>
@@ -77,7 +77,7 @@ const SideNav = () => {
                     return <button 
                         id={idx} 
                         key={idx}
-                        className={`${sidenavLinkStyles} ${section === String(idx) ? activeStyles : ''}`}
+                        className={`${sideNavBar.body} ${section === String(idx) ? activeStyles : ''}`}
                         > 
                         <Link to={`/user/${activeUserID}/${String(idx)}/${obj.path}`} className='w-full flex flex-row justify-center items-center space-x-2'>
                             <span>{obj.displayname} </span>
@@ -89,14 +89,14 @@ const SideNav = () => {
             }
             </div>
             <div className='w-full flex flex-col justify-between items-center'>
-                <button type='disable' className={`${sidenavLinkStyles} border-t border-t-neutral-200`}>{username} - {userRole}</button>
+                <button type='disable' className={`${sideNavBar.body} border-t border-t-neutral-200`}>{username} - {userRole}</button>
             {
                 userNavButtons.map((obj, index) => {
                     const idx = index + commonOptions.length + adminStuff.length + 1
                     return <button 
                         id={idx} 
                         key={idx}
-                        className={`${sidenavLinkStyles} ${section === String(idx) ? activeStyles : ''}`}
+                        className={`${sideNavBar.body} ${section === String(idx) ? activeStyles : ''}`}
                         > 
                         <Link to={`/user/${activeUserID}/${String(idx)}/${obj.path}`}>{obj.displayname}</Link>
                     </button>

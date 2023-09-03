@@ -1,6 +1,6 @@
 
 import { useSelector } from 'react-redux';
-import { selectActiveUserID } from '../../User/store/slice';
+import { selectActiveUserID } from '../users/store/slice';
 
 const MakeARequest = () => {
     let activeUserId = useSelector(selectActiveUserID);

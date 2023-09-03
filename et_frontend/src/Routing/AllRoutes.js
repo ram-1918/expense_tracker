@@ -1,28 +1,28 @@
 // Users
-import HomePage from '../Components/User/Home';
-import RegisterPage from '../Components/User/Register';
-import LoginPage from '../Components/User/Login';
-import ForgotPasswordPage from '../Components/User/ForgotPassword';
-import PageNotFound from '../Components/PageNotFound';
+import HomePage from '../pages/Home';
+import RegisterPage from '../Components/users/Register';
+import LoginPage from '../Components/users/Login';
+import ForgotPasswordPage from '../Components/users/ForgotPassword';
+import PageNotFound from '../pages/PageNotFound';
 
 // Expense app
-import ExpenseHome from '../Components/Expenses/ExpenseHome';
-import Dashboard from '../Components/Expenses/sections/Dashboard';
-import ViewUsers from '../Components/Expenses/sections/ViewUsers';
-import ViewRequests from '../Components/Expenses/sections/ViewRequests';
-import MyExpenses from '../Components/Expenses/sections/MyExpenses';
-import SubmitExpense from '../Components/Expenses/sections/SubmitExpense';
-import MakeARequest from '../Components/Expenses/sections/MakeARequest';
-import ExpenseForecast from '../Components/Expenses/sections/ExpenseForecast';
-import CreditLineIncrease from '../Components/Expenses/sections/CreditLineIncrease';
-import UpdateProfile from '../Components/Expenses/sections/UpdateProfile';
-import ExpenseRequests from '../Components/Expenses/sections/ExpenseRequests';
+import ExpenseHome from '../Components/features/Base';
+import Dashboard from '../Components/features/Dashboard';
+import ViewUsers from '../Components/features/ViewUsers';
+import ViewRequests from '../Components/features/ViewRequests';
+import MyExpenses from '../Components/features/MyExpenses';
+import SubmitExpense from '../Components/features/SubmitExpense';
+import MakeARequest from '../Components/features/MakeARequest';
+import ExpenseForecast from '../Components/features/ExpenseForecast';
+import CreditLineIncrease from '../Components/features/CreditLineIncrease';
+import UpdateProfile from '../Components/users/UpdateProfile';
+import ExpenseRequests from '../Components/features/ExpenseRequests';
 
 // Builtin
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
-import { selectActiveUserID } from '../Components/User/store/slice';
+import { selectActiveUserID } from '../Components/users/store/slice';
 
 // Private and public elements
 import PublicRoute from './PublicRoute';

@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import { selectLinkStyles, selectResponsiveBGs, setActiveUserID, setUsername, setUserRole } from './store/slice';
 import BaseHeader from '../basepages/BaseHeader';
+import BaseButton from '../basepages/BaseButton';
 
 
 
@@ -40,8 +41,8 @@ function Login(){
             localStorage.setItem('role', btoa(role)); 
             localStorage.setItem('uname', btoa(username));
             dispatch(setActiveUserID(id));
-            dispatch(setUserRole(role));
-            dispatch(setUsername(username));
+            // dispatch(setUserRole(role));
+            // dispatch(setUsername(username));
             setEmail('');
             setPassword('');
             // const prevroute = localStorage('prevroute', null)
@@ -80,7 +81,8 @@ function Login(){
                     value={password}
                     onChange = {(e) => setPassword(e.target.value)} required/>
                 </fieldset>
-                <button type='submit' onClick={handleSubmit} className='border border-cyan-600 outline-none rounded-lg p-2 transition duration-300 hover:outline-none hover:border-cyan-600 hover:bg-cyan-600 hover:text-white'>Submit</button>
+                <span onClick={handleSubmit}><BaseButton type="submit" mode="user" text="Login" others='w-20'/></span>
+
 
                 <div className='flex flex-col w-full justify-between items-center'>
                     <span className='text-sm'>Already registed? <Link to='/users/register' className={linkStyles}>Sign Up</Link></span>

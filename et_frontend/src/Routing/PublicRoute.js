@@ -1,9 +1,11 @@
+import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import { IsAuthenticated, Userid } from "../Services"
+import { selectActiveUserID } from "../Components/users/store/slice";
+import { IsAuthenticated } from "../services/Services"
 
 const PublicRoute = () => {
     const auth = IsAuthenticated();
-    const userid = Userid();
+    const userid = useSelector(selectActiveUserID);
     // const location = useLocation();
     // const prevroute = localStorage.getItem('prevroute', null)
     // if(prevroute){
