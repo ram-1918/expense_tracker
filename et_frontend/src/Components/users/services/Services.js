@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
-import { selectActiveUserID } from "../Components/users/store/slice";
+import { selectActiveUserID } from "../store/slice";
 
 import {useParams} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
-import { setActiveSection } from '../Components/features/store/slice';
+import { setActiveSection } from '../../features/store/slice';
 
 export const IsAuthenticated = () => {
     const userInLocalStore = localStorage.getItem('id', null);

@@ -42,7 +42,7 @@ def testing(request):
 #     }
 
 def get_access_token(user):
-    expiry_days = datetime.now() + timedelta(seconds=10)
+    expiry_days = datetime.now() + timedelta(minutes=15)
     payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title()}
     payload['iat'] = datetime.now()
     payload['iss'] = 'etbackend'
@@ -52,7 +52,7 @@ def get_access_token(user):
     return accesstoken
 
 def get_refresh_token(user):
-    expiry_days = datetime.now() + timedelta(minutes=15)
+    expiry_days = datetime.now() + timedelta(minutes=60)
     payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title()}
     payload['iat'] = datetime.now()
     payload['iss'] = 'etbackend'
@@ -60,58 +60,76 @@ def get_refresh_token(user):
     refreshtoken = jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm='HS256')
     return refreshtoken
 
+def calc_time_left(exp_epoch):
+    return datetime.fromtimestamp(exp_epoch) - datetime.now()
+
+def decode_uuid(id):
+    return uuid.UUID(id).hex # converts string to UUID
+
+
 # def auth_decorator(func):
 #     print("Outer func")
 #     @wraps(func) # this ensures decorated function retains name and doc string
 def validate_token(request):
+    response = Response()
     try:
         access = request.COOKIES.get('access')
-        print(access, "FIRST")
-        decoded_token = jwt.decode(jwt=access, key=settings.SECRET_KEY, algorithms='HS256')
         if access:
             decoded_token = jwt.decode(jwt=access, key=settings.SECRET_KEY, algorithms='HS256')
-            expiry_epoch = decoded_token['exp']
-            timeleft = datetime.fromtimestamp(expiry_epoch) - datetime.now()
+            timeleft = calc_time_left(decoded_token['exp'])
+            # expiry_epoch = decoded_token['exp']
+            # timeleft = datetime.fromtimestamp(expiry_epoch) - datetime.now()
             print("Time left for access token", timeleft)
             # return func(request, *args, **kwargs)
-            return True, decoded_token
+            response = Response()
+            response.data = {'status': True, 'data': decoded_token}
+            return response
         else:
-            return False, None # Response(status=status.HTTP_401_UNAUTHORIZED)
+            response.data = {'status': False, 'data': ''}
+            return response # Response(status=status.HTTP_401_UNAUTHORIZED)
     except:
         try:
             refresh = request.COOKIES.get('refresh')
             print(refresh, "REFRESH")
             if refresh:
                 decoded_refresh = jwt.decode(jwt=refresh, key=settings.SECRET_KEY, algorithms='HS256')
-                expiry_epoch = decoded_refresh['exp']
-                timeleft = datetime.fromtimestamp(expiry_epoch) - datetime.now()
+                timeleft = calc_time_left(decoded_refresh['exp'])
+                # expiry_epoch = decoded_refresh['exp']
+                # timeleft = datetime.fromtimestamp(expiry_epoch) - datetime.now()
                 print("Time left for refresh token", timeleft)
-                id = uuid.UUID(decoded_refresh['sub']).hex # converts string to UUID
+                id = decode_uuid(decoded_refresh['sub'])
                 user = Users.objects.filter(id=id).first()
                 newaccess = get_access_token(user)
                 print("NEW ACCES")
                 response = Response()
-                response.set_cookie(key='access', value=newaccess, path='/', httponly=True, samesite='Lax')
-                response.set_cookie(key='refresh', value=refresh, path='/', httponly=True, samesite='Lax')
+                response.set_cookie('access', newaccess)
+                # response.set_cookie(key='access', value=newaccess, path='/', httponly=True, samesite='Lax')
+                response.data = {'status': True, 'data': decoded_refresh}
                 # return func(request, *args, **kwargs)
-                return True, decoded_refresh
+                return response
             else:
-                return False, None # Response(status=status.HTTP_401_UNAUTHORIZED)
+                response.data = {'status': False, 'data': ''}
+                return response # Response(status=status.HTTP_401_UNAUTHORIZED)
         except:
-            return False, None #Response(status=status.HTTP_401_UNAUTHORIZED)
+            response.data = {'status': False, 'data': ''}
+            return response #Response(status=status.HTTP_401_UNAUTHORIZED)
     return validate_token
 
 @api_view(['GET'])
 def view_users(request):
     # data = validate_token(request)
-    isLoggedIn, user = validate_token(request)
+    response = validate_token(request)
+    isLoggedIn = response.data['status']
+    data = response.data['data']
+    # isLoggedIn, user = validate_token(request)
     if isLoggedIn:
-        id = uuid.UUID(user['sub']).hex
+        id = uuid.UUID(data['sub']).hex
         print(id, "UUID")
         user = Users.objects.filter(id=id).first()
         serializer = UserSerializer(user)
         print(serializer.data, " FINAL DATA ")
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        response.data = serializer.data
+        return response
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -154,19 +172,21 @@ class RegisterAPI(APIView):
     def get(self, request):
         # for admins - it returns list of all the users under him
         # for superadmins - it returns list of all the admins and users under him
-        decoded_token = handleToken(request)
-        print("GET", decoded_token)
-        if decoded_token:
+        response = validate_token(request)
+        decoded_token = response.data['data']
+        isLoggedIn = response.data['status']
+        print("GET", decoded_token, isLoggedIn)
+        if isLoggedIn:
             id = decoded_token['sub']
             user = Users.objects.filter(id=id).first()
             if user and user.role == '1':
                     users = Users.objects.all()
                     serializer = SerializerMapper()
                     data = serializer.mapSerializer('listusers', users)
-                    print(data)
-                    return Response(data, status=status.HTTP_200_OK)
+                    response.data = data
+                    return response
             return Response('invaliduser', status=status.HTTP_204_NO_CONTENT)
-        return Response('invalidtoken', status=status.HTTP_403_FORBIDDEN)
+        return Response('invalidtoken', status=status.HTTP_401_UNAUTHORIZED)
     
     def post(self, request):
         proceedToRequest = request.data.pop('proceedtorequest')
@@ -244,26 +264,27 @@ class ApproveRequest(APIView):
         requestObj.delete()
         return Response('rejected', status=status.HTTP_200_OK)
 
-class UpdateAPI(APIView):
+class UserAPI(APIView):
     # permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         # returns the details of individual user, while updateprofile
-        decoded_token = handleToken(request)
-        print("UPDATE GET", decoded_token)
-        # if decoded_token:
-        user = Users.objects.get(id=pk)
-        print(user, "UPDATEAPI")
-        if user:
-            data = modelObjectToDict(user)
-            filteredData = {}
-            for k,v in data.items():
-                if k in ['fullname', 'email', 'phone', 'password', 'employee_id', 'company_id', 'image']:
-                    filteredData[k] = v
-            filteredData['role'] = "superadmin" if user.is_superadmin else "admin" if user.is_admin else "employee"
-            filteredData['image'] = getImage(filteredData['image'])
-            return JsonResponse(filteredData, status=status.HTTP_200_OK)
-        return JsonResponse('nouser', status=status.HTTP_400_BAD_REQUEST)
-        # return Response('invalidtoken', status=status.HTTP_403_FORBIDDEN)
+        # decoded_token = handleToken(request)
+        response = validate_token(request)
+        isAuthenticated = response.data['status']
+        if isAuthenticated:
+            user = Users.objects.get(id=pk)
+            if user:
+                data = modelObjectToDict(user)
+                filteredData = {}
+                for k,v in data.items():
+                    if k in ['fullname', 'email', 'phone', 'password', 'employee_id', 'company_id', 'image', 'role']:
+                        filteredData[k] = v
+                # filteredData['role'] = "superadmin" if user.is_superadmin else "admin" if user.is_admin else "employee"
+                filteredData['image'] = getImage(filteredData['image'])
+                response.data = filteredData
+                return response
+            return Response('nouser', status=status.HTTP_400_BAD_REQUEST)
+        return Response('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
     
     def patch(self, request, pk):
         user = Users.objects.filter(id=pk).first()
@@ -320,10 +341,9 @@ class LoginAPI(APIView):
             return Response('notactive', status=status.HTTP_403_FORBIDDEN)
         return Response('No user with this email address.', status=status.HTTP_401_UNAUTHORIZED)
     # If authenticated, setup generated token inside httponly cookies
-    # if authenticated, check if a record with this email exists in login table
     def post(self, request):
         user, access, refresh = self.authenticate(request)
-        data = {"userid":str(user.id), "role":user.role, "username": user.fullname.title()}
+        data = {"id":str(user.id), "role":user.role, "fullname": user.fullname.title()}
         print("line 4")
         # set JWT into cookies
         response = Response(data, status=status.HTTP_201_CREATED)
@@ -332,14 +352,23 @@ class LoginAPI(APIView):
         response.set_cookie(key='access', value=access, path='/', httponly=True, samesite='Lax') # storing access
         return response
 
-class LogoutAPI(APIView):
-    def post(self, request):
-        token = handleToken(request)
-        print("DELETE", token)
-        response = Response({"message": "Logged out successfully", "status": True})
-        response.set_cookie(key='refresh', value='refresh', path='/', httponly=True, samesite='Lax') # clearing refresh
-        response.set_cookie(key='access', value='access', path='/', httponly=True, samesite='Lax') # clearing access
-        return response
+@api_view(['GET'])
+def logout(request):
+    print("DELETE", request.COOKIES)
+    response = Response({"status":True})
+    response.delete_cookie('access')
+    response.delete_cookie('refresh')
+    return response
+
+
+
+# class LogoutAPI(APIView):
+#     def post(self, request):
+#         print("DELETE", request.COOKIES)
+#         response = Response({"message": "Logged out successfully", "status": True})
+#         response.set_cookie('access', '')
+#         response.set_cookie('refresh', '')
+#         return response
         
 
 

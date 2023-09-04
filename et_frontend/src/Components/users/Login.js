@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import { selectLinkStyles, selectResponsiveBGs, setActiveUserID, setUsername, setUserRole } from './store/slice';
 import BaseHeader from '../basepages/BaseHeader';
 import BaseButton from '../basepages/BaseButton';
+import { userlogin } from './services/apicalls';
 
 
 
@@ -30,19 +31,20 @@ function Login(){
         const entered_data = {
           "email": email,
           "password": password
-        }
-        // API call
-        axios.post(`${API_URL}/users/login/`, entered_data)
+        }  
+        // axios.post(`${API_URL}/users/login/`, entered_data, {withCredentials:true})
+        userlogin(entered_data)
         .then((response) => {
-            const id = response.data['userid'];
+            const id = response.data['id'];
             const role = response.data['role'];
-            const username = response.data['username'];
+            const username = response.data['fullname'];
+            console.log(id, role, username)
             localStorage.setItem('id', JSON.stringify(id));
-            localStorage.setItem('role', btoa(role)); 
-            localStorage.setItem('uname', btoa(username));
+            // localStorage.setItem('role', btoa(role)); 
+            // localStorage.setItem('uname', btoa(username));
             dispatch(setActiveUserID(id));
-            // dispatch(setUserRole(role));
-            // dispatch(setUsername(username));
+            dispatch(setUserRole(role));
+            dispatch(setUsername(username));
             setEmail('');
             setPassword('');
             // const prevroute = localStorage('prevroute', null)
@@ -57,7 +59,7 @@ function Login(){
                 console.log("except: ", err)
             }
         })
-      }
+    }
     return (
         <>
             <p className='text-[1.8rem] font-light pt-4'>Login</p>

@@ -2,9 +2,8 @@ import { Link, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectTotalRegiRequests } from './store/slice';
 import { selectActiveUserID, selectUsername, selectUserRole } from '../users/store/slice';
-import axios from 'axios';
-import { API_URL } from '../../store/constants';
 import { sideNavBar } from '../BaseStyles';
+import { userlogout } from '../users/services/apicalls';
 
 const SideNav = () => {
     const {section} = useParams();
@@ -18,7 +17,7 @@ const SideNav = () => {
     const logout = (event) => {
         event.preventDefault();
         console.log(activeUserID);
-        axios.post(`${API_URL}/users/logout/`, {"id": activeUserID})
+        userlogout()
         .then((response) => {
             console.log(response.data, response.status)
             localStorage.removeItem('id');

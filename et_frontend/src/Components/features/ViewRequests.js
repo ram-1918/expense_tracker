@@ -7,7 +7,7 @@ import { formStyles } from '../BaseStyles';
 import NoContent from '../basepages/NoContent';
 import Message from '../basepages/Message';
 import BaseHeader from '../basepages/BaseHeader';
-import { changeRequestStatus, registerRequests } from '../../services/apicalls';
+import { changeRequestStatus, registerRequests } from '../users/services/apicalls';
 import BaseButton from '../basepages/BaseButton';
 
 const Display = ({obj, handlestatus}) => {

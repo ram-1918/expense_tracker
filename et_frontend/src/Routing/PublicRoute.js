@@ -1,7 +1,8 @@
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import { selectActiveUserID } from "../Components/users/store/slice";
-import { IsAuthenticated } from "../services/Services"
+import { IsAuthenticated } from "../Components/users/services/Services"
+
 
 const PublicRoute = () => {
     const auth = IsAuthenticated();

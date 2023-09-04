@@ -23,7 +23,7 @@ function ForgotPassword(){
           "email": email,
           "password": password
         }
-        // API call
+        // needs change
         axios.post(`${API_URL}/users/login/`, entered_data)
         .then((response) => {
           console.log(response.data, response.status)

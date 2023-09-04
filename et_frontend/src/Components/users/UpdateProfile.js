@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { API_URL } from "../../store/constants";
 import { selectPrevRoute, setPrevRoute, setUsername } from './store/slice';
-import { IsAuthenticated, UpdateState, containsUppercase} from "../../services/Services";
+import { IsAuthenticated, UpdateState, containsUppercase} from "./services/Services";
 
 import defaultimg from '../../images/default.png';
-import { getUserProfile, updateProfile } from "../../services/apicalls";
+import { getUserProfile, updateUserProfile } from "./services/apicalls";
 import Message from "../basepages/Message";
 import BaseDisplay from "../basepages/BaseDisplay";
 
@@ -200,7 +200,7 @@ const UpdateProfile = () => {
             formdata.append('email', email);
         }
         if (!(emailChangeRequest || passwordChangeRequest)){
-            updateProfile(userid, formdata)
+            updateUserProfile(userid, formdata)
             .then((response) => {
                 const data = response.data;
                 dispatch(setUsername(fullname));

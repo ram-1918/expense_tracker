@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {useParams} from 'react-router-dom';
-import {getCompanies, getUsersByCompanies} from '../../services/apicalls';
+import {getCompanies, getUsersByCompanies} from '../users/services/apicalls';
 import { selectCompany, selectUserRole } from '../users/store/slice';
 
 const Display = ({data}) => {
@@ -23,7 +23,7 @@ const ViewUsers = () => {
 
     useEffect(() => {
         console.log(role,company);
-        if (role === 'superadmin' || role === 'admin'){
+        if (role === 'superadmin'){
             getCompanies(role)
             .then((response) => {
                 setUsersData(response.data);
@@ -34,13 +34,7 @@ const ViewUsers = () => {
             })
         }
         // else if (role === 'admin') {
-        //     getUsersByCompanies(role, company)
-        //     .then((res) => {
-        //         setUsersData(res.data);
-        //     })
-        //     .catch((err) => {
-        //         console.log(err);
-        //     })
+        //     return 
         // }
 
     }, [userid, role, company])
