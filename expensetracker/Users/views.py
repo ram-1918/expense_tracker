@@ -1,137 +1,35 @@
-from django.conf import settings
-from django.shortcuts import render
-from django.urls import reverse
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from rest_framework.decorators import APIView, api_view
 from rest_framework.response import Response
-from rest_framework import generics, status
-
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication  import JWTAuthentication
-# from rest_framework_simplejwt.tokens import RefreshToken
-from django.middleware import csrf
+from rest_framework import status
 
 from .models import AuthorizedUsers, Company, Users, RegisterationRequests
 from .serializers import SerializerMapper, UserSerializer
 
-from .services import HandleService, AuthenticationService
+from .services import HandleService
 
-from django.views.decorators.http import require_GET
+from .authentication import login_required, GlobalAccess, decode_uuid, get_access_token, get_refresh_token
 
-
-import jwt 
 import json
 import os
-import logging
-import uuid
-from django.conf import settings
-from datetime import datetime, timedelta
-from PIL import Image 
-from functools import wraps
 
 # Create your views here.
 
 def testing(request):
     return Response('Users app')
 
-# def get_tokens_for_user(user):
-#     refresh = RefreshToken.for_user(user)
-#     return {
-#         'refresh': str(refresh),
-#         'access': str(refresh.access_token),
-#     }
-
-def get_access_token(user):
-    expiry_days = datetime.now() + timedelta(minutes=15)
-    payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title()}
-    payload['iat'] = datetime.now()
-    payload['iss'] = 'etbackend'
-    payload['exp'] = int(expiry_days.strftime('%s'))
-    accesstoken = jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm='HS256')
-    print('Inside getaccess', expiry_days)
-    return accesstoken
-
-def get_refresh_token(user):
-    expiry_days = datetime.now() + timedelta(minutes=120)
-    payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title()}
-    payload['iat'] = datetime.now()
-    payload['iss'] = 'etbackend'
-    payload['exp'] = int(expiry_days.strftime('%s'))
-    refreshtoken = jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm='HS256')
-    return refreshtoken
-
-def calc_time_left(exp_epoch):
-    return datetime.fromtimestamp(exp_epoch) - datetime.now()
-
-def decode_uuid(id):
-    return uuid.UUID(id).hex # converts string to UUID
-
-
-# def auth_decorator(func):
-#     print("Outer func")
-#     @wraps(func) # this ensures decorated function retains name and doc string
-def validate_token(request):
-    # response = Response()
-    access = request.COOKIES.get('access')
-    refresh = request.COOKIES.get('refresh')
-    try:
-        if access:
-            decoded_token = jwt.decode(jwt=access, key=settings.SECRET_KEY, algorithms='HS256')
-            timeleft = calc_time_left(decoded_token['exp'])
-            print("Time left for access token", timeleft)
-            # response = Response()
-            # response.data = {'status': True, 'data': decoded_token}
-            return {'status': True, 'data': decoded_token, 'access': access, 'refresh': refresh}
-            # return response
-        else:
-            # response.data = {'status': False, 'data': ''}
-            return {'status': False, 'data': '', 'access': access, 'refresh': refresh}
-            # return response # Response(status=status.HTTP_401_UNAUTHORIZED)
-    except:
-        try:
-            print(refresh, "REFRESH")
-            if refresh:
-                decoded_refresh = jwt.decode(jwt=refresh, key=settings.SECRET_KEY, algorithms='HS256')
-                timeleft = calc_time_left(decoded_refresh['exp'])
-                print("Time left for refresh token", timeleft)
-                id = decode_uuid(decoded_refresh['sub'])
-                user = Users.objects.filter(id=id).first()
-                newaccess = get_access_token(user)
-                print("NEW ACCES")
-                # response = Response()
-                # response.set_cookie('access', newaccess)
-                # response.data = {'status': True, 'data': decoded_refresh, 'access': newaccess, 'refresh': refresh}
-                return {'status': True, 'data': decoded_refresh, 'access': newaccess, 'refresh': refresh}
-                # return func(request, *args, **kwargs)
-                # return response
-            else:
-                # response.data = {'status': False, 'data': ''}
-                # response.data = {'status': False, 'data': '', 'access': '', 'refresh': ''}
-                return {'status': False, 'data': '', 'access': '', 'refresh': ''}
-                # return response # Response(status=status.HTTP_401_UNAUTHORIZED)
-        except:
-            # response.data = {'status': False, 'data': ''}
-            # return response #Response(status=status.HTTP_401_UNAUTHORIZED)
-            return {'status': False, 'data': '', 'access': '', 'refresh': ''}
-    # return validate_token
+def decodeddata():
+    globalobj = GlobalAccess()
+    return globalobj.data
 
 @api_view(['GET'])
+@login_required
 def view_users(request):
-    # data = validate_token(request)
-    response = validate_token(request)
-    token = response.data
-    # isLoggedIn, user = validate_token(request)
-    print(token.status, 'VIEW USERS')
-    if token.status:
-        id = uuid.UUID(token.data['sub']).hex
-        print(id, "UUID")
-        user = Users.objects.filter(id=id).first()
-        serializer = UserSerializer(user)
-        print(serializer.data, " FINAL DATA ")
-        response.data = serializer.data
-        return response
-    return Response(status=status.HTTP_401_UNAUTHORIZED)
-
+    decoded = decodeddata()
+    id = decode_uuid(decoded['sub'])
+    user = Users.objects.filter(id=id).first()
+    serializer = UserSerializer(user)
+    return serializer.data
 
 
 def modelObjectToDict(obj):
@@ -148,26 +46,7 @@ def processFormData(data):
         newData[k] = v[0]
     return newData
 
-class RegisterAPI(APIView):
-    # def get(self, request):
-    #     # for admins - it returns list of all the users under him
-    #     # for superadmins - it returns list of all the admins and users under him
-    #     response = validate_token(request)
-    #     decoded_token = response.data['data']
-    #     isLoggedIn = response.data['status']
-    #     print("GET", decoded_token, isLoggedIn)
-    #     if isLoggedIn:
-    #         id = decoded_token['sub']
-    #         user = Users.objects.filter(id=id).first()
-    #         if user and user.role == '1':
-    #                 users = Users.objects.all()
-    #                 serializer = SerializerMapper()
-    #                 data = serializer.mapSerializer('listusers', users)
-    #                 response.data = data
-    #                 return response
-    #         return Response('invaliduser', status=status.HTTP_204_NO_CONTENT)
-    #     return Response('invalidtoken', status=status.HTTP_401_UNAUTHORIZED)
-    
+class RegisterAPI(APIView):    
     def post(self, request):
         proceedToRequest = request.data.pop('proceedtorequest')
         serializer = SerializerMapper()
@@ -203,7 +82,6 @@ class RegisterAPI(APIView):
 
 
 class ApproveRequest(APIView):
-    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         print(request.data)
@@ -247,71 +125,55 @@ class ApproveRequest(APIView):
 
 # protected
 class UserAPI(APIView):
+    @login_required
     def get(self, request, pk):
-        # returns the details of individual user, while updateprofile
-        # decoded_token = handleToken(request)
-        response = validate_token(request)
-        token = response.data
-        if token['status']:
-            user = Users.objects.get(id=pk)
-            if user:
-                data = modelObjectToDict(user)
-                filteredData = {}
-                for k,v in data.items():
-                    if k in ['fullname', 'email', 'phone', 'password', 'employee_id', 'company_id', 'image', 'role']:
-                        filteredData[k] = v
-                # filteredData['role'] = "superadmin" if user.is_superadmin else "admin" if user.is_admin else "employee"
-                filteredData['image'] = getImage(filteredData['image'])
-                response.data = filteredData
-                return response
-            return Response('nouser', status=status.HTTP_400_BAD_REQUEST)
-        return Response('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
+        user = Users.objects.get(id=pk)
+        if user:
+            data = modelObjectToDict(user)
+            filteredData = {}
+            for k,v in data.items():
+                if k in ['fullname', 'email', 'phone', 'password', 'employee_id', 'company_id', 'image', 'role']:
+                    filteredData[k] = v
+            filteredData['image'] = getImage(filteredData['image'])
+            return filteredData
+        return Response('nouser', status=status.HTTP_400_BAD_REQUEST)
     
+    @login_required
     def patch(self, request, pk):
-        response = validate_token(request)
-        token = response.data
-        if token['status']:
-            handleObj = HandleService()
-            print("FORM DATA BEFORE ", request.data)
-            user = Users.objects.filter(id=pk).first()
-            data = processFormData(request.data)
-            print("FORMDATA AFTER ", data)
-            emailChange = data['emailchange']
-            passwordChange = data['passwordchange']
-            if 'image' in data and not data['image']: data.pop('image')
-            if data['phone']:
-                phone = handleObj.handler('phone', data['phone'])
-                if phone: data['phone'] = phone
-                else: return Response('invalidphonenumber',  status=status.HTTP_400_BAD_REQUEST)
+        handleObj = HandleService()
+        user = Users.objects.filter(id=pk).first()
+        data = processFormData(request.data)
+        emailChange = data['emailchange']
+        passwordChange = data['passwordchange']
+        if 'image' in data and not data['image']: data.pop('image')
+        if data['phone']:
+            phone = handleObj.handler('phone', data['phone'])
+            if phone: data['phone'] = phone
+            else: return Response('invalidphonenumber',  status=status.HTTP_400_BAD_REQUEST)
+        else:
+            data.pop('phone')
+
+        if emailChange == 'true':
+            # check and upadate with out clashes
+            email = handleObj.handler('email', data['email'])
+            userCheck = Users.objects.filter(email=email).first()
+            if userCheck and not userCheck.email == email:
+                return Response({"msg":"alreadyexists"}, status=status.HTTP_409_CONFLICT)
             else:
-                data.pop('phone')
-            print("FINAL DATA TO SUBMIT ", data)
+                data['email'] = email
 
-            if emailChange == 'true':
-                # check and upadate with out clashes
-                email = handleObj.handler('email', data['email'])
-                userCheck = Users.objects.filter(email=email).first()
-                if userCheck and not userCheck.email == email:
-                    response.data = {"msg":"alreadyexists"}
-                    return response
-                else:
-                    data['email'] = email
-
-            if passwordChange == 'true':
-                password = data['password']
-                if not user.check_password(password): # checking new password against old password
-                    user.set_password(password) 
-                    user.save()
-                    response.data = {"msg": "passwordupdated"}
-                    return response
-                return Response({"msg": "sameasprevious"}, status=status.HTTP_400_BAD_REQUEST)
-            
-            serializer = UserSerializer(user, data = data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            response.data = serializer.data
-            return response
-        return Response("unauthorized", status=status.HTTP_401_UNAUTHORIZED)
+        if passwordChange == 'true':
+            password = data['password']
+            if not user.check_password(password): # checking new password against old password
+                user.set_password(password) 
+                user.save()
+                return {"msg": "passwordupdated"}
+            return Response({"msg": "sameasprevious"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = UserSerializer(user, data = data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return serializer.data
     
 class LoginAPI(APIView):
     def authenticate(self, request):
@@ -320,15 +182,9 @@ class LoginAPI(APIView):
         password = request.data['password']
         if not email: return Response("Enter a valid email address.", status=status.HTTP_401_UNAUTHORIZED)
         user = Users.objects.filter(email=email).first()
-        print("line 1")
         if user:
             if user.is_active:
-                print("line 2")
-                # authObj = AuthenticationService()
-                # token = authObj.handler('auth', {"user":user, "email":email, "password":password})
                 if user.check_password(password):
-                    # payload = {"sub":str(user.id)}
-                    # token = self.generateJWTToken(payload)
                     access = get_access_token(user)
                     refresh = get_refresh_token(user)
                     print("ACCESS ", access, "REFRESH ", refresh)
@@ -340,10 +196,8 @@ class LoginAPI(APIView):
     def post(self, request):
         user, access, refresh = self.authenticate(request)
         data = {"id":str(user.id), "role":user.role, "fullname": user.fullname.title()}
-        print("line 4")
         # set JWT into cookies
         response = Response(data, status=status.HTTP_201_CREATED)
-        print(refresh, "REFSRESF")
         response.set_cookie(key='refresh', value=refresh, path='/', httponly=True, samesite='Lax') # storing refresh
         response.set_cookie(key='access', value=access, path='/', httponly=True, samesite='Lax') # storing access
         return response
