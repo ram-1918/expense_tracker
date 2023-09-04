@@ -52,12 +52,6 @@ INSTALLED_APPS = [
     "Expenses",
 ]
 
-REST_FRAMWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
-
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware", # CORS
     "django.middleware.security.SecurityMiddleware",
@@ -72,16 +66,69 @@ MIDDLEWARE = [
 # Enable CORS if your frontend is on a different domain
 
 CORS_ORIGIN_ALLOW_ALL = True # CORS
-CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE"]
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    'http://localhost:3000',  # The origin of your frontend
 ]
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE"]
+CORS_ALLOW_CREDENTIALS = True
+
 
 # Enable Django's built-in sessions
-SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+# SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
-# Set your desired session cookie name (optional)
-SESSION_COOKIE_NAME = "jwt"
+# # Set your desired session cookie name (optional)
+# SESSION_COOKIE_NAME = "jwt"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Adjust as needed
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(minutes=6),
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=2),
+    'SLIDING_TOKEN_REFRESH_TIMEOUT_LIFETIME': timedelta(days=7),
+}
+
+# SIMPLE_JWT = {
+#   'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+#   'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+#   'ROTATE_REFRESH_TOKENS': False,
+#   'BLACKLIST_AFTER_ROTATION': True,
+#   'UPDATE_LAST_LOGIN': False,
+
+#   'ALGORITHM': 'HS256',
+#   'SIGNING_KEY': config('SECRET_KEY'),
+#   'VERIFYING_KEY': None,
+#   'AUDIENCE': None,
+#   'ISSUER': None,
+
+#   'AUTH_HEADER_TYPES': ('Bearer',),
+#   'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+#   'USER_ID_FIELD': 'id',
+#   'USER_ID_CLAIM': 'user_id',
+#   'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+
+#   'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+#   'TOKEN_TYPE_CLAIM': 'token_type',
+
+#   'JTI_CLAIM': 'jti',
+
+#   'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+#   'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+#   'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+
+#   # custom
+#   'AUTH_COOKIE': 'access_token',  # Cookie name. Enables cookies if value is set.
+#   'AUTH_COOKIE_DOMAIN': None,     # A string like "example.com", or None for standard domain cookie.
+#   'AUTH_COOKIE_SECURE': False,    # Whether the auth cookies should be secure (https:// only).
+#   'AUTH_COOKIE_HTTP_ONLY' : True, # Http only cookie flag.It's not fetch by javascript.
+#   'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.
+#   'AUTH_COOKIE_SAMESITE': 'Lax',  # Whether to set the flag restricting cookie leaks on cross-site requests. This can be 'Lax', 'Strict', or None to disable the flag.
+# }
+
 
 
 ROOT_URLCONF = "expensetracker.urls"

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users, Login, Company, RegisterationRequests
+from .models import Users, Company, RegisterationRequests
 import os
 
 
@@ -34,30 +34,33 @@ class UserSerializer(serializers.ModelSerializer):
     #     print(image, '><><><><><><<><><><><><')
     #     return os.path.join('http://127.0.0.1:8000/ExpenseMedia/', image)
 
-
-class LoginSerializer(serializers.ModelSerializer):
+class ListUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Login
-        fields = '__all__'
+        model = Users
+        fields = ['fullname', 'email', 'phone', 'image', 'is_active', 'role', 'company', 'employeeid']
 
 # Factory pattern
-class PostSerializerMapper():
+class SerializerMapper():
     def mapSerializer(self, type, data):
         serializer = self.mapper(type)
         return serializer(data)
     
     def mapper(self, type):
-        if type == 'user':
+        if type == 'postuser':
             return self.userSerializer
-        elif type == 'login':
-            return self.loginSerializer
+        elif type == 'listusers':
+            return self.listUserSerializer
     
     def userSerializer(self, data):
         serializer = UserSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         return serializer.data
     
-    def loginSerializer(self, data):
-        serializer = LoginSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
+    def listUserSerializer(self, data):
+        serializer = ListUserSerializer(data, many=True)
         return serializer.data
+    
+    # def loginSerializer(self, data):
+    #     serializer = LoginSerializer(data=data)
+    #     serializer.is_valid(raise_exception=True)
+    #     return serializer.data

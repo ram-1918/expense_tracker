@@ -1,4 +1,4 @@
-from .models import Users, Login
+from .models import Users
 import re
 import time
 import jwt
@@ -6,6 +6,11 @@ import base64
 import os
 from django.conf import settings
 from datetime import datetime, timedelta
+
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.response import Response
+from rest_framework import status
+
 
 # Utilized Factory Patterns
 class HandleService():
@@ -67,6 +72,7 @@ class HandleService():
         return profilepic
 
 
+
 class AuthenticationService():
     def handler(self, type, data):
         handle = self.getAuthType(type)
@@ -81,11 +87,12 @@ class AuthenticationService():
             return self.handleTokenExpiry
     
     def generateJWTToken(self, payload):
-        expiry_days = datetime.now() + timedelta(days=1)
+        expiry_days = datetime.now() + timedelta(hours=2)
         payload['exp'] = int(expiry_days.strftime('%s'))
         payload['iss'] = 'et_backend'
         payload['iat'] = datetime.now()
         token = jwt.encode(payload, key=settings.SECRET_KEY, algorithm='HS256')
+        # tokens = get_tokens_for_user(user)
         return token
 
 
@@ -94,6 +101,7 @@ class AuthenticationService():
         if user.check_password(password):
             payload = {"sub":str(user.id)}
             token = self.generateJWTToken(payload)
+            # token = self.generateJWTToken(user)
             self.handleTokenExpiry(token)
             return token
         return False
@@ -104,16 +112,16 @@ class AuthenticationService():
             expiry_epoch = decoded_token['exp']
             timeleft = datetime.fromtimestamp(expiry_epoch) - datetime.now()
             print(timeleft)
-            return True
+            return decoded_token
         except jwt.ExpiredSignatureError as e:
             # Signature has expired
             # redirect user to login page again
-            print('Expired err ', e)
-            return e
+            print('Token expired ', e)
+            return False
         except jwt.DecodeError as e:
             # invalid token - Not enough segments
-            print("Token error", e)
-            return e
+            print("Invalid token", e)
+            return False
 
     def handleExpenseRequest(self, request):
         print(f'{request} has been approved!')

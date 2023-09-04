@@ -18,13 +18,16 @@ class Company(models.Model):
         verbose_name_plural = 'Company'
 
 class AuthorizedUsers(models.Model):
+    choices = [('1', 'Superadmin'), ('2', 'admin'), ('3', 'employee')]
     email = models.EmailField(max_length=255, default='example@siriinfo.com')
+    employeeid = models.CharField(max_length=24, default='employeeid')
+    role = models.CharField(choices=choices, max_length=24, default=3)
 
     def __str__(self):
         return self.email
     
     class Meta:
-        verbose_name_plural = 'AuthorizedUsers'
+        verbose_name_plural = 'Authorized Users'
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -45,26 +48,32 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_employee', False)
         return self.create_user(email, password, **extra_fields)
+    
 
 def upload_to(instance, filename):
     print(instance, filename, 'ghvhgvh')
     return 'profilepics/{filename}'.format(filename=filename) if filename else 'profilepics/default.png'
 
+
 class Users(AbstractBaseUser):
+    last_login = None
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
-    fullname = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255, unique=True)
+
+    choices = [('1', 'Superadmin'), ('2', 'admin'), ('3', 'employee')]
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
+    fullname = models.CharField(max_length=255, blank=True)
+    email = models.EmailField(max_length=255, unique=True, default="email@siriinfo.com")
     phone = models.CharField(max_length=12, blank=True)
     password = models.CharField(max_length=255, blank=True, null=True)
-    datecreated = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    employee_id = models.CharField(max_length=255, blank=True)
     image = models.ImageField(upload_to=upload_to, blank=True, null=True, default='profilepics/default.png')
+    datecreated = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    employee_id = models.CharField(max_length=255, blank=True, null=True)
+    role = models.CharField(choices=choices, max_length=24, default='3')
     is_active = models.BooleanField(default=True)
     is_superadmin = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_employee = models.BooleanField(default=True)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    # is_employee = models.ForeignKey(Admins, on_delete=models.CASCADE, null=True, blank=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, default=4)
 
     objects = UserManager()
 
@@ -77,41 +86,46 @@ class Users(AbstractBaseUser):
     class Meta:
         verbose_name_plural = 'Users'
 
-class loginManager():
-    def generate_jwt(self):
-        self.save_record('id', 'email')
+# class loginManager():
+#     def generate_jwt(self):
+#         self.save_record('id', 'email')
     
-    def save_record(self, *args):
-        print('Record saved with JWT\n', args)
+#     def save_record(self, *args):
+#         print('Record saved with JWT\n', args)
 
-class Login(models.Model):
+# class Login(models.Model):
 
-    loginobjects = loginManager()
-    userid = models.OneToOneField(Users, on_delete=models.DO_NOTHING, default=uuid.uuid4)
-    email = models.CharField(max_length=255, unique=True)
-    last_login = models.DateTimeField(auto_now=True)
-    token = models.CharField(max_length=255, default=loginobjects.generate_jwt())
+#     loginobjects = loginManager()
+#     userid = models.OneToOneField(Users, on_delete=models.DO_NOTHING, default=uuid.uuid4)
+#     email = models.CharField(max_length=255, unique=True)
+#     last_login = models.DateTimeField(auto_now=True)
+#     token = models.CharField(max_length=255, default=loginobjects.generate_jwt())
 
-    class Meta:
-        verbose_name_plural = 'Login'
+#     class Meta:
+#         verbose_name_plural = 'Login'
     
-    def __str__(self):
-        return self.email
+#     def __str__(self):
+#         return self.email
 
-class RegisterationRequests(AbstractBaseUser):
+class RegisterationRequests(models.Model):
+    last_login = None
+
+    choices = [('1', 'Superadmin'), ('2', 'admin'), ('3', 'employee')]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
-    fullname = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255, unique=True)
+    fullname = models.CharField(max_length=255, blank=True)
+    email = models.EmailField(max_length=255, unique=True, default="email@siriinfo.com")
     phone = models.CharField(max_length=12, blank=True)
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255, blank=True, null=True)
     datecreated = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    employee_id = models.CharField(max_length=255, blank=True)
+    employee_id = models.CharField(max_length=255, blank=True, null=True)
+    role = models.CharField(choices=choices, max_length=24, default='3')
     is_active = models.BooleanField(default=True)
     is_superadmin = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_employee = models.BooleanField(default=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, default=4)
     comment = models.TextField(default='Could you please validate and register my profile?')
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     objects = UserManager()
 

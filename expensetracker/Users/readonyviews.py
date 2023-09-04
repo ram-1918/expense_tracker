@@ -5,8 +5,8 @@ from rest_framework.decorators import APIView, api_view
 from rest_framework.response import Response
 from rest_framework import generics, status
 
-from .models import AuthorizedUsers, Company, Users, RegisterationRequests, Login
-from .serializers import PostSerializerMapper, LoginSerializer, UserSerializer
+from .models import AuthorizedUsers, Company, Users, RegisterationRequests
+from .serializers import SerializerMapper, UserSerializer
 
 from .readonlyserializers import RO_UserSerializer, RO_CompanySerializer
 

@@ -20,7 +20,7 @@ def upload_to(instance, filename):
 class Expenses(models.Model):
     userid = models.ForeignKey(Users, on_delete=models.DO_NOTHING)
     categoryid = models.ForeignKey(ExpenseType, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, default='expense_name')
     amount = models.CharField(max_length=255, blank=False, null=True)
     submitted_date = models.DateTimeField(auto_now=True)
     last_modified = models.DateTimeField(auto_now_add=True)
