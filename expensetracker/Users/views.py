@@ -52,7 +52,7 @@ def get_access_token(user):
     return accesstoken
 
 def get_refresh_token(user):
-    expiry_days = datetime.now() + timedelta(minutes=60)
+    expiry_days = datetime.now() + timedelta(minutes=120)
     payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title()}
     payload['iat'] = datetime.now()
     payload['iss'] = 'etbackend'
@@ -71,59 +71,59 @@ def decode_uuid(id):
 #     print("Outer func")
 #     @wraps(func) # this ensures decorated function retains name and doc string
 def validate_token(request):
-    response = Response()
+    # response = Response()
+    access = request.COOKIES.get('access')
+    refresh = request.COOKIES.get('refresh')
     try:
-        access = request.COOKIES.get('access')
         if access:
             decoded_token = jwt.decode(jwt=access, key=settings.SECRET_KEY, algorithms='HS256')
             timeleft = calc_time_left(decoded_token['exp'])
-            # expiry_epoch = decoded_token['exp']
-            # timeleft = datetime.fromtimestamp(expiry_epoch) - datetime.now()
             print("Time left for access token", timeleft)
-            # return func(request, *args, **kwargs)
-            response = Response()
-            response.data = {'status': True, 'data': decoded_token}
-            return response
+            # response = Response()
+            # response.data = {'status': True, 'data': decoded_token}
+            return {'status': True, 'data': decoded_token, 'access': access, 'refresh': refresh}
+            # return response
         else:
-            response.data = {'status': False, 'data': ''}
-            return response # Response(status=status.HTTP_401_UNAUTHORIZED)
+            # response.data = {'status': False, 'data': ''}
+            return {'status': False, 'data': '', 'access': access, 'refresh': refresh}
+            # return response # Response(status=status.HTTP_401_UNAUTHORIZED)
     except:
         try:
-            refresh = request.COOKIES.get('refresh')
             print(refresh, "REFRESH")
             if refresh:
                 decoded_refresh = jwt.decode(jwt=refresh, key=settings.SECRET_KEY, algorithms='HS256')
                 timeleft = calc_time_left(decoded_refresh['exp'])
-                # expiry_epoch = decoded_refresh['exp']
-                # timeleft = datetime.fromtimestamp(expiry_epoch) - datetime.now()
                 print("Time left for refresh token", timeleft)
                 id = decode_uuid(decoded_refresh['sub'])
                 user = Users.objects.filter(id=id).first()
                 newaccess = get_access_token(user)
                 print("NEW ACCES")
-                response = Response()
-                response.set_cookie('access', newaccess)
-                # response.set_cookie(key='access', value=newaccess, path='/', httponly=True, samesite='Lax')
-                response.data = {'status': True, 'data': decoded_refresh}
+                # response = Response()
+                # response.set_cookie('access', newaccess)
+                # response.data = {'status': True, 'data': decoded_refresh, 'access': newaccess, 'refresh': refresh}
+                return {'status': True, 'data': decoded_refresh, 'access': newaccess, 'refresh': refresh}
                 # return func(request, *args, **kwargs)
-                return response
+                # return response
             else:
-                response.data = {'status': False, 'data': ''}
-                return response # Response(status=status.HTTP_401_UNAUTHORIZED)
+                # response.data = {'status': False, 'data': ''}
+                # response.data = {'status': False, 'data': '', 'access': '', 'refresh': ''}
+                return {'status': False, 'data': '', 'access': '', 'refresh': ''}
+                # return response # Response(status=status.HTTP_401_UNAUTHORIZED)
         except:
-            response.data = {'status': False, 'data': ''}
-            return response #Response(status=status.HTTP_401_UNAUTHORIZED)
-    return validate_token
+            # response.data = {'status': False, 'data': ''}
+            # return response #Response(status=status.HTTP_401_UNAUTHORIZED)
+            return {'status': False, 'data': '', 'access': '', 'refresh': ''}
+    # return validate_token
 
 @api_view(['GET'])
 def view_users(request):
     # data = validate_token(request)
     response = validate_token(request)
-    isLoggedIn = response.data['status']
-    data = response.data['data']
+    token = response.data
     # isLoggedIn, user = validate_token(request)
-    if isLoggedIn:
-        id = uuid.UUID(data['sub']).hex
+    print(token.status, 'VIEW USERS')
+    if token.status:
+        id = uuid.UUID(token.data['sub']).hex
         print(id, "UUID")
         user = Users.objects.filter(id=id).first()
         serializer = UserSerializer(user)
@@ -131,13 +131,6 @@ def view_users(request):
         response.data = serializer.data
         return response
     return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-
-
-
-
-
-
 
 
 
@@ -155,38 +148,25 @@ def processFormData(data):
         newData[k] = v[0]
     return newData
 
-def handleToken(request):
-    token = request.COOKIES.get('access')
-    print(token)
-    authObj = AuthenticationService()
-    decoded_token = authObj.handler('token_expiry', token)
-    print(decoded_token)
-    return decoded_token
-
-class GenericUserView(generics.ListAPIView):
-    queryset = Users.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
-
 class RegisterAPI(APIView):
-    def get(self, request):
-        # for admins - it returns list of all the users under him
-        # for superadmins - it returns list of all the admins and users under him
-        response = validate_token(request)
-        decoded_token = response.data['data']
-        isLoggedIn = response.data['status']
-        print("GET", decoded_token, isLoggedIn)
-        if isLoggedIn:
-            id = decoded_token['sub']
-            user = Users.objects.filter(id=id).first()
-            if user and user.role == '1':
-                    users = Users.objects.all()
-                    serializer = SerializerMapper()
-                    data = serializer.mapSerializer('listusers', users)
-                    response.data = data
-                    return response
-            return Response('invaliduser', status=status.HTTP_204_NO_CONTENT)
-        return Response('invalidtoken', status=status.HTTP_401_UNAUTHORIZED)
+    # def get(self, request):
+    #     # for admins - it returns list of all the users under him
+    #     # for superadmins - it returns list of all the admins and users under him
+    #     response = validate_token(request)
+    #     decoded_token = response.data['data']
+    #     isLoggedIn = response.data['status']
+    #     print("GET", decoded_token, isLoggedIn)
+    #     if isLoggedIn:
+    #         id = decoded_token['sub']
+    #         user = Users.objects.filter(id=id).first()
+    #         if user and user.role == '1':
+    #                 users = Users.objects.all()
+    #                 serializer = SerializerMapper()
+    #                 data = serializer.mapSerializer('listusers', users)
+    #                 response.data = data
+    #                 return response
+    #         return Response('invaliduser', status=status.HTTP_204_NO_CONTENT)
+    #     return Response('invalidtoken', status=status.HTTP_401_UNAUTHORIZED)
     
     def post(self, request):
         proceedToRequest = request.data.pop('proceedtorequest')
@@ -220,6 +200,7 @@ class RegisterAPI(APIView):
             try: RegisterationRequests.objects.create_user(**data)
             except: return Response('usercreationerror', status=status.HTTP_400_BAD_REQUEST)
             return Response('requestsent', status=status.HTTP_201_CREATED)
+
 
 class ApproveRequest(APIView):
     # permission_classes = [IsAuthenticated]
@@ -264,14 +245,14 @@ class ApproveRequest(APIView):
         requestObj.delete()
         return Response('rejected', status=status.HTTP_200_OK)
 
+# protected
 class UserAPI(APIView):
-    # permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         # returns the details of individual user, while updateprofile
         # decoded_token = handleToken(request)
         response = validate_token(request)
-        isAuthenticated = response.data['status']
-        if isAuthenticated:
+        token = response.data
+        if token['status']:
             user = Users.objects.get(id=pk)
             if user:
                 data = modelObjectToDict(user)
@@ -287,36 +268,51 @@ class UserAPI(APIView):
         return Response('unauthorized', status=status.HTTP_401_UNAUTHORIZED)
     
     def patch(self, request, pk):
-        user = Users.objects.filter(id=pk).first()
-        data = processFormData(request.data)
-        handleObj = HandleService()
-        emailChange = data['emailchange']
-        passwordChange = data['passwordchange']
-        if 'image' in data and not data['image']: data.pop('image')
+        response = validate_token(request)
+        token = response.data
+        if token['status']:
+            handleObj = HandleService()
+            print("FORM DATA BEFORE ", request.data)
+            user = Users.objects.filter(id=pk).first()
+            data = processFormData(request.data)
+            print("FORMDATA AFTER ", data)
+            emailChange = data['emailchange']
+            passwordChange = data['passwordchange']
+            if 'image' in data and not data['image']: data.pop('image')
+            if data['phone']:
+                phone = handleObj.handler('phone', data['phone'])
+                if phone: data['phone'] = phone
+                else: return Response('invalidphonenumber',  status=status.HTTP_400_BAD_REQUEST)
+            else:
+                data.pop('phone')
+            print("FINAL DATA TO SUBMIT ", data)
 
-        if emailChange == 'true':
-            # check and upadate with out clashes
-            email = handleObj.handler('email', data['email'])
-            userCheck = Users.objects.filter(email=email).first()
-            if userCheck and not userCheck.email == email:
-                return Response('already exists', status=status.HTTP_400_BAD_REQUEST)
-            data['email'] = email
+            if emailChange == 'true':
+                # check and upadate with out clashes
+                email = handleObj.handler('email', data['email'])
+                userCheck = Users.objects.filter(email=email).first()
+                if userCheck and not userCheck.email == email:
+                    response.data = {"msg":"alreadyexists"}
+                    return response
+                else:
+                    data['email'] = email
 
-        if passwordChange == 'true':
-            password = data['password']
-            user.set_password(password)
-            user.save()
-            return Response('Password updated')
-        
-        # phone = handleObj.handler('phone', request.data['phone']) if request.data['phone'] else ''
-        # if phone: request.data['phone'] = phone
-        # else: return Response('invalidphonenumber',  status=status.HTTP_400_BAD_REQUEST)
-        serializer = UserSerializer(user, data = data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if passwordChange == 'true':
+                password = data['password']
+                if not user.check_password(password): # checking new password against old password
+                    user.set_password(password) 
+                    user.save()
+                    response.data = {"msg": "passwordupdated"}
+                    return response
+                return Response({"msg": "sameasprevious"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            serializer = UserSerializer(user, data = data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            response.data = serializer.data
+            return response
+        return Response("unauthorized", status=status.HTTP_401_UNAUTHORIZED)
     
-
 class LoginAPI(APIView):
     def authenticate(self, request):
         handleobj = HandleService()

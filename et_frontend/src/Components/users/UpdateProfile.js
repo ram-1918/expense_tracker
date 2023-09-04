@@ -192,13 +192,15 @@ const UpdateProfile = () => {
         // CHECK DATA WITH THE OLD, BEFORE UPDATING; SAVE APICALLs
         const formdata = new FormData();
         formdata.append('fullname', fullname);
+        formdata.append('phone', phone);
         formdata.append('passwordchange', false);
         formdata.append('emailchange', false);
         formdata.append('image', newImage);
 
+
         if(emailChangeRequest && emailVerified){
             formdata.append('email', email);
-        }
+        } 
         if (!(emailChangeRequest || passwordChangeRequest)){
             updateUserProfile(userid, formdata)
             .then((response) => {
