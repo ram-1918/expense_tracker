@@ -1,4 +1,4 @@
-import jwt, uuid
+import jwt, uuid, time
 from datetime import datetime, timedelta
 from functools import wraps
 from django.conf import settings
@@ -94,8 +94,11 @@ def login_required(function=None):
                 decoded_data = token['data']
                 access, refresh = token['access'], token['refresh']
                 print("EXECUTING API LOGIC: STARTED")
+                start = time.time()
                 data = view_func(request, *args, **kwargs)
+                end = time.time()
                 print("EXECTION: ENDED")
+                print('TOTAL EXECUTION TIME: ', int(end-start))
                 response = Response({"msg": "authorized"}, status=status.HTTP_200_OK)
                 response.set_cookie('access', access)
                 response.set_cookie('refresh', refresh)

@@ -143,6 +143,7 @@ class UserAPI(APIView):
         handleObj = HandleService()
         user = Users.objects.filter(id=pk).first()
         data = processFormData(request.data)
+        print(data,"PATCH")
         emailChange = data['emailchange']
         passwordChange = data['passwordchange']
         if 'image' in data and not data['image']: data.pop('image')
@@ -180,7 +181,7 @@ class LoginAPI(APIView):
         handleobj = HandleService()
         email = handleobj.handleEmail(request.data['email'])
         password = request.data['password']
-        if not email: return Response("Enter a valid email address.", status=status.HTTP_401_UNAUTHORIZED)
+        if not email: return {"msg": 'Enter a valid email address.'} # Response("Enter a valid email address.", status=status.HTTP_401_UNAUTHORIZED)
         user = Users.objects.filter(email=email).first()
         if user:
             if user.is_active:
@@ -189,9 +190,10 @@ class LoginAPI(APIView):
                     refresh = get_refresh_token(user)
                     print("ACCESS ", access, "REFRESH ", refresh)
                     return user, access, refresh
-                return Response('Incorrect password.', status=status.HTTP_401_UNAUTHORIZED)
-            return Response('notactive', status=status.HTTP_403_FORBIDDEN)
-        return Response('No user with this email address.', status=status.HTTP_401_UNAUTHORIZED)
+                return {"msg": 'Incorrect password.'} # Response('Incorrect password.', status=status.HTTP_401_UNAUTHORIZED)
+            return {"msg": 'notactive'} # Response('notactive', status=status.HTTP_403_FORBIDDEN)
+        return {"msg": 'No user with this email address.'} # Response('No user with this email address.', status=status.HTTP_401_UNAUTHORIZED)
+    
     # If authenticated, setup generated token inside httponly cookies
     def post(self, request):
         user, access, refresh = self.authenticate(request)

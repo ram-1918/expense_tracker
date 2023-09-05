@@ -59,7 +59,7 @@ class Users(AbstractBaseUser):
     last_login = None
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
 
-    choices = [('1', 'Superadmin'), ('2', 'admin'), ('3', 'employee')]
+    choices = [('superadmin', 'Superadmin'), ('admin', 'admin'), ('employee', 'employee')]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False) 
     fullname = models.CharField(max_length=255, blank=True)
     email = models.EmailField(max_length=255, unique=True, default="email@siriinfo.com")
