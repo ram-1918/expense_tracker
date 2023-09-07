@@ -5,6 +5,11 @@ import os
 
 from .services import HandleService, AuthenticationService
 
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Company
+        fields='__all__'
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
@@ -35,9 +40,10 @@ class UserSerializer(serializers.ModelSerializer):
     #     return os.path.join('http://127.0.0.1:8000/ExpenseMedia/', image)
 
 class ListUserSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True)
     class Meta:
         model = Users
-        fields = ['fullname', 'email', 'phone', 'image', 'is_active', 'role', 'company', 'employeeid']
+        fields = ['fullname', 'email', 'phone', 'image', 'role', 'company', 'employee_id']
 
 # Factory pattern
 class SerializerMapper():

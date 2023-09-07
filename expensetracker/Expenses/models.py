@@ -11,7 +11,8 @@ class Expenses(models.Model):
     submitted_date = models.DateTimeField(auto_now=True)
     last_modified = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True, null=True)
-    status = models.BooleanField(default=False)
+    status = models.CharField(choices=[('1', '1'), ('2', '2'), ('3', '3')], max_length=3, default=3)
+    # status = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Expenses'

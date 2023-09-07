@@ -10,14 +10,14 @@ import SideNav from './SideNav';
 // Constants and values from redux
 
 const Varying = () => {
-    let {userid, section} = useParams();
-    let navigate = useNavigate();
-    const user = useSelector(selectActiveUserID);
-    useEffect(() => {
-        if ( userid !== user || !userid ) {
-            navigate('/PageNotFound');
-        }
-    }, [userid, section, navigate, user])
+    // let {userid} = useParams();
+    // let navigate = useNavigate();
+    // const user = useSelector(selectActiveUserID);
+    // useEffect(() => {
+    //     if ( userid !== user || !userid ) {
+    //         navigate('/PageNotFound');
+    //     }
+    // }, [userid, navigate, user])
     return <Outlet />
 }
 
@@ -25,10 +25,10 @@ function ExpenseHome(){
     
     return (
         <div className="w-full h-screen flex flex-row">
-            <div className='w-[20%]'>
+            <div className='w-[20%] br-2'>
                 <SideNav />
             </div>
-            <div className="w-[80%] h-full tablet:w-full mobile:w-full small:w-full">
+            <div className="w-[80%] mx-2 h-full tablet:w-full mobile:w-full small:w-full">
                 <Varying />
             </div>
         </div>

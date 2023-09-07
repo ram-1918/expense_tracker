@@ -32,29 +32,29 @@ const SideNav = () => {
 
     // NEEDS OPTIMIZATION USE FORLOOP FOR BELOW NAV BUTTONS
     const commonOptions = [
-        {'displayname':'Dashboard', 'path':'Dashboard'},
-        {'displayname':'Submit your expense', 'path':'submityourexpense'}, // Form
-        {'displayname':'My expenses', 'path':'myexpenses'}, // All submissions like leetcode
-        {'displayname':'Make a request', 'path':'makearequest'}, // Request for an out-of-company expense by filling a form
-        {'displayname':'Expense Forecast', 'path':'expenseforecast'}
+        {'displayname':'Dashboard', 'path':'1/1/Dashboard'},
+        {'displayname':'Submit your expense', 'path':'2/2/submityourexpense'}, // Form
+        {'displayname':'My expenses', 'path':'3/3/myexpenses'}, // All submissions like leetcode
+        {'displayname':'Make a request', 'path':'4/4/makearequest'}, // Request for an out-of-company expense by filling a form
+        {'displayname':'Expense Forecast', 'path':'5/5/expenseforecast'}
     ]
 
     const adminStuff = [
-        {'displayname':'View Users', 'path': 'viewusers'},
-        {'displayname':'Expense Requests', 'path': 'expenserequests'},
-        {'displayname':'Registration Requests', 'path':'viewrequests'},
+        {'displayname':'Manage Users', 'path': '6/6/viewusers'},
+        {'displayname':'View Expenses', 'path': '7/7/viewexpenses'},
+        {'displayname':'Registration Requests', 'path':'8/8/registrationrequests'},
+        {'displayname':'Expense Requests', 'path': '9/9/expenserequests'},
         // {'displayname':'All Requests', 'path':'allrequests'} // approvals, rejections and pending filters; merge registration and expense requests
     ]
 
     const userNavButtons = [
-        {'displayname': 'Update profile', 'path': 'updateprofile'},
-        {'displayname': 'Credit line increase', 'path': 'creditlineincrease'},
+        {'displayname': 'Update profile', 'path': '10/10/updateprofile'},
     ]
     return (
-        <div className="sticky top-0 left-0 w-full h-full text-center flex flex-col justify-between items-center bg-gradient-to-r from-neutral-100 to-neutral-200 mobile:hidden small:hidden">
+        <div className="sticky top-0 left-0 w-full h-full text-center flex flex-col justify-between items-center  mobile:hidden small:hidden">
             <div className='w-full flex flex-col space-y-[-13px] text-left pl-8'>
                 <span className='text-[1.2rem] font-light'>Siri info's</span>
-                <span className='text-[2rem] font-light'>Expense Tracker</span>
+                <span className='text-[1.6rem] font-light'><span className='font-semibold text-[2rem] text-purple-700'>X</span>pense<span className='font-semibold text-[2rem] text-purple-700'>T</span>racker</span>
             </div>
             <div className="w-full flex flex-col justify-center items-center">
             {
@@ -64,13 +64,14 @@ const SideNav = () => {
                         key={index+1}
                         className={`${sideNavBar.body} ${section === String(index+1) ? activeStyles : ''}`}
                         > 
-                        <Link to={`/user/${activeUserID}/${String(index+1)}/${obj.path}`}>{obj.displayname}</Link>
+                        <Link to={`/user/${activeUserID}/${userRole}/${obj.path}`}>{obj.displayname}</Link>
                     </button>
                     }
                 )
             }
             {
                 userRole === "admin" || userRole === 'superadmin' ? 
+                // userRole === "2" || userRole === '1' ? 
                 adminStuff.map((obj, index) => {
                     const idx = index + commonOptions.length + 1
                     return <button 
@@ -78,7 +79,7 @@ const SideNav = () => {
                         key={idx}
                         className={`${sideNavBar.body} ${section === String(idx) ? activeStyles : ''}`}
                         > 
-                        <Link to={`/user/${activeUserID}/${String(idx)}/${obj.path}`} className='w-full flex flex-row justify-center items-center space-x-2'>
+                        <Link to={`/user/${activeUserID}/${userRole}/${obj.path}`} className='w-full flex flex-row justify-center items-center space-x-2'>
                             <span>{obj.displayname} </span>
                             {obj.path === 'viewrequests' && totalRequests ? <span className='border border-black w-6 h-6 rounded-full flex justify-center items-center bg-neutral-100'> {totalRequests}</span> : ''} </Link>
                     </button>
@@ -97,7 +98,7 @@ const SideNav = () => {
                         key={idx}
                         className={`${sideNavBar.body} ${section === String(idx) ? activeStyles : ''}`}
                         > 
-                        <Link to={`/user/${activeUserID}/${String(idx)}/${obj.path}`}>{obj.displayname}</Link>
+                        <Link to={`/user/${activeUserID}/${userRole}/${obj.path}`}>{obj.displayname}</Link>
                     </button>
                     }
                 )

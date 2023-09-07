@@ -233,6 +233,7 @@ const UpdateProfile = () => {
         {label: "Company", value:company, setField: setCompany, type:'text'},
         {label: "Phone", value:phone, setField: setPhone, type:'text'},
     ]
+    const fileStyles = 'block w-72 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-neutral-100 file:text-neutral-700 hover:file:bg-neutral-200'
     return (
             <div className='w-full h-screen flex flex-col overflow-scroll overflow-x-hidden'>
                 <Message msg={succussMsg} type="succuss"/>
@@ -245,7 +246,7 @@ const UpdateProfile = () => {
                         <div className={`${trStyles} flex flex-col space-y-2`}>
                             <img src={image} alt={defaultimg} width="200" height="200" ></img>
                             {/* <input type="file" accept="image/png, image/gif, .jpeg, image/*" onChange={(e) => {setNewImage(e.target.files[0])}}/> */}
-                            <input type="file" accept="image/png, image/gif, .jpeg, image/*" onChange={(e) => {setNewImage(e.target.files[0])}}/>
+                            <input className={`${fileStyles}`} type="file" accept="image/png, image/gif, .jpeg, image/*" onChange={(e) => {setNewImage(e.target.files[0])}}/>
                         </div>
                         <div>
                             {vals.map((obj) => 

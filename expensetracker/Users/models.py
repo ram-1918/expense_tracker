@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import uuid
 from datetime import datetime
+import bcrypt
 
 
 # Create your models here.
@@ -18,7 +19,7 @@ class Company(models.Model):
         verbose_name_plural = 'Company'
 
 class AuthorizedUsers(models.Model):
-    choices = [('1', 'Superadmin'), ('2', 'admin'), ('3', 'employee')]
+    choices = [('superadmin', 'Superadmin'), ('admin', 'admin'), ('employee', 'employee')]
     email = models.EmailField(max_length=255, default='example@siriinfo.com')
     employeeid = models.CharField(max_length=24, default='employeeid')
     role = models.CharField(choices=choices, max_length=24, default=3)
@@ -29,13 +30,22 @@ class AuthorizedUsers(models.Model):
     class Meta:
         verbose_name_plural = 'Authorized Users'
 
+# bcrypt is slow(speed can be managed, usually 12 is used in gensalt() to dictate the slowness); salt is stored inside the hash itself
+def get_hashed_password(plain_password):
+    return bcrypt.hashpw(plain_password, bcrypt.gensalt(12))
+
+def check_password(plain_password, hashed_password):
+    return bcrypt.checkpw(plain_password, hashed_password)
+
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
+        h_password = get_hashed_password(password)
+        user = self.model(email=email, password=h_password, **extra_fields)
+        # user.set_password(password)
         user.save()
         return user
 
@@ -108,6 +118,17 @@ class Users(AbstractBaseUser):
 #         return self.email
 
 class RegisterationRequests(models.Model):
+
+    # def create_user(self, email, password=None, **extra_fields):
+    #     if not email:
+    #         raise ValueError('The Email field must be set')
+    #     email = self.normalize_email(email)
+    #     h_password = get_hashed_password(password)
+    #     user = self.model(email=email, password=h_password, **extra_fields)
+    #     # user.set_password(password)
+    #     user.save()
+    #     return user
+    
     last_login = None
 
     choices = [('1', 'Superadmin'), ('2', 'admin'), ('3', 'employee')]

@@ -52,20 +52,22 @@ function Register(){
     axios.post(`${API_URL}/users/register/`, entered_data)
     .then((response) => {
       console.log(response.data, response.status)
-      alert('in')
-      if (response.data === 'created'){
+      if (response.data.includes('created')){
         navigate('/users/login');
       }
-      setFullname('');
-      setEmail('');
-      setPassword1('');
-      setPassword2('');
-      setCompany('');
-      setEmployeeid('');
-      setComment('');
-      navigate('/users/register');
-      setSuccussMsg('Request sent succussfully!')
-      setProceedCheck(false);
+      else{
+        setFullname('');
+        setEmail('');
+        setPassword1('');
+        setPassword2('');
+        setCompany('');
+        setEmployeeid('');
+        setComment('');
+        navigate('/users/register');
+        setSuccussMsg('Request sent succussfully!')
+        setProceedCheck(false);
+      }
+
     })
     .catch((err) => {
       const errors = err.response.data;

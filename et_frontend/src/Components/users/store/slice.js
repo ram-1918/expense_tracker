@@ -6,7 +6,7 @@ export const userSlice = createSlice({
     initialState: {
         // User related
         activeUserID: localStorage.getItem('id', null) ? JSON.parse(localStorage.getItem('id', null)): null,
-        userRole: "employee",
+        userRole: "",
         username: null,
         company: null,
         employeeid: null,

@@ -48,7 +48,7 @@ function Login(){
             setEmail('');
             setPassword('');
             // const prevroute = localStorage('prevroute', null)
-            navigate(`user/${id}/1/dashboard`);
+            navigate(`user/${id}/${role}/1/1/Dashboard`);
         })
         .catch((err) => {
             try{
@@ -63,7 +63,7 @@ function Login(){
     return (
         <>
             <p className='text-[1.8rem] font-light pt-4'>Login</p>
-            {errorField ? <li className='text-sm text-red-500 mt-4'>{errorField}</li> : ''}
+            {/* {errorField ? <li className='text-sm text-red-500 mt-4'>{errorField}</li> : ''} */}
             <div className='flex flex-col justify-center items-center w-full h-full space-y-4'>
                 <fieldset className='border border-gray-400 text-left flex justify-center items-center'>
                     <legend className='mx-2 text-sm font-light px-2'>Email</legend>

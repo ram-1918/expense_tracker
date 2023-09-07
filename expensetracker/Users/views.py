@@ -12,6 +12,7 @@ from .authentication import login_required, GlobalAccess, decode_uuid, get_acces
 
 import json
 import os
+import bcrypt
 
 # Create your views here.
 
@@ -21,6 +22,9 @@ def testing(request):
 def decodeddata():
     globalobj = GlobalAccess()
     return globalobj.data
+
+def check_password(plain_password, hashed_password):
+    return bcrypt.checkpw(plain_password, hashed_password)
 
 @api_view(['GET'])
 @login_required
@@ -60,7 +64,7 @@ class RegisterAPI(APIView):
             data['email'] = authorized_users_check.email
             data['role'] = authorized_users_check.role
             data['employee_id'] = authorized_users_check.employeeid
-            data['image'] = os.path('profilepics/default.png')
+            data['image'] = 'profilepics/default.png'
             try: Users.objects.create_user(**data) # once created send an email
             except: return Response('user creation error', status=status.HTTP_400_BAD_REQUEST)
             return Response('created', status=status.HTTP_201_CREATED)
@@ -76,7 +80,15 @@ class RegisterAPI(APIView):
             data['comment'] = request.data['comment'].strip()
             print(data, "unauth + workedout")
             data.pop('image')
-            try: RegisterationRequests.objects.create_user(**data)
+            RegisterationRequests.objects.create_user(**data)
+            # sdata = UserSerializer(data=data)
+            # sdata.is_valid(raise_exception=True)
+            # print(sdata.data, 'DJHBHWJBFKJBKJF')
+            try: 
+                pass
+                # RegisterationRequests.objects.create_user(**data)
+                # register = RegisterationRequests(**data)
+                # register.save()
             except: return Response('usercreationerror', status=status.HTTP_400_BAD_REQUEST)
             return Response('requestsent', status=status.HTTP_201_CREATED)
 
@@ -185,14 +197,15 @@ class LoginAPI(APIView):
         user = Users.objects.filter(email=email).first()
         if user:
             if user.is_active:
-                if user.check_password(password):
+                h_password = user.password
+                if check_password(password, h_password):
                     access = get_access_token(user)
                     refresh = get_refresh_token(user)
                     print("ACCESS ", access, "REFRESH ", refresh)
                     return user, access, refresh
-                return {"msg": 'Incorrect password.'} # Response('Incorrect password.', status=status.HTTP_401_UNAUTHORIZED)
-            return {"msg": 'notactive'} # Response('notactive', status=status.HTTP_403_FORBIDDEN)
-        return {"msg": 'No user with this email address.'} # Response('No user with this email address.', status=status.HTTP_401_UNAUTHORIZED)
+                return Response('Incorrect password.', status=status.HTTP_401_UNAUTHORIZED) # {"msg": 'Incorrect password.'} # 
+            return Response('notactive', status=status.HTTP_403_FORBIDDEN) # {"msg": 'notactive'} # 
+        return Response('No user with this email address.', status=status.HTTP_401_UNAUTHORIZED) # {"msg": 'No user with this email address.'} 
     
     # If authenticated, setup generated token inside httponly cookies
     def post(self, request):

@@ -79,7 +79,7 @@ const ViewRequests = () => {
         })
     }
     return (
-        <div className='flex flex-col h-screen mx-2 overflow-scroll'>
+        <div className='flex flex-col h-screen overflow-scroll overflow-x-hidden'>
             <BaseHeader text="Registration Requests" />
             <Message msg={succussMsg} type="succuss"/>
             <Message msg={errorMsg} type="error"/>
