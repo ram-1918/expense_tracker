@@ -5,36 +5,6 @@ import report from '../../images/generatereport.jpeg';
 import invite from '../../images/inviteuser.png';
 import dollar from '../../images/addexpense.png';
 
-// function Left(){
-//     const commons = 'border w-full h-fit text-left p-2 text-[0.9rem]';
-//     const sideNavTitle = 'w-full text-left text-slate-400 text-[0.85rem]';
-//     return (
-//         <div className='border w-full flex-col-style justify-start space-y-8'>
-//             <span className='border w-full h-fit text-left p-2 mt-10 text-[0.9rem]'>Dashboard</span>
-//             <div className='border w-full flex-col-style justify-start'>
-//                 {/* My expenses contains Rejected ones as well */}
-//                 <span className={`${sideNavTitle}`}>Functions</span>
-//                 <span className={`${commons}`}>My Expenses</span>
-//                 <span className={`${commons}`}>Reciepts</span>
-//                 <span className={`${commons}`}>Reports</span>
-//                 <span className={`${commons}`}>Forecasts</span>
-//             </div>
-//             <div className='border w-full flex-col-style justify-start'>
-//                 {/* Pending, All approvals[contains only approved ones] */}
-//                 <span className={`${sideNavTitle}`}>Approvals</span>
-//                 <span className={`${commons}`}>Pending Approvals</span>
-//                 <span className={`${commons}`}>All Approvals</span>
-//             </div>
-//             <div className='border w-full flex-col-style justify-start'>
-//                 <span className={`${sideNavTitle}`}>Admin</span>
-//                 <span className={`${commons}`}>Manage Users</span>
-//                 <span className={`${commons}`}>Expense Requests</span>
-//                 <span className={`${commons}`}>Registration Requests</span>
-//             </div>
-
-//         </div>
-//     )
-// }
 
 function DisplayTasks(){
     const box_70 = 'border w-full shadow-lg my-4 flex-col-style justify-around';
@@ -42,7 +12,7 @@ function DisplayTasks(){
     const navButtonStyles = 'border w-full flex-col-style justify-center text-md text-green-900 font-normal';
     return (
         <div className={`${box_70} h-48`}>
-            <span className={`${titles}`}>Easy Navigations</span>
+            <span className={`${titles}`}>Submit Types</span>
             <div className="border w-full flex-row-style justify-around space-x-4">
                 <span className={`${navButtonStyles}`}>
                     {/* <span><i className="fa fa-dollar text-3xl"></i></span> */}
@@ -151,12 +121,6 @@ function Dashboard() {
             <DisplayApprovals />
             <Summary />
         </div>
-    // <div className="border w-full h-full flex-row-style justify-center">
-        // {/* <div className="sticky border w-[15%] h-full flex-col-style bg-[#282c34] text-white">
-        //     <Left />
-        // </div> */}
-
-    // </div>
   );
 }
 

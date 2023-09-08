@@ -3,7 +3,10 @@ function Left(){
     const sideNavTitle = 'w-full text-left text-slate-400 text-[0.85rem]';
     return (
         <div className='border w-full flex-col-style justify-start space-y-8'>
-            <span className='border w-full h-fit text-left p-2 mt-10 text-[0.9rem]'>Dashboard</span>
+            <div className="w-full flex-col-style justify-center">
+                <span className='border w-full h-fit text-left px-2 text-[1rem] text-right'><i className="fa fa-bars"></i></span>
+                <span className='border w-full h-fit text-left p-2 text-[0.9rem]'>Dashboard</span>
+            </div>
             <div className='border w-full flex-col-style justify-start'>
                 {/* My expenses contains Rejected ones as well */}
                 <span className={`${sideNavTitle}`}>Functions</span>

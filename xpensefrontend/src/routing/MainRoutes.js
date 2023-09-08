@@ -1,12 +1,17 @@
 // Builtin
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from '../components/home/Login';
-import Dashboard from '../components/xpenses/Dashboard';
+
 import Home from '../pages/Home';
+import Login from '../components/home/Login';
+
+import XHome from '../pages/Xhome';
+import Dashboard from '../components/xpenses/Dashboard';
+import BaseDisplay from '../components/base/BaseDisplay';
 
 import PageNotFound from '../pages/PageNotFound';
-import XHome from '../pages/Xhome';
+
+
 // import PublicRoute from './PublicRoute';
 // import PrivateRoute from './PrivateRoute';
 
@@ -20,6 +25,7 @@ const MainRoutes = () => {
             <Route path='/user/' element={<XHome />}>
               <Route path='' element={<Navigate replace to='/user/dashboard'/>} />
               <Route path='dashboard' element={<Dashboard />} />
+              <Route path='basedisplay' element={<BaseDisplay />} />
             </Route>
             <Route path='*' element={<PageNotFound />} />
           </Routes>
