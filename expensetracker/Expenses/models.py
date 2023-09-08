@@ -8,11 +8,21 @@ class Expenses(models.Model):
     userid = models.ForeignKey(Users, related_name='users', on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=255, default='expense_name')
     amount = models.CharField(max_length=255, blank=False, null=True)
-    submitted_date = models.DateTimeField(auto_now=True)
+    date_submitted = models.DateTimeField(auto_now=True)
     last_modified = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True, null=True)
     status = models.CharField(choices=[('1', '1'), ('2', '2'), ('3', '3')], max_length=3, default=3)
     # status = models.BooleanField(default=False)
+    year = models.IntegerField(null=True, blank=True)
+    month = models.IntegerField(null=True, blank=True)
+    day = models.IntegerField(null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if self.last_modified:
+            self.year = self.last_modified.year
+            self.month = self.last_modified.month
+            self.day = self.last_modified.day
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = 'Expenses'

@@ -76,7 +76,7 @@ class Users(AbstractBaseUser):
     phone = models.CharField(max_length=12, blank=True)
     password = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(upload_to=upload_to, blank=True, null=True, default='profilepics/default.png')
-    datecreated = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     employee_id = models.CharField(max_length=255, blank=True, null=True)
     role = models.CharField(choices=choices, max_length=24, default='3')
     is_active = models.BooleanField(default=True)
@@ -84,6 +84,17 @@ class Users(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_employee = models.BooleanField(default=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, default=4)
+    
+    year = models.IntegerField(null=True, blank=True)
+    month = models.IntegerField(null=True, blank=True)
+    day = models.IntegerField(null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if self.created_at:
+            self.year = self.created_at.year
+            self.month = self.created_at.month
+            self.day = self.created_at.day
+        super().save(*args, **kwargs)
 
     objects = UserManager()
 
