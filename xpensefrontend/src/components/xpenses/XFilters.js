@@ -1,12 +1,12 @@
 // [position] [border] [width,height] [flex] [padding, margin] [bg] [text] [hover] [media]
 
 
-function Filters() {
+function XFilters() {
   return (
     <div className="border w-full h-full flex-row-style justify-center">
-        Filters Check
+        XFilters Check
     </div>
   );
 }
 
-export default Filters;
+export default XFilters;

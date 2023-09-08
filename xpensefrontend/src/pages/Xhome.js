@@ -14,7 +14,7 @@ function XHome() {
             <div className="sticky w-[15%] h-screen flex-col-style justify-start bg-[#282c34] text-white">
                 <Left />
             </div>
-            <div className="border w-full h-screen flex-col-style justify-center overflow-scroll overflow-x-hidden">
+            <div className="border w-[85%] h-screen flex-col-style justify-center">
                 <span className="border w-full px-4">Sandwitch</span>
                 <div className="border w-full h-screen flex-row-style justify-center">
                     <Outlet />

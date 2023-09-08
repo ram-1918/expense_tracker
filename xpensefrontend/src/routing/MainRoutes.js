@@ -25,7 +25,7 @@ const MainRoutes = () => {
             <Route path='/user/' element={<XHome />}>
               <Route path='' element={<Navigate replace to='/user/dashboard'/>} />
               <Route path='dashboard' element={<Dashboard />} />
-              <Route path='basedisplay' element={<BaseDisplay />} />
+              <Route path='basedisplay/:type' element={<BaseDisplay />} />
             </Route>
             <Route path='*' element={<PageNotFound />} />
           </Routes>
