@@ -88,6 +88,7 @@ function BaseDisplay() {
             <div className="border w-[20%] h-full space-y-8">
                 <div className="border w-full h-[35%]">
                     <span className={`${base_title_headers}`}>Tags</span>
+                    {/* Implement colored tags */}
                     <div>
                         {/* Tags related to component */}
                         {type === 'xpenses' && <XFavorites />} {type === 'users' && <UFavorites />}

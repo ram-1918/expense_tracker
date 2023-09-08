@@ -2,7 +2,7 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    borderColor: 'green',
+    // borderColor: 'green',
     extend: {
       screens: {
         'small': {'max': '349px'},
