@@ -66,6 +66,11 @@ npm install -D tailwindcss framer-motion
 for tailwind config file - npx tailwindcss init
 add this to content block in tailwindcss.config - "./src/**/*.{js,jsx,ts,tsx}"
 3. add these lines to index.css
+<!-- Install for icons -->
+npm install --save @fortawesome/fontawesome-svg-core
+npm install --save @fortawesome/free-solid-svg-icons
+npm install --save @fortawesome/react-fontawesome
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

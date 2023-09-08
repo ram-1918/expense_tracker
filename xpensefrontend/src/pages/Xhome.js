@@ -17,7 +17,6 @@ function XHome() {
                 <Left showSideNav={showSideNav} setShowSideNav={setShowSideNav}/>
             </div>
             <div className={`${showSideNav ? 'w-[85%]' : 'w-[97%]'} h-screen flex-col-style justify-center`}>
-                <span className="border w-full px-4">Sandwitch</span>
                 <div className="border w-full h-screen flex-row-style justify-center">
                     <Outlet />
                 </div>
