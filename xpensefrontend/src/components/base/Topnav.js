@@ -1,4 +1,7 @@
 // [position] [border] [width,height] [flex] [padding, margin] [bg] [text] [hover] [media]
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlassDollar, faMagnifyingGlassArrowRight, faMagnifyingGlassMinus } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 import defaultpic from '../../images/default.png'
 
 const Topnav = () => {
@@ -7,11 +10,11 @@ const Topnav = () => {
     return (
         <div className="sticky border-b border-b-red-200 w-full h-10 justify-between flex-row-style shadow-lg px-2">
             {/* Title */}
-            <div className="border-0 w-44 h-7 flex-row-style justify-center text-2xl font-bold">XpenseTracker</div>
+            <div className="border-0 w-44 h-7 flex-row-style justify-center text-2xl text-teal-600"><span className="px-2 text-2xl text-teal-600 font-medium">XpenseTracker</span> <FontAwesomeIcon icon={faMagnifyingGlassDollar} /></div>
             {/* options */}
             <div className="w-[47%] flex-row-style justify-between">
                 <div className='border border-slate-400 flex items-center justify-center space-x-0'>
-                    <button className='border-r border-r-slate-400 w-6 h-7 flex-row-style justify-center bg-neutral-300 text-gray-600 hover:opacity-60'><i className='fa fa-search'></i></button>
+                    <button className='border-r border-r-slate-400 w-6 h-7 flex-row-style justify-center bg-neutral-100 text-gray-600 hover:opacity-60'><i className='fa fa-search'></i></button>
                     <input type="text" placeholder="search..." className='border-0 w-80 h-7 px-2 outline-none'/>
                 </div>
                 <div className='flex justify-center items-center'>
@@ -23,8 +26,8 @@ const Topnav = () => {
                     {
                     isloggedin ? 
                     <div className='flex-row-style justify-center space-x-0'>
-                        <button className='border w-20 h-7 flex-row-style justify-center bg-white text-orange-500 hover:opacity-80' >Login</button>
-                        <button className='border-0 w-20 h-7 flex-row-style justify-center bg-orange-500 text-white hover:opacity-80' >Register</button>
+                        <button className='border w-20 h-7 flex-row-style justify-center bg-white text-orange-500 hover:opacity-80' ><Link to='/users/login/login'>Login</Link></button>
+                        <button className='border-0 w-20 h-7 flex-row-style justify-center bg-orange-500 text-white hover:opacity-80' ><Link to='/users/register/register'>Register</Link></button>
                     </div> :
                     <>
                         <span className=''>Username</span>

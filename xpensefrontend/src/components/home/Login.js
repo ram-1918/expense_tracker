@@ -3,6 +3,7 @@ import googlesso from '../../images/google_sso.png'
 import fbsso from '../../images/fb_sso.png'
 import linsso from '../../images/linksso.png'
 import { useState } from 'react'
+import { Navigate, useNavigate, useParams } from 'react-router'
 
 
 function handleRegister(){
@@ -14,6 +15,7 @@ function handleLogin(){
 }
 
 const Login = () => {
+    const navigate = useNavigate();
     const [name, setname] = useState('');
     const [email, setemail] = useState('');
     const [password1, setpassword1] = useState('');
@@ -34,8 +36,10 @@ const Login = () => {
         else{
             const result = handleRegister(formdata);
         }
+        navigate('/user/dashboard/home')
     }
-    const [login, setLogin] = useState(false);
+    const {type} = useParams();
+    const [login, setLogin] = useState(type==='login' ? true : false);
     const userHeaderStyle = 'w-96 h-10 flex-row-style justify-center p-2 text-3xl text-green-800 font-semibold font-sans';
     const userInputStyle = 'border-none w-80 h-10 p-4 bg-gray-100 text-md outline-none placeholder:text-gray-450';
     const userButtonStyle = 'border-none rounded-full w-32 p-2 bg-green-600 text-white hover:opacity-80';

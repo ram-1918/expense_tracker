@@ -20,12 +20,12 @@ const MainRoutes = () => {
         <BrowserRouter>
           <Routes>
             <Route path='/users' element={<Home />}>
-              <Route path='login' element={<Login />} />
+              <Route path='login/:type' element={<Login />} />
             </Route>
-            <Route path='/user/' element={<XHome />}>
-              <Route path='' element={<Navigate replace to='/user/dashboard'/>} />
-              <Route path='dashboard' element={<Dashboard />} />
-              <Route path='basedisplay/:type' element={<BaseDisplay />} />
+            <Route path='/user/dashboard' element={<XHome />}>
+              <Route path='' element={<Navigate replace to='/user/dashboard/home'/>} />
+              <Route path='home/' element={<Dashboard />}></Route>
+              <Route path='manage/:type' element={<BaseDisplay />} />
             </Route>
             <Route path='*' element={<PageNotFound />} />
           </Routes>

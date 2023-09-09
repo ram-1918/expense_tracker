@@ -33,7 +33,7 @@ function UMain({data, keys}) {
 
   const tbody = 'flex-col justify-center items-center';
   
-  const pagenoStyle = 'border border-slate-400 rounded-full shadow-lg w-6 h-6 flex-row-style justify-center bg-slate-100 cursor-pointer hover:scale-[1.1]';
+  const pagenoStyle = 'border border-slate-100 rounded-full shadow-lg w-6 h-6 flex-row-style justify-center bg-slate-100 cursor-pointer hover:scale-[1.1] hover:scale-[1.2] hover:bg-slate-200';
   const pageOptionStye = ''
   
     return (
@@ -53,7 +53,7 @@ function UMain({data, keys}) {
           </thead>
           <tbody className={`${tbody}`}>
             {data.map((obj, idx) => <View key={idx} obj={obj}/>)}
-            <div className="w-full border-2 flex-row-style justify-center p-2">
+            <div className="w-full border-0 flex-row-style justify-center p-2">
               <div className="w-56 flex-row-style justify-around p-2">
                 <span className={`${pagenoStyle}`}><i className="fa fa-angle-double-left"></i></span>
                 <span className={`${pagenoStyle}`}>1</span>

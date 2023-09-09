@@ -102,7 +102,7 @@ function BaseDisplay() {
 
     return (
         <div className='border-0 w-full h-full flex-row-style justify-center space-x-2 p-2'>
-            <div className={`border border-t-0 ${showTags && showSummary ? 'w-[85%]' : 'w-full'} h-full flex-col-style overflow-x-scroll overflow-y-scroll`}>
+            <div className={`border border-t-0 border-b-0 ${showTags && showSummary ? 'w-[85%]' : 'w-full'} h-full flex-col-style overflow-x-scroll overflow-y-scroll`}>
                 <Filters keys={keys} />
                 <div className="w-full px-4 overflow-y-scroll">
                     {type === 'xpenses' && <XMain data={data} keys={keys}/>} {type === 'users' && <UMain data={data} keys={keys}/>}

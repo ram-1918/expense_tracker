@@ -2,11 +2,12 @@ import { useState } from "react";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faReceipt, faChartBar, faWallet, faChartLine, faCheckCircle, faClock, faUsers, faInbox, faRegistered } from '@fortawesome/free-solid-svg-icons';
+import { Link } from "react-router-dom";
 
 
 function Left({showSideNav, setShowSideNav}){
     const dashboard = `border-b border-b-slate-400 w-full h-fit ${showSideNav ? 'text-left font-medium': 'text-center'} p-2 pt-4 text-[0.9rem]`;
-    const commons = `border-b border-b-slate-400 w-full h-fit ${showSideNav ? 'text-left text-[0.9rem]': 'text-center text-[1.1rem] font-light'} p-2`;
+    const commons = `border-b border-b-slate-400 w-full h-fit p-2 ${showSideNav ? 'text-left text-[0.9rem]': 'text-center text-[1.2rem] font-light'}`;
     const sideNavTitle = `w-full ${showSideNav ? 'text-left': 'text-center'} text-slate-400 text-[0.85rem]`;
     return (
         <div className={`w-full flex-col-style justify-start space-y-8`}>
@@ -20,7 +21,7 @@ function Left({showSideNav, setShowSideNav}){
             <div className='w-full flex-col-style justify-start'>
                 {/* My expenses contains Rejected ones as well */}
                 {showSideNav ? <span className={`${sideNavTitle}`}>Functions</span> : <span className={`${sideNavTitle}`}></span>}
-                {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faWallet} /> My Expenses</span> : <span className={commons}><FontAwesomeIcon icon={faWallet} /></span>}
+                {showSideNav ? <span className={`${commons}`}><Link to='/user/dashboard/manage/xpenses'><FontAwesomeIcon icon={faWallet} /> My Expenses</Link></span> : <span className={commons}><FontAwesomeIcon icon={faWallet} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faReceipt} /> Reciepts</span> : <span className={commons}><FontAwesomeIcon icon={faReceipt} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faChartBar} /> Reports</span> : <span className={commons}><FontAwesomeIcon icon={faChartBar} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faChartLine} /> Forecasts</span> : <span className={commons}><FontAwesomeIcon icon={faChartLine} /></span>}
@@ -33,7 +34,7 @@ function Left({showSideNav, setShowSideNav}){
             </div>
             <div className='w-full flex-col-style justify-start'>
             {showSideNav ? <span className={`${sideNavTitle}`}>Admin</span> : <span className={`${sideNavTitle}`}></span>}
-                {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faUsers} /> Manage Users</span> : <span className={commons}><FontAwesomeIcon icon={faUsers} /></span>}
+                {showSideNav ? <span className={`${commons}`}><Link to='/user/dashboard/manage/users'><FontAwesomeIcon icon={faUsers} /> Manage Users</Link></span> : <span className={commons}><FontAwesomeIcon icon={faUsers} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faInbox} /> Expense Requests</span> : <span className={commons}><FontAwesomeIcon icon={faInbox} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faRegistered} /> Registration Requests</span> : <span className={commons}><FontAwesomeIcon icon={faRegistered} /></span>}
             </div>

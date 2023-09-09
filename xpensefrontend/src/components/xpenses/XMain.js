@@ -28,7 +28,7 @@ function XMain({data, keys}) {
 
   const tbody = 'flex-col justify-center items-center';
 
-  const pagenoStyle = 'border border-slate-400 rounded-full shadow-lg w-6 h-6 flex-row-style justify-center bg-slate-100 cursor-pointer hover:scale-[1.1]';
+  const pagenoStyle = 'border border-slate-100 rounded-full shadow-lg w-6 h-6 flex-row-style justify-center bg-slate-100 cursor-pointer hover:scale-[1.2] hover:bg-slate-200';
   const pageOptionStye = ''
   
     return (

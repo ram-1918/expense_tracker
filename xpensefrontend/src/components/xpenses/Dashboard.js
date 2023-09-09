@@ -4,19 +4,21 @@ import receipt from '../../images/receipt.jpeg';
 import report from '../../images/generatereport.jpeg';
 import invite from '../../images/inviteuser.png';
 import dollar from '../../images/addexpense.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDollar } from '@fortawesome/free-solid-svg-icons';
 
 
 function DisplayTasks(){
     const box_70 = 'border-0 w-full shadow-lg my-4 flex-col-style justify-around';
     const titles = 'border-b border-neutral-300 w-full py-2 px-4 text-2xl text-green-900 font-normal';
     const navButtonStyles = 'border-r border-slate-300 w-full flex-col-style justify-center text-md text-green-900 font-normal';
+    const iconStyle = 'text-3xl text-gray-600'
     return (
         <div className={`${box_70} h-48`}>
             <span className={`${titles}`}>Dashboard</span>
             <div className="border-0 w-full flex-row-style justify-around space-x-4">
                 <span className={`${navButtonStyles}`}>
-                    {/* <span><i className="fa fa-dollar text-3xl"></i></span> */}
-                    <span><img src={dollar} alt="newexpense" className='w-14 h-14 flex-row-syle justify-center '></img></span>
+                    <span><img src={dollar} alt="newexpense" className='w-14 h-14 flex-row-syle justify-center opacity-70'></img></span>
                     <span>New Expense</span>
                 </span>
                 <span className={`${navButtonStyles}`}>
