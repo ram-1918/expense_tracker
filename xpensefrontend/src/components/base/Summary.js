@@ -2,21 +2,30 @@
 
 
 function Summary() {
+  const titleStyle = 'font-light';
     return (
-      <div className="border-8 w-full h-full flex-col-style justify-center">
-        <table>
-          <tbody>
-            <tr>
-              <td>Users Count</td>
+      <div className="w-full h-full flex-col-style justify-start space-y-4 px-2 ">
+        <table className="w-full odd:bg-white even:bg-slate-200">
+          <tbody className="">
+            <tr className="">
+              <td className={titleStyle}>Users Count</td>
               <td>231</td>
             </tr>
             <tr>
-              <td>Users Count</td>
-              <td>231</td>
+              <td className={titleStyle}>SuperAdmins</td>
+              <td>8</td>
             </tr>
             <tr>
-              <td>Users Count</td>
-              <td>231</td>
+              <td className={titleStyle}>Admins</td>
+              <td>32</td>
+            </tr>
+            <tr>
+              <td className={titleStyle}>Active</td>
+              <td>225</td>
+            </tr>
+            <tr>
+              <td className={titleStyle}>Companies</td>
+              <td>8</td>
             </tr>
           </tbody>
         </table>
