@@ -23,10 +23,10 @@ function DisplayTasks(){
                     <span><img src={invite} alt="invite_user" className='w-12 h-12 flex-row-syle justify-center '></img></span>
                     <span>Send Invitation</span>
                 </Link>
-                <span className={`${navButtonStyles}`}>
+                <Link to='/user/dashboard/submit/attachreciept' className={`${navButtonStyles}`}>
                     <span><img src={receipt} alt="receipt" className='w-12 h-12 flex-row-syle justify-center '></img></span>
-                    <span>Submit Reciept</span>
-                </span>
+                    <span>Attach Reciept</span>
+                </Link>
                 <span className={`${navButtonStyles}`}> 
                     <span><img src={report} alt="report" className='w-14 h-14 flex-row-syle justify-center '></img></span>
                     <span>Generate Reports</span>

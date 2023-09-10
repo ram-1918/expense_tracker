@@ -47,7 +47,7 @@ function XMain({data, keys}) {
           <tbody className={`${tbody}`}>
             {data.map((obj, idx) => <View key={idx} obj={obj}/>)}
 
-            <div className="w-full border-2 flex-row-style justify-center p-2">
+            <div className="w-full border-0 flex-row-style justify-center p-2">
               <div className="w-56 flex-row-style justify-around p-2">
                 <span className={`${pagenoStyle}`}><i className="fa fa-angle-double-left"></i></span>
                 <span className={`${pagenoStyle}`}>1</span>

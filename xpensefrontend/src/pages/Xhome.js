@@ -13,7 +13,7 @@ function XHome() {
     <>
         <Topnav />
         <div className="w-full h-screen flex-row-style justify-center">
-            <div className={`${showSideNav ? 'w-[15%]' : 'w-[4%]'} sticky  h-full flex-col-style justify-start bg-[#282c34] text-white`}>
+            <div onMouseOver={() => {setShowSideNav(true)}} className={`${showSideNav ? 'w-[15%]' : 'w-[4%]'} sticky  h-full flex-col-style justify-start bg-[#282c34] text-white transition-transform ease-linear duration-700`}>
                 <Left showSideNav={showSideNav} setShowSideNav={setShowSideNav}/>
             </div>
             <div className={`${showSideNav ? 'w-[85%]' : 'w-[97%]'} h-full flex-col-style justify-center`}>
