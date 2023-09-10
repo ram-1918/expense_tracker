@@ -4,8 +4,6 @@ import receipt from '../../images/receipt.jpeg';
 import report from '../../images/generatereport.jpeg';
 import invite from '../../images/inviteuser.png';
 import dollar from '../../images/addexpense.png';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDollar } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
 
@@ -13,19 +11,18 @@ function DisplayTasks(){
     const box_70 = 'border-0 w-full shadow-lg my-4 flex-col-style justify-around';
     const titles = 'border-b border-neutral-300 w-full py-2 px-4 text-2xl text-green-900 font-normal';
     const navButtonStyles = 'border-r border-slate-300 w-full flex-col-style justify-center text-md text-green-900 font-normal';
-    const iconStyle = 'text-3xl text-gray-600'
     return (
         <div className={`${box_70} h-48`}>
             <span className={`${titles}`}>Dashboard</span>
             <div className="border-0 w-full flex-row-style justify-around space-x-4">
-                <Link to='/user/dashboard/addexpense' className={`${navButtonStyles}`}>
+                <Link to='/user/dashboard/submit/addexpense' className={`${navButtonStyles}`}>
                     <span><img src={dollar} alt="newexpense" className='w-14 h-14 flex-row-syle justify-center opacity-70'></img></span>
                     <span>New Expense</span>
                 </Link>
-                <span className={`${navButtonStyles}`}>
+                <Link to='/user/dashboard/submit/sendinvitation' className={`${navButtonStyles}`}>
                     <span><img src={invite} alt="invite_user" className='w-12 h-12 flex-row-syle justify-center '></img></span>
                     <span>Send Invitation</span>
-                </span>
+                </Link>
                 <span className={`${navButtonStyles}`}>
                     <span><img src={receipt} alt="receipt" className='w-12 h-12 flex-row-syle justify-center '></img></span>
                     <span>Submit Reciept</span>
@@ -59,7 +56,7 @@ function DisplayList({obj}) {
 function DisplayApprovals(){
     const box_70 = 'border w-full shadow-lg my-4 flex-col-style justify-between pb-2';
     const titles = 'border-b border-neutral-300 w-full py-2 px-4 text-2xl text-green-900 font-normal';
-    const navButtonStyles = 'border w-full flex-col-style justify-center text-xl text-green-900 font-normal';
+    // const navButtonStyles = 'border w-full flex-col-style justify-center text-xl text-green-900 font-normal';
     const receipt = [
         {"name": "Expense1", "date": "September 7th, 2023", "by":"Srinivas", "status": "3", "amount": "213.00", "count": 2},
         {"name": "Expense2", "date": "August 30, 2023", "by":"Harsha", "status": "3", "amount": "43.23", "count": 0}
@@ -116,8 +113,6 @@ function Summary(){
     )
 }
 function Dashboard() {
-    const box_70 = 'border w-full shadow-lg my-4';
-    const titles = 'text-xl text-green-900 font-normal';
   return (
         <div className="border-0 w-[97%] h-full flex-col-style justify-around space-y-8 pb-8">
             <DisplayTasks />

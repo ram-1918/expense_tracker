@@ -10,7 +10,8 @@ import Dashboard from '../components/xpenses/Dashboard';
 import BaseDisplay from '../components/base/BaseDisplay';
 
 import PageNotFound from '../pages/PageNotFound';
-import AddExpense from '../components/xpenses/AddExpense';
+import BaseForm from '../components/base/BaseForm';
+import Register from '../components/home/Register';
 
 
 // import PublicRoute from './PublicRoute';
@@ -20,15 +21,16 @@ const MainRoutes = () => {
     return (
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<Navigate replace to='/users/login/login'/>} />
+            <Route path='/' element={<Navigate replace to='/users/login'/>} />
             <Route path='/users' element={<Home />}>
-              <Route path='login/:type' element={<Login />} />
+              <Route path='login/' element={<Login />} />
+              <Route path='register/' element={<Register />} />
             </Route>
             <Route path='/user/dashboard' element={<XHome />}>
               <Route path='' element={<Navigate replace to='/user/dashboard/home'/>} />
               <Route path='home/' element={<Dashboard />}></Route>
               <Route path='manage/:type' element={<BaseDisplay />} />
-              <Route path='addexpense' element={<AddExpense />} />
+              <Route path='submit/:formtype' element={<BaseForm />} />
             </Route>
             <Route path='*' element={<PageNotFound />} />
           </Routes>
