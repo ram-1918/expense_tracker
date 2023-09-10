@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 
 
 function Left({showSideNav, setShowSideNav}){
-    const dashboard = `border-b border-b-slate-400 w-full h-fit ${showSideNav ? 'text-left font-medium': 'text-center'} p-2 pt-4 text-[0.9rem]`;
-    const commons = `border-b border-b-slate-400 w-full h-fit p-2 ${showSideNav ? 'text-left text-[0.9rem]': 'text-center text-[1.2rem] font-light'}`;
+    const dashboard = `border-b border-b-slate-400 w-full h-fit ${showSideNav ? 'text-left font-medium': 'text-center'} p-2 text-[0.9rem] hover:bg-teal-200 hover:text-black`;
+    const commons = `border-b border-b-slate-400 w-full h-fit p-2 ${showSideNav ? 'text-left text-[0.9rem]': 'text-center text-[1.2rem] font-light'} hover:bg-teal-200 hover:text-black`;
     const sideNavTitle = `w-full ${showSideNav ? 'text-left': 'text-center'} text-slate-400 text-[0.85rem]`;
     return (
         <div className={`w-full flex-col-style justify-start space-y-8`}>
@@ -15,7 +15,7 @@ function Left({showSideNav, setShowSideNav}){
                 <span onClick={() => {setShowSideNav((prev) => !prev)}} className={`w-full h-fit text-left p-2 text-[1rem] ${showSideNav ? 'text-right' : 'text-center'}`}>
                     {showSideNav ? <i className="fa fa-minus"></i> : <i className="fa fa-bars"></i>}
                 </span>
-                {showSideNav ? <span className={`${dashboard}`}>Dashboard</span> : <span className={`${dashboard}`}><FontAwesomeIcon icon={faHome} /></span>}
+                {showSideNav ? <span className={`${dashboard}`}><Link to='/user/dashboard/home' ><i className='fa fa-home text-[1rem]'></i> Dashboard</Link></span> : <span className={`${dashboard}`}><FontAwesomeIcon icon={faHome} /></span>}
 
             </div>
             <div className='w-full flex-col-style justify-start'>

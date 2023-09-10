@@ -6,6 +6,7 @@ import invite from '../../images/inviteuser.png';
 import dollar from '../../images/addexpense.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollar } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 
 function DisplayTasks(){
@@ -17,10 +18,10 @@ function DisplayTasks(){
         <div className={`${box_70} h-48`}>
             <span className={`${titles}`}>Dashboard</span>
             <div className="border-0 w-full flex-row-style justify-around space-x-4">
-                <span className={`${navButtonStyles}`}>
+                <Link to='/user/dashboard/addexpense' className={`${navButtonStyles}`}>
                     <span><img src={dollar} alt="newexpense" className='w-14 h-14 flex-row-syle justify-center opacity-70'></img></span>
                     <span>New Expense</span>
-                </span>
+                </Link>
                 <span className={`${navButtonStyles}`}>
                     <span><img src={invite} alt="invite_user" className='w-12 h-12 flex-row-syle justify-center '></img></span>
                     <span>Send Invitation</span>
