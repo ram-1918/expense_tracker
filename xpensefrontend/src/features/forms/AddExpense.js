@@ -3,13 +3,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollar } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import FieldValidations from '../base/FieldValidations';
+import FieldValidations from '../../components/base/FieldValidations';
 
 function handleSubmit(){
     return 
 }
 
-function AddExpenseForm({setcheckiffull}){
+function AddExpense({setCheckIfFull}){
     const formStyles = 'border-r border-l w-full h-full flex-col-style justify-between space-y-4 overscroll-hidden';
     const groupStyles = 'border-0 w-fit h-fit flex-col-style space-y-2';
     const labelStyles = 'w-full text-lg font-semibold';
@@ -25,10 +25,10 @@ function AddExpenseForm({setcheckiffull}){
     const [showOptions, setShowOptions] = useState(false);
 
     if (name !== '' || amount !== ''|| tags !== '' || category !== ''|| comment !== ''){
-        setcheckiffull(true);
+        setCheckIfFull(true);
     }
     else{
-        setcheckiffull(false);
+        setCheckIfFull(false);
     }
     const categories = ['Travel', 'Food', 'Appliances', 'Others']
 
@@ -81,4 +81,4 @@ function AddExpenseForm({setcheckiffull}){
     )
 }
 
-export default AddExpenseForm;
+export default AddExpense;

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users, Company, RegisterationRequests
+from .models import Users, Company
 import os
 
 

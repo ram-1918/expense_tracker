@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users, Company, RegisterationRequests
+from .models import Users, Company
 import os
 
 
@@ -8,12 +8,13 @@ from .services import HandleService, AuthenticationService
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model=Company
-        fields='__all__'
+        fields=['id', 'name', 'location']
 
 class UserSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True)
     class Meta:
         model = Users
-        fields = '__all__'
+        fields =  '__all__' # ['id', 'email', 'fullname', 'role', 'authorized', 'phone', 'password', 'is_active', 'image', 'company']
     
     def validate_email(self, email):
         handleObj = HandleService()
@@ -34,16 +35,11 @@ class UserSerializer(serializers.ModelSerializer):
         if not phone: raise serializers.ValidationError('Enter a valid phone number.')
         return phone
 
-    
-    # def validate_image(self, image):
-    #     print(image, '><><><><><><<><><><><><')
-    #     return os.path.join('http://127.0.0.1:8000/ExpenseMedia/', image)
-
 class ListUserSerializer(serializers.ModelSerializer):
     company = CompanySerializer(read_only=True)
     class Meta:
         model = Users
-        fields = ['fullname', 'email', 'phone', 'image', 'role', 'company', 'employee_id']
+        fields = ['id', 'email', 'fullname', 'role', 'authorized', 'phone', 'is_active', 'image', 'company', 'colortag', 'get_date_created', 'get_last_modified'] # ['fullname', 'email', 'phone', 'image', 'role', 'company', 'employee_id']
 
 # Factory pattern
 class SerializerMapper():

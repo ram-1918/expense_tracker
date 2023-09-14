@@ -1,21 +1,19 @@
 from django.urls import path
-from .views import testing, RegisterAPI, UserAPI, LoginAPI, ApproveRequest, view_users, logout
-from .readonyviews import get_users, get_users_by_company, get_companies
+from .views import testing, RegisterAPI, UserAPI, LoginAPI, logout
+from .readonyviews import list_users, get_users_by_company, get_companies
 
 urlpatterns = [
     path('', testing),
 
     path('register/', RegisterAPI.as_view()),
+    path('approverequest/<uuid:pk>', RegisterAPI.as_view()),
+
     path('user/<uuid:pk>', UserAPI.as_view()),
-    path('approverequest/', ApproveRequest.as_view()),
     path('login/', LoginAPI.as_view()),
     path('logout/', logout),
-
-    path('list/', get_users),
-    path('userinfo/', view_users),
-    path('list/<str:role>/<int:company>', get_users_by_company),
+    
+    # Read only
+    path('listusers/', list_users),
     path('companies/', get_companies),
-
-
-
+    path('list/<int:company>', get_users_by_company),
 ]

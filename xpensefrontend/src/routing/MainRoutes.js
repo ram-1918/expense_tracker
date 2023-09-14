@@ -2,35 +2,43 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Home from '../pages/Home';
-import Login from '../components/home/Login';
+import UsersHome from '../pages/UsersHome';
+import Login from '../features/users/Login';
+import Register from '../features/users/Register';
 
-import XHome from '../pages/Xhome';
-import Dashboard from '../components/xpenses/Dashboard';
-import BaseDisplay from '../components/base/BaseDisplay';
+
+import CoreHome from '../pages/CoreHome';
+import FormLayout from '../components/layouts/FormLayout';
+import Dashboard from '../features/core/Dashboard';
+import ContentLayout from '../components/layouts/ContentLayout';
+
+
+
+import PublicRoute from './PublicRoute';
+import PrivateRoute from './PrivateRoute';
 
 import PageNotFound from '../pages/PageNotFound';
-import BaseForm from '../components/base/BaseForm';
-import Register from '../components/home/Register';
 
-
-// import PublicRoute from './PublicRoute';
-// import PrivateRoute from './PrivateRoute';
 
 const MainRoutes = () => {
     return (
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<Navigate replace to='/users/login'/>} />
-            <Route path='/users' element={<Home />}>
-              <Route path='login/' element={<Login />} />
-              <Route path='register/' element={<Register />} />
+            <Route path='/' element={<PublicRoute />} >
+              <Route path='/' element={<Navigate replace to='/users/login'/>} />
+              <Route path='/users' element={<UsersHome />}>
+                <Route path='login' element={<Login />} />
+                <Route path='register' element={<Register />} />
+              </Route>
             </Route>
-            <Route path='/user/dashboard' element={<XHome />}>
-              <Route path='' element={<Navigate replace to='/user/dashboard/home'/>} />
-              <Route path='home/' element={<Dashboard />}></Route>
-              <Route path='manage/:type' element={<BaseDisplay />} />
-              <Route path='submit/:formtype' element={<BaseForm />} />
+            <Route path='/user/home/' element={<PrivateRoute />} >
+              <Route path='/user/home/' element={<CoreHome />}>
+                <Route index element={<Navigate replace to='/user/dashboard/home'/>} />
+                <Route path='dashboard' element={<Dashboard />} > 
+                  <Route path='submit/:formtype' element={<FormLayout />} />
+                </Route>
+                <Route path='manage/:type' element={<ContentLayout />} />
+              </Route>
             </Route>
             <Route path='*' element={<PageNotFound />} />
           </Routes>
@@ -42,7 +50,22 @@ export default MainRoutes;
 
 
 
-
+{/* <BrowserRouter>
+<Routes>
+  <Route path='/' element={<Navigate replace to='/users/login'/>} />
+  <Route path='/users' element={<Home />}>
+    <Route path='login/' element={<Login />} />
+    <Route path='register/' element={<Register />} />
+  </Route>
+  <Route path='/user/dashboard' element={<XHome />}>
+    <Route path='' element={<Navigate replace to='/user/dashboard/home'/>} />
+    <Route path='home/' element={<Dashboard />}></Route>
+    <Route path='manage/:type' element={<BaseDisplay />} />
+    <Route path='submit/:formtype' element={<BaseForm />} />
+  </Route>
+  <Route path='*' element={<PageNotFound />} />
+</Routes>
+</BrowserRouter> */}
 
 
 

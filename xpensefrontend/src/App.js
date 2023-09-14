@@ -1,5 +1,5 @@
 import './App.css';
-import Topnav from './components/base/Topnav';
+import Topnav from './features/core/Topnav';
 import MainRoutes from './routing/MainRoutes'; 
 
 function App() {

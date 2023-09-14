@@ -3,10 +3,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollar } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import FieldValidations from '../base/FieldValidations';
+import FieldValidations from '../../components/base/FieldValidations';
 import { useNavigate } from 'react-router';
 
-function AttachReciept({setcheckiffull}){
+function AttachReciept({setCheckIfFull}){
     const navigate = useNavigate();
     const formStyles = 'border-r border-l w-full h-full flex-col-style justify-start space-y-8 overscroll-hidden';
     const groupStyles = 'border-0 w-fit h-fit flex-col-style space-y-2';
@@ -23,20 +23,14 @@ function AttachReciept({setcheckiffull}){
 
     const categories = ['Travel', 'Food', 'Appliances', 'Others'];
     const mark = 'border border-gray-500 rounded-full w-4 h-4 flex-row-style justify-center text-sm px-2 cursor-pointer hover:scale-[1.03]';
-    const [activeSection, setActiveSection] = useState(2);
+    const [activeSection, setActiveSection] = useState(1);
 
     const listExpenses = [
         {"name":"Expense1", "date": "August 13th, 2023", "status": "Pending..."},
         {"name":"Expense2", "date": "September 10th, 2023", "status": "Approved"},
         {"name":"Expense3", "date": "September 2th, 2023", "status": "Rejected"},
     ]
-
-    if (image !== []){
-        setcheckiffull(true);
-    }
-    else{
-        setcheckiffull(false);
-    }
+    setCheckIfFull(false);
 
     function handleSubmit(){
         alert('Attached proof is under review, only if attached to any of your expenses');

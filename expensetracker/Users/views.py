@@ -1,10 +1,13 @@
 from django.http import JsonResponse
 from rest_framework.decorators import APIView, api_view
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics, mixins
+from django.utils.decorators import method_decorator
+from django_filters.rest_framework import DjangoFilterBackend # pip3 install django-filter
+from rest_framework.pagination import PageNumberPagination
 
-from .models import AuthorizedUsers, Company, Users, RegisterationRequests
-from .serializers import SerializerMapper, UserSerializer
+from .models import AuthorizedUsers, Company, Users
+from .serializers import SerializerMapper, UserSerializer, ListUserSerializer
 
 from .services import HandleService
 
@@ -35,7 +38,6 @@ def view_users(request):
     serializer = UserSerializer(user)
     return serializer.data
 
-
 def modelObjectToDict(obj):
     return obj.__dict__
 
@@ -52,11 +54,15 @@ def processFormData(data):
 
 class RegisterAPI(APIView):    
     def post(self, request):
+        # data = request.data.__dict__ 
+        print(request.data['email'], "EMAIL")
         proceedToRequest = request.data.pop('proceedtorequest')
+        if not request.data['phone']: request.data.pop('phone')
         serializer = SerializerMapper()
         data = serializer.mapSerializer('postuser', request.data)
+        print(data, 'INITINALLY')
         # replace with instance of the company object
-        data['company'] = Company.objects.filter(id=data['company']).first()
+        data['company'] = Company.objects.filter(id=request.data['company']).first()
         # check if the user is in authorized list of users
         authorized_users_check = AuthorizedUsers.objects.filter(email=data['email']).first()
         # Differntiate between admin and superadmins while user creation - create_admin, create_superadmin
@@ -66,7 +72,7 @@ class RegisterAPI(APIView):
             data['employee_id'] = authorized_users_check.employeeid
             data['image'] = 'profilepics/default.png'
             try: Users.objects.create_user(**data) # once created send an email
-            except: return Response('user creation error', status=status.HTTP_400_BAD_REQUEST)
+            except: return Response('user creation error', status=status.HTTP_409_CONFLICT)
             return Response('created', status=status.HTTP_201_CREATED)
         
         elif not authorized_users_check and not proceedToRequest:
@@ -74,68 +80,60 @@ class RegisterAPI(APIView):
         
         elif not authorized_users_check and proceedToRequest:
             # if not authorized, then create a record in requests table and send an email
-            already_requested_check = RegisterationRequests.objects.filter(email=data['email'])
+
+            already_requested_check = Users.objects.filter(email=data['email'], authorized=False)
             if already_requested_check: 
                 return Response('alreadyrequested', status=status.HTTP_409_CONFLICT)
-            data['comment'] = request.data['comment'].strip()
+            
+            data['comment'] = data['comment'].strip()
+            data['image'] = 'profilepics/default.png'
             print(data, "unauth + workedout")
-            data.pop('image')
-            RegisterationRequests.objects.create_user(**data)
-            # sdata = UserSerializer(data=data)
-            # sdata.is_valid(raise_exception=True)
-            # print(sdata.data, 'DJHBHWJBFKJBKJF')
             try: 
-                pass
-                # RegisterationRequests.objects.create_user(**data)
-                # register = RegisterationRequests(**data)
-                # register.save()
-            except: return Response('usercreationerror', status=status.HTTP_400_BAD_REQUEST)
+                Users.objects.create_user(**data)
+            except: 
+                return Response('usercreationerror', status=status.HTTP_400_BAD_REQUEST)
             return Response('requestsent', status=status.HTTP_201_CREATED)
 
-
-class ApproveRequest(APIView):
-
-    def get(self, request):
-        print(request.data)
-        if request.data and request.data['role'] not in ['admin', 'superadmin']:
-            return Response('Please login as admin to access requests', status=status.HTTP_406_NOT_ACCEPTABLE)
-        allRequests = RegisterationRequests.objects.all()
-        result = []
-        for obj in allRequests:
-            role = "superadmin" if obj.is_superadmin else "admin" if obj.is_admin else "employee"
-            details = {
-                "fullname":obj.fullname, 
-                "email": obj.email, 
-                "phone": obj.phone, 
-                "role": role, 
-                "company": obj.company.id, 
-                "employeeid": obj.employee_id, 
-                "comment": obj.comment
-                }
-            result.append(details)
-        result = json.dumps(result)
-        print(result, '----------------')
-        return JsonResponse(result, safe=False)
-
-    def post(self, request):
-        requestObj = RegisterationRequests.objects.filter(email=request.data['email'])
-        if request.data['status']:
-            convertedObj = modelObjectToDict(requestObj.first())
-            convertedObj.pop('_state')
-            convertedObj.pop('comment')
-            # convertedObj['image'] = ''
-            print(convertedObj)
-            # try: 
-            user = Users(**convertedObj) # once created send an email
+    def patch(self, request, pk):
+        user = Users.objects.filter(id=pk).first()
+        if request.data['authorized']:
+            user.authorized = True
             user.save()
-            requestObj.delete()
-            # except: return Response('user creation error', status=status.HTTP_400_BAD_REQUEST)
             return Response('approved', status=status.HTTP_201_CREATED)
-        # if status if false, just delete the record
-        requestObj.delete()
+        try:user.delete() # if status if false, just delete the record
+        except: Response('invaliduser', status=status.HTTP_409_CONFLICT)
         return Response('rejected', status=status.HTTP_200_OK)
 
-# protected
+# # PROTECTED - list of users with filters
+# @api_view(['GET'])
+# @login_required
+# def list_users(request):
+#     decoded = decodeddata()
+#     id = decode_uuid(decoded['sub'])
+#     user = Users.objects.filter(id=id).first()  
+
+#     if user.role in ['superadmin', 'admin']:
+#         params = request.query_params      
+#         if params:
+#             if 'ordering' in params.keys():
+#                 print(params.get('ordering'), 'ORDERING')
+#                 users = Users.objects.all().order_by(params.get('ordering'))
+#             else:
+#                 filter_dic = {}
+#                 for key in params.keys(): filter_dic[key] = params.get(key)
+#                 users = Users.objects.filter(**filter_dic)
+#         else:
+#             if user.role == 'admin':
+#                 users = Users.objects.filter(company=user.company).exclude(id=id)
+#             else:
+#                 users = Users.objects.all()
+#         ser = ListUserSerializer(users, many=True)
+#         return {"data": ser.data, "count":len(ser.data)}
+#     return {"msg": 'unauthorized'} # Response('Notvalid')
+    
+
+
+# PROTECTED - Single user info and update
 class UserAPI(APIView):
     @login_required
     def get(self, request, pk):
@@ -187,7 +185,8 @@ class UserAPI(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return serializer.data
-    
+
+# Login and authentication
 class LoginAPI(APIView):
     def authenticate(self, request):
         handleobj = HandleService()
@@ -225,45 +224,6 @@ def logout(request):
     response.delete_cookie('refresh')
     return response
 
-
-
-# class LogoutAPI(APIView):
-#     def post(self, request):
-#         print("DELETE", request.COOKIES)
-#         response = Response({"message": "Logged out successfully", "status": True})
-#         response.set_cookie('access', '')
-#         response.set_cookie('refresh', '')
-#         return response
-        
-
-
-
-        # print(request.data)
-        # email = request.data['email']
-        # handleObj = HandleService()
-        # email = handleObj.handler('email', email)
-        # if not email: return Response('Enter a valid email address.')        
-        # if request.data['status'] == True:
-        #     dataObj = RegisterationRequests.objects.filter(email=email).first()
-        #     print(dataObj.__dict__, " dataobject")
-        #     if dataObj:
-        #         dataObj = dataObj.__dict__
-        #         is_staff = True if 'is_staff' in dataObj and dataObj['is_staff'] == True else False
-        #         superadmin = dataObj.superadmin if 'superadmin' in dataObj else None
-        #         is_superuser = True if 'is_superuser' in dataObj and dataObj['is_superuser'] == True else False
-        #         print('superuser and admins are set ', dataObj)
-        #         company = Company.objects.filter(id=dataObj['company_id']).first()
-        #         result = createUser(dataObj, company, is_staff, superadmin, is_superuser)
-        #         print(result.data, "after creation")
-        #         if result.data == 'created':
-        #             try: RegisterationRequests.objects.filter(email=email).delete()
-        #             except: return Response("Deleting request failed")
-        #             return Response("Approved! email should be recieved")
-        #     return Response("Invalid request")
-        # val = RegisterationRequests.objects.filter(email=email).delete()
-        # print(val, 'experimenting delete')
-
-
 '''
 # registering superadmin
 {
@@ -299,28 +259,3 @@ def logout(request):
 }
 
 '''
-                # Users.objects.create_user(
-                #     email=serializer.data['email'], 
-                #     password=serializer.data['password'], 
-                #     phone=serializer.data['phone'],
-                #     firstname=serializer.data['firstname'].strip().lower(), 
-                #     lastname=serializer.data['lastname'].strip().lower(),
-                #     company = company,
-                #     employee_id = serializer.data['employee_id']
-                # )
-                # name = serializer.data['firstname'] + serializer.data['lastname']
-                # print("verified and created")
-                # if 'is_superuser' in request.data:
-                #     print('create superuser...')
-                #     superadmins = SuperAdmins(name=name, empid=serializer.data['employee_id'])
-                #     superadmins.save()
-                #     print('superadmin created')
-                # elif 'is_staff' in request.data:
-                #     try:
-                #         superadmin = SuperAdmins.objects.filter(name=request.data['superadmin']).first()
-                #         admins = Admins(name=name, empid=serializer.data['employee_id'], is_employee=superadmin)
-                #         admins.save()
-                #         print('admin created')
-                #     except:
-                #         return Response('Superadmin not available', status=status.HTTP_400_BAD_REQUEST)
-                # return Response('created', status=status.HTTP_201_CREATED)

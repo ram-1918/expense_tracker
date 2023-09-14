@@ -40,6 +40,7 @@ def decode_uuid(id):
 
 
 def validate_token(request):
+    # return {'status': True, 'data': '', 'access': '', 'refresh': ''}
     try:
         access = request.COOKIES.get('access')
         refresh = request.COOKIES.get('refresh')
@@ -95,7 +96,7 @@ def login_required(function=None):
                 access, refresh = token['access'], token['refresh']
                 print("EXECUTING API LOGIC: STARTED")
                 start = time.time()
-                data = view_func(request, *args, **kwargs)
+                data = view_func(request, *args, **kwargs) # Main login
                 end = time.time()
                 print("EXECTION: ENDED")
                 print('TOTAL EXECUTION TIME: ', int(end-start))
