@@ -9,17 +9,17 @@ import SendInvitation from '../../features/forms/SendInvitation';
 
 function FormLayout() {
     const navigate = useNavigate();
-    const { formtype } = useParams();
+    const { formtype, userid } = useParams();
     const [checkIfFull, setCheckIfFull] = useState(true);
 
     function handleClose(){
         if (checkIfFull){
             alert("Details will not be saved, Proceed?");
-            navigate('/user/home/dashboard/');
+            navigate('/user/'+userid+'/home/dashboard/');
         }
         else{
             // proceed ot cancel
-            navigate('/user/home/dashboard/');
+            navigate('/user/'+userid+'/home/dashboard/');
         }
     }
 

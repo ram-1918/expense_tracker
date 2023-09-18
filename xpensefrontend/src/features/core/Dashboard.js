@@ -4,7 +4,9 @@ import receipt from '../../images/receipt.jpeg';
 import report from '../../images/generatereport.jpeg';
 import invite from '../../images/inviteuser.png';
 import dollar from '../../images/addexpense.png';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUserInfo } from '../users/usersSlice';
 
 
 let box_70 = 'border-0 w-full h-56 flex-col-style justify-between';
@@ -19,19 +21,20 @@ let cellStyle = 'border-0 p-[5px] text-left';
 
 function DisplayTasks(){
     box_70 = 'border-0 w-full shadow-lg my-4 flex-col-style justify-around';
+    const {userid} = useParams();
     return (
         <div className={`${box_70} h-48`}>
             <span className={`${titles}`}>Dashboard</span>
             <div className="border-0 w-full flex-row-style justify-around space-x-4">
-                <Link to='/user/home/dashboard/submit/addexpense' className={`${navButtonStyles}`}>
+                <Link to={`/user/${userid}/home/dashboard/submit/addexpense`} className={`${navButtonStyles}`}>
                     <span><img src={dollar} alt="newexpense" className='w-14 h-14 flex-row-syle justify-center opacity-70'></img></span>
                     <span>New Expense</span>
                 </Link>
-                <Link to='/user/home/dashboard/submit/sendinvitation' className={`${navButtonStyles}`}>
+                <Link to={`/user/${userid}/home/dashboard/submit/sendinvitation`} className={`${navButtonStyles}`}>
                     <span><img src={invite} alt="invite_user" className='w-12 h-12 flex-row-syle justify-center '></img></span>
                     <span>Send Invitation</span>
                 </Link>
-                <Link to='/user/home/dashboard/submit/attachreciept' className={`${navButtonStyles}`}>
+                <Link to={`/user/${userid}/home/dashboard/submit/attachreciept`} className={`${navButtonStyles}`}>
                     <span><img src={receipt} alt="receipt" className='w-12 h-12 flex-row-syle justify-center '></img></span>
                     <span>Attach Reciept</span>
                 </Link>

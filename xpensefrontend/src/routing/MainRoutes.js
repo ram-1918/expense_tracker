@@ -18,9 +18,12 @@ import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
 
 import PageNotFound from '../pages/PageNotFound';
+import { selectUserid } from '../features/users/usersSlice';
+import { useSelector } from 'react-redux';
 
 
 const MainRoutes = () => {
+  const userid = useSelector(selectUserid);
     return (
         <BrowserRouter>
           <Routes>
@@ -31,9 +34,9 @@ const MainRoutes = () => {
                 <Route path='register' element={<Register />} />
               </Route>
             </Route>
-            <Route path='/user/home/' element={<PrivateRoute />} >
-              <Route path='/user/home/' element={<CoreHome />}>
-                <Route index element={<Navigate replace to='/user/dashboard/home'/>} />
+            <Route path='/user/:userid/home/' element={<PrivateRoute />} >
+              <Route path='/user/:userid/home/' element={<CoreHome />}>
+                <Route index element={<Navigate replace to={`/user/${userid}/home/dashboard`} /> } />
                 <Route path='dashboard' element={<Dashboard />} > 
                   <Route path='submit/:formtype' element={<FormLayout />} />
                 </Route>

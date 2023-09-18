@@ -8,6 +8,7 @@ import BaseField from '../../components/base/BaseField';
 import { login } from './apicalls';
 // State
 import {useDispatch, useSelector} from 'react-redux';
+import { setUserid } from './usersSlice';
 
 
 const userHeaderStyle = 'w-96 h-10 flex-row-style justify-center p-2 text-3xl text-green-800 font-semibold font-sans';
@@ -19,6 +20,7 @@ const mark = 'border border-gray-500 rounded-full w-4 h-4 flex-row-style justify
 
 const Login = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch()
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [succussMsg, setSuccussMsg] = useState('');
@@ -42,6 +44,7 @@ const Login = () => {
             const response = await login(enteredValues);
             console.log(response.status, response.data, "LOGIN");
             localStorage.setItem('id', response.data['id']);
+            dispatch(setUserid(response.data['id']));
             navigate('/user/home/dashboard');
         }
         catch (error){

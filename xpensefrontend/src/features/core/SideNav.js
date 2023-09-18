@@ -2,10 +2,11 @@ import { useState } from "react";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faReceipt, faChartBar, faWallet, faChartLine, faCheckCircle, faClock, faUsers, faInbox, faRegistered } from '@fortawesome/free-solid-svg-icons';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 
 function SideNav({showSideNav, setShowSideNav}){
+    const { userid } = useParams();
     const navigate = useNavigate();
     const dashboard = `border-b border-b-slate-400 w-full h-fit ${showSideNav ? 'text-left font-medium': 'text-center'} p-2 text-[0.9rem] hover:bg-teal-200 hover:text-black`;
     const commons = `border-b border-b-slate-400 w-full h-fit p-2 ${showSideNav ? 'text-left text-[0.9rem]': 'text-center text-[1.2rem] font-light'} hover:bg-teal-200 hover:text-black`;
@@ -16,13 +17,13 @@ function SideNav({showSideNav, setShowSideNav}){
                 <span onClick={() => {setShowSideNav((prev) => !prev)}} className={`w-full h-fit text-left p-2 text-[1rem] ${showSideNav ? 'text-right' : 'text-center'}`}>
                     {showSideNav ? <i className="fa fa-minus"></i> : <i className="fa fa-bars"></i>}
                 </span>
-                {showSideNav ? <span className={`${dashboard}`}><Link to='/user/home/dashboard'><i className='fa fa-home text-[1rem]'></i> Dashboard</Link></span> : <span onClick={() => {setShowSideNav(true); navigate('/user/dashboard/home') }} className={`${dashboard}`}><FontAwesomeIcon icon={faHome} /></span>}
+                {showSideNav ? <span className={`${dashboard}`}><Link to={`/user/${userid}/home/dashboard`}><i className='fa fa-home text-[1rem]'></i> Dashboard</Link></span> : <span onClick={() => {setShowSideNav(true); navigate('/user/dashboard/home') }} className={`${dashboard}`}><FontAwesomeIcon icon={faHome} /></span>}
 
             </div>
             <div className='w-full flex-col-style justify-start'>
                 {/* My expenses contains Rejected ones as well */}
                 {showSideNav ? <span className={`${sideNavTitle}`}>Functions</span> : <span className={`${sideNavTitle}`}></span>}
-                {showSideNav ? <span className={`${commons}`}><Link to='/user/home/manage/expenses'><FontAwesomeIcon icon={faWallet} /> My Expenses</Link></span> : <span className={commons}><FontAwesomeIcon icon={faWallet} /></span>}
+                {showSideNav ? <span className={`${commons}`}><Link to={`/user/${userid}/home/manage/expenses`}><FontAwesomeIcon icon={faWallet} /> My Expenses</Link></span> : <span className={commons}><FontAwesomeIcon icon={faWallet} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faReceipt} /> Reciepts</span> : <span className={commons}><FontAwesomeIcon icon={faReceipt} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faChartBar} /> Reports</span> : <span className={commons}><FontAwesomeIcon icon={faChartBar} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faChartLine} /> Forecasts</span> : <span className={commons}><FontAwesomeIcon icon={faChartLine} /></span>}
@@ -35,7 +36,7 @@ function SideNav({showSideNav, setShowSideNav}){
             </div>
             <div className='w-full flex-col-style justify-start'>
             {showSideNav ? <span className={`${sideNavTitle}`}>Admin</span> : <span className={`${sideNavTitle}`}></span>}
-                {showSideNav ? <span className={`${commons}`}><Link to='/user/home/manage/users'><FontAwesomeIcon icon={faUsers} /> Manage Users</Link></span> : <span className={commons}><FontAwesomeIcon icon={faUsers} /></span>}
+                {showSideNav ? <span className={`${commons}`}><Link to={`/user/${userid}/home/manage/users`}><FontAwesomeIcon icon={faUsers} /> Manage Users</Link></span> : <span className={commons}><FontAwesomeIcon icon={faUsers} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faInbox} /> Expense Requests</span> : <span className={commons}><FontAwesomeIcon icon={faInbox} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faRegistered} /> Registration Requests</span> : <span className={commons}><FontAwesomeIcon icon={faRegistered} /></span>}
             </div>

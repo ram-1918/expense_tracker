@@ -16,6 +16,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = Users
         fields =  '__all__' # ['id', 'email', 'fullname', 'role', 'authorized', 'phone', 'password', 'is_active', 'image', 'company']
     
+    def validate_fullname(self, fullname):
+        return fullname.lower()
+    
     def validate_email(self, email):
         handleObj = HandleService()
         email = handleObj.handler('email', email)

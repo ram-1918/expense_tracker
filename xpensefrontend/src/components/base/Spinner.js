@@ -1,12 +1,9 @@
 import React from 'react'
 
-const Spinner = ({ text = '', size = '5em' }) => {
+const Spinner = ({ text = '', size = '5em', data }) => {
   const header = text ? <h4>{text}</h4> : null
   return (
-    <div className="spinner">
-      {header}
-      <div className="loader" style={{ height: size, width: size }} />
-    </div>
+    !data && <div className="loader" style={{ height: size, width: size }}>Loading...</div>
   )
 }
 

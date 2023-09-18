@@ -1,10 +1,11 @@
-import { useSelector } from "react-redux";
+import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router";
-import { selectUserid } from "../features/users/usersSlice";
 
 const PrivateRoute = () => {
-    const userid = useSelector(selectUserid) || localStorage.getItem('id', null); // should be retrieved from the session storage
-    console.warn("PRIVATE ROUTE!", userid);
+    const userid = useSelector((state) => state.user.userid); 
+    console.log("PRIVATE ROUTE");
     return userid ? <Outlet /> : <Navigate replace to='/users/login/' />;
 }
 

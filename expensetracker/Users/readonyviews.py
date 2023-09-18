@@ -14,28 +14,32 @@ def decodeddata():
     return globalvars.data
 
 # PROTECTED - list of users with filters
-@api_view(['GET'])
+@api_view(['POST'])
 @login_required
 def list_users(request):
     decoded = decodeddata()
     id = decode_uuid(decoded['sub'])
     user = Users.objects.filter(id=id).first()  
 
+    print('DATA REQUESTED BY USER FOR LIST - ', request.data)
+    filters = request.data['filters']
     if user.role in ['superadmin', 'admin']:
-        params = request.query_params      
-        if params:
-            if 'ordering' in params.keys():
-                print(params.get('ordering'), 'ORDERING')
-                users = Users.objects.all().order_by(params.get('ordering'))
-            else:
-                filter_dic = {}
-                for key in params.keys(): filter_dic[key] = params.get(key)
-                users = Users.objects.filter(**filter_dic)
+        if user.role == 'admin':
+            users = Users.objects.filter(company=user.company).exclude(id=id)
         else:
-            if user.role == 'admin':
-                users = Users.objects.filter(company=user.company).exclude(id=id)
-            else:
-                users = Users.objects.all()
+            users = Users.objects.all()
+
+        if filters:
+            [fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate] = filters.values()
+            print(fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate)
+            # role = filters['role']
+            # company = filters['company']
+            users = users.filter(is_active = isactive).filter(authorized = isauthorized)
+            if fromdate and todate: 
+                users = users.filter(created_at__range=[fromdate, todate])
+            if company: users = users.order_by('company')
+            if role: users = users.order_by('role')
+            if fullname: users = users.order_by('fullname')
         ser = ListUserSerializer(users, many=True)
         return {"data": ser.data, "count":len(ser.data)}
     return {"msg": 'unauthorized'} # Response('Notvalid')
@@ -78,3 +82,33 @@ Optimize code if possible, create groups, Images upload(IMP)
 request > each page (should retrieve id from URL) (create reusable code blocks(for retrieving params from URL) in react and django) > 
 '''
     
+
+'''
+@api_view(['POST'])
+@login_required
+def list_users(request):
+decoded = decodeddata()
+id = decode_uuid(decoded['sub'])
+user = Users.objects.filter(id=id).first()  
+
+print('DATA REQUESTED BY USER FOR LIST - ', request.data)
+
+if user.role in ['superadmin', 'admin']:
+    params = request.query_params      
+    if params:
+        if 'ordering' in params.keys():
+            print(params.get('ordering'), 'ORDERING')
+            users = Users.objects.all().order_by(params.get('ordering'))
+        else:
+            filter_dic = {}
+            for key in params.keys(): filter_dic[key] = params.get(key)
+            users = Users.objects.filter(**filter_dic)
+    else:
+        if user.role == 'admin':
+            users = Users.objects.filter(company=user.company).exclude(id=id)
+        else:
+            users = Users.objects.all()
+    ser = ListUserSerializer(users, many=True)
+    return {"data": ser.data, "count":len(ser.data)}
+return {"msg": 'unauthorized'} # Response('Notvalid')
+'''

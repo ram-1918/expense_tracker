@@ -1,16 +1,55 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { client } from '../../api/client';
-import {API_URL} from '../../store/constants';
 import axios from 'axios';
 
+export const fetchusers = createAsyncThunk('expenses/fetchusers', 
+    async (data) => {
+        const response = await axios.post('http://localhost:8000/users/listusers/', data, {withCredentials:true});
+        // console.log(response.data, response);
+        return response.data;
+    }
+);
 
-// export const customHook = createAsyncThunk('name/asyncFuncName', async_function);
+// export const fetchuserinfo = createAsyncThunk('expenses/fetchusers', 
+//     async () => {
+//         const response = await axios.get('http://localhost:8000/user/'+'', {withCredentials:true});
+//         // console.log(response.data, response);
+//         return response.data;
+//     }
+// );
 
-export const expenseSlice = createSlice({name:'expenses', initialState:{test: 'test'}, reducers:{}}); // extrareducers(builder) {builder.addCase()}
+const initialState = {
+    userslist: [],
+    status: 'idle',
+    filterStack: [],
+}
 
-export const {} = expenseSlice.actions; 
+export const expenseSlice = createSlice({
+    name:'expenses', 
+    initialState, 
+    reducers:{
+        setUsersList: (state, action) => {
+            state.userslist = action.payload;
+        },
+        setFilterStack: (state, action) => {
+            state.filterStack = [...state.filterStack, action.payload];
+        },
+    },
+    extraReducers(builder) {
+        builder
+        .addCase(fetchusers.pending, (state, action) => {
+            state.status = "loading";
+        })
+        .addCase(fetchusers.fulfilled, (state, action) => {
+            state.status = "succeeded";
+            console.log(state.status, "INSIDE BUILDER")
+            state.userslist = action.payload.data;
+        })
+    }
+});
 
-export const expenseTestValue = (state) => state.test;
+export const {setUsersList, setFilterStack} = expenseSlice.actions; 
+
+
 
 export default expenseSlice.reducer;
 
