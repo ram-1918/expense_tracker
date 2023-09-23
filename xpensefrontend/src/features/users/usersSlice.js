@@ -6,7 +6,7 @@ export const fetchuserinfo = createAsyncThunk('users/fetchuserinfo',
     async (userid) => {
         const response = await axios.get(`http://localhost:8000/users/user/${userid}`, {withCredentials:true});
         // console.log(response.data, response);
-        return response;
+        return response.data;
     }
 );
 
@@ -30,7 +30,7 @@ export const userSlice = createSlice({
         builder
         .addCase(fetchuserinfo.fulfilled, (state, action) => {
             state.status = "succeeded";
-            state.userinfo = action.payload.data;
+            state.userinfo = action.payload;
         })
     }
 }); //  extraReducers(builder) {builder.addCase()}

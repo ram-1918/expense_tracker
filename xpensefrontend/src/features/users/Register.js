@@ -48,15 +48,13 @@ const Register = () => {
             "is_admin": false,
             "is_employee": true,
             "comment": comment,
-            "proceedtorequest": false
+            "proceedtorequest": proceedToRequest
         }
         try{
             const response = await register(enteredValues);
             console.log(response.status, ' Response');
-            if (!proceedToRequest){
-                navigate('/users/login');
-            }
-            reset();
+            navigate('/users/login');
+            // reset();
         }
         catch (error){
             if(error.response.status === 400){

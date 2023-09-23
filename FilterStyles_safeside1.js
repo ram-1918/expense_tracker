@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setUsersList } from "../coreSlice";
+import { setUsersList } from "./xpensefrontend/src/features/core/coreSlice";
 
 const sortObjects = (obj, setStack, stack, userslist) => {
   console.log(userslist, stack, 'FILTERS', obj);

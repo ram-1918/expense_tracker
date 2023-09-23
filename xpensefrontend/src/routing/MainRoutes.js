@@ -2,15 +2,17 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import UsersHome from '../pages/UsersHome';
+import UsersHome from '../features/users/UsersHome';
 import Login from '../features/users/Login';
 import Register from '../features/users/Register';
 
 
-import CoreHome from '../pages/CoreHome';
-import FormLayout from '../components/layouts/FormLayout';
+import CoreHome from '../features/core/CoreHome';
+import FormLayout from '../containers/forms/FormLayout';
+import UpdateUserForm from '../containers/forms/UpdateUserForm';
 import Dashboard from '../features/core/Dashboard';
-import ContentLayout from '../components/layouts/ContentLayout';
+import ContentLayout from '../containers/content/ContentLayout';
+import RequestsLayout from '../containers/requests/RequestsLayout';
 
 
 
@@ -40,7 +42,10 @@ const MainRoutes = () => {
                 <Route path='dashboard' element={<Dashboard />} > 
                   <Route path='submit/:formtype' element={<FormLayout />} />
                 </Route>
-                <Route path='manage/:type' element={<ContentLayout />} />
+                <Route path='manage/:type' element={<ContentLayout />}>
+                  <Route path='updateuser/:userid' element={<UpdateUserForm />} />
+                </Route>
+                <Route path='requests/:type' element={<RequestsLayout />}></Route>
               </Route>
             </Route>
             <Route path='*' element={<PageNotFound />} />

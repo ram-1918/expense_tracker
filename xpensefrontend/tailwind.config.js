@@ -25,10 +25,10 @@ module.exports = {
         'xl': '36rem',
       },
       backgroundImage: {
-        'about-bg': "url('/src/images/about-bg-img.jpeg')",
-        'fallwp-bg': "url('/src/images/fall_walpaper.webp')",
-        'login1-bg': "url('/src/images/login1.jpeg')",
-        'login2-bg': "url('/src/images/login2.jpeg')",
+        'about-bg': "url('/src/assets/images/about-bg-img.jpeg')",
+        'fallwp-bg': "url('/src/assets/images/fall_walpaper.webp')",
+        'login1-bg': "url('/src/assets/images/login1.jpeg')",
+        'login2-bg': "url('/src/assets/images/login2.jpeg')",
       },
       aspectRatio: {
         '4/3': '4 / 3',

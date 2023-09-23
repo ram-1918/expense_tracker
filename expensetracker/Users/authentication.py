@@ -12,7 +12,7 @@ class GlobalAccess():
 
 def get_access_token(user):
     print('GENERATING ACCESS TOKEN: STARTED')
-    expiry_days = datetime.now() + timedelta(minutes=150)
+    expiry_days = datetime.now() + timedelta(days=1)
     payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title()}
     payload['iat'] = datetime.now()
     payload['iss'] = 'etbackend'
@@ -23,7 +23,7 @@ def get_access_token(user):
 
 def get_refresh_token(user):
     print('GENERATING REFRESH TOKEN: STARTED')
-    expiry_days = datetime.now() + timedelta(hours=10)
+    expiry_days = datetime.now() + timedelta(days=7)
     payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title()}
     payload['iat'] = datetime.now()
     payload['iss'] = 'etbackend'

@@ -64,8 +64,10 @@ class RegisterAPI(APIView):
         # replace with instance of the company object
         data['company'] = Company.objects.filter(id=request.data['company']).first()
         # check if the user is in authorized list of users
+        print('After Company')
         authorized_users_check = AuthorizedUsers.objects.filter(email=data['email']).first()
         # Differntiate between admin and superadmins while user creation - create_admin, create_superadmin
+        print('After Check', authorized_users_check, proceedToRequest)
         if authorized_users_check:
             data['email'] = authorized_users_check.email
             data['role'] = authorized_users_check.role
@@ -80,11 +82,12 @@ class RegisterAPI(APIView):
         
         elif not authorized_users_check and proceedToRequest:
             # if not authorized, then create a record in requests table and send an email
-
+            print('inside UNAUTH')
             already_requested_check = Users.objects.filter(email=data['email'], authorized=False)
             if already_requested_check: 
                 return Response('alreadyrequested', status=status.HTTP_409_CONFLICT)
             
+            print('After No clash')
             data['comment'] = data['comment'].strip()
             data['image'] = 'profilepics/default.png'
             print(data, "unauth + workedout")
@@ -185,6 +188,64 @@ class UserAPI(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return serializer.data
+
+
+@api_view(['POST'])
+@login_required
+def get_single_user(request):
+    print(request.data)
+    user = Users.objects.filter(id=request.data['userid']).first()
+    ser = ListUserSerializer(user)
+    return ser.data
+
+@api_view(['PUT'])
+@login_required
+def update_user_by_admin(request):
+    print(request.data, 'UPDATE USER')
+    decoded = decodeddata()
+    id = decode_uuid(decoded['sub'])
+    user = Users.objects.filter(id=id).first()
+    if user and user.role == "superadmin":
+        employee = Users.objects.filter(id=request.data['id']).first()
+        if not employee: return {"msg": "error occured"}
+        ser = UserSerializer(employee, data = request.data, partial=True)
+        ser.is_valid(raise_exception=True)
+        ser.save()
+        return {"msg": "updated succussfully"}
+    return {"msg": "not authorized"}
+
+@api_view(['POST'])
+@login_required
+def deleteuserbyadmin(request):
+    print(request.data)
+    decoded = decodeddata()
+    id = decode_uuid(decoded['sub'])
+    user = Users.objects.filter(id=id).first()
+    if user and user.role == "superadmin":
+        userid = request.data['userid']
+        user = Users.objects.filter(id=userid).first()
+        user.delete()
+        return {"msg": "deleted succussfully"}
+    return {"msg": "Not Authorized"}
+
+@api_view(['POST'])
+@login_required
+def change_registration_request_status(request):
+    status = request.data['status']
+    userid = request.data['userid']
+    print(status, userid, "DATA FOR REQUETS CHANGE")
+    user = Users.objects.filter(id=userid).first()
+    if status == 'accept': 
+        user.authorized = True
+        user.save()
+        return {"msg" : "accepted"}
+    elif status == 'reject': 
+        user.delete()
+        return {"msg": "rejected"}
+    return {"msg" : "Invalid input"}
+
+
+
 
 # Login and authentication
 class LoginAPI(APIView):

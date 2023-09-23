@@ -1,21 +1,25 @@
 
-const mark = 'border border-gray-500 rounded-full w-4 h-4 flex-row-style justify-center text-[0.8rem] cursor-pointer hover:scale-[1.03]';
-const tooltipStyles = 'absolute border w-72 min-h-full flex-col-style justify-center left-0 bottom-[0] rounded-lg bg-slate-100 opacity-0 group-hover/tooltip:opacity-100 px-4 ml-2 mb-4 text-sm';
+const outerdiv = 'group/item relative flex-row-style justify-center h-10';
+const mark = 'group/tooltip border border-gray-500 rounded-full w-4 h-4 flex-row-style justify-center text-[0.8rem] font-semibold cursor-pointer hover:scale-[1.03]';
+const tooltipStyles = 'absolute left-0 bottom-0 border rounded-md w-72 min-h-fit flex-col-style justify-center shadow-lg bg-white p-2 ml-2 mb-4 text-[0.8rem] hidden group-hover/item:block';
 const Tooltip = ({type}) => {
+    const passwordrules = [
+        'atleast one number', 
+        'atleast one symbol (@.#$%^!&*)',
+        'atleast one uppercase & lowercase letters'
+    ]
+    const commentrules = [
+        'Include expected role and employee id'
+    ]
+    const tooltipMapper = {
+        'password' : passwordrules.map((e) => <li>{e}</li>),
+        'comment': commentrules.map((e) => <li>{e}</li>)
+    }
+    const tooltip = (type) => <span className={tooltipStyles}> {tooltipMapper[type]} </span>
     return (
-        <span className='group/item relative flex-row-style justify-center h-10'>
-            <span className={`group/tooltip ${mark}`}>?</span>
-            {type === 'password' ? 
-            <span className={tooltipStyles}>
-                <li>atleast one number</li>
-                <li>atleast one symbol (@.#$%^!&*)</li>
-                <li>atleast one uppercase & lowercase letters</li>
-            </span>
-            :
-            <span className={tooltipStyles}>
-                <li>Details about your role and company</li>
-            </span>
-            }
+        <span className={outerdiv}>
+            <span className={mark}>?</span>
+            {tooltip(type)}
         </span>
     )
 }

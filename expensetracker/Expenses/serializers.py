@@ -1,4 +1,4 @@
-from .models import TypeTags, Expenses, ExpenseProofs
+from .models import Category, TypeTags, Expenses, ExpenseProofs
 from Users.serializers import UserSerializer, ListUserSerializer
 
 from rest_framework.serializers import ModelSerializer
@@ -25,16 +25,18 @@ class TypeTagSerializerReadOnly(ModelSerializer):
         model = TypeTags
         fields = ['name']
 
+class Category(ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+    
 class ExpenseSerializer(ModelSerializer):
-    # use related names for nested serializing - prrofe_expense, tag_expense
-    proof_expense = ExpenseProofSerializerReadOnly(many=True, read_only=True)
-    tag_expense = TypeTagSerializerReadOnly(many=True, read_only=True)
+    # use related names for nested serializing - proof_expense, tag_expense
+    # tag_expense = TypeTagSerializerReadOnly(many=True, read_only=True)
+    # expense_proof = ExpenseProofSerializerReadOnly(many=True, read_only=True)
     user_info = UserSerializer(read_only=True, many=True)
 
     class Meta:
         model = Expenses
-        fields = ['id', 'userid','name', 'amount', 'description', 'submitted_date', 'status', 'proof_expense', 'tag_expense', 'user_info']
+        fields = ['id', 'category', 'userid', 'amount', 'description', 'date_submitted', 'last_modified',  'payment_recepient', 'payment_method', 'status', 'currency', 'rejection_count', 'user_info']
 
-    # def validate_submitted_date(self, date):
-    #     formatted_date = date.strftime('%b %d %Y')
-    #     return formatted_date

@@ -38,9 +38,8 @@ function SideNav({showSideNav, setShowSideNav}){
             {showSideNav ? <span className={`${sideNavTitle}`}>Admin</span> : <span className={`${sideNavTitle}`}></span>}
                 {showSideNav ? <span className={`${commons}`}><Link to={`/user/${userid}/home/manage/users`}><FontAwesomeIcon icon={faUsers} /> Manage Users</Link></span> : <span className={commons}><FontAwesomeIcon icon={faUsers} /></span>}
                 {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faInbox} /> Expense Requests</span> : <span className={commons}><FontAwesomeIcon icon={faInbox} /></span>}
-                {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faRegistered} /> Registration Requests</span> : <span className={commons}><FontAwesomeIcon icon={faRegistered} /></span>}
+                {showSideNav ? <span className={`${commons}`}><FontAwesomeIcon icon={faRegistered} /><Link to={`/user/${userid}/home/requests`} >Registration Requests</Link></span> : <span className={commons}><FontAwesomeIcon icon={faRegistered} /></span>}
             </div>
-
         </div>
     )
 }

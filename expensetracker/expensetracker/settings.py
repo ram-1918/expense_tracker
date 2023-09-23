@@ -28,7 +28,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # print(get_random_secret_key()) # Generate new secret periodically
 SECRET_KEY = config('SECRET_KEY')
-print(type(SECRET_KEY), " settings")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default="False", cast=bool)

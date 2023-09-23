@@ -42,7 +42,7 @@ class ListUserSerializer(serializers.ModelSerializer):
     company = CompanySerializer(read_only=True)
     class Meta:
         model = Users
-        fields = ['id', 'email', 'fullname', 'role', 'authorized', 'phone', 'is_active', 'image', 'company', 'colortag', 'get_date_created', 'get_last_modified'] # ['fullname', 'email', 'phone', 'image', 'role', 'company', 'employee_id']
+        fields = ['id', 'email', 'password', 'fullname', 'role', 'authorized', 'phone', 'is_active', 'image', 'company', 'colortag', 'get_date_created', 'get_last_modified'] # ['fullname', 'email', 'phone', 'image', 'role', 'company', 'employee_id']
 
 # Factory pattern
 class SerializerMapper():

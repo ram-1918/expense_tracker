@@ -1,9 +1,18 @@
-import React from 'react'
 
-const Spinner = ({ text = '', size = '5em', data }) => {
-  const header = text ? <h4>{text}</h4> : null
+const outerdiv = 'border-0 border-black rounded-full grid grid-flow-col grid-rows-2 gap-1 animate-spin mt-20';
+const innerdiv = 'w-2 h-2 bg-black rounded-full';
+
+const Spinner = ({name}) => {
   return (
-    !data && <div className="loader" style={{ height: size, width: size }}>Loading...</div>
+    <div className='flex-col-style'>
+      <div className={outerdiv}>
+        <div className={innerdiv}></div>
+        <div className={innerdiv}></div>
+        <div className={innerdiv}></div>
+        <div className={innerdiv}></div>
+      </div>
+      <span>Loading {name}</span>
+    </div>
   )
 }
 

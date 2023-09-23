@@ -1,35 +1,56 @@
 from django.db import models
 from Users.models import Users
 from datetime import datetime
+import uuid
 
 # Create your models here.
 
+class Category(models.Model):
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name_plural = 'Category'
+    
+    def __str__(self):
+        return self.name
+
+# date, category, amount, description, payment method, payment recepient, receipt, expense id/ reference number, currency, tax info
+
+# https://www.geeksforgeeks.org/prefetch_related-and-select_related-functions-in-django/
+
 class Expenses(models.Model):
-    userid = models.ForeignKey(Users, related_name='users', on_delete=models.DO_NOTHING)
-    name = models.CharField(max_length=255, default='expense_name')
-    amount = models.CharField(max_length=255, blank=False, null=True)
+    choices = [('cash', 'Cash'), ('card', 'Card'), ('cheque', 'Cheque')]
+    currency_choices = [('usd', 'USD'), ('inr', 'INR')]
+    status_choices = [('pending', 'Pending'), ('approved', 'Approved')]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    userid = models.ForeignKey(Users, related_name="userid", on_delete=models.CASCADE)
     date_submitted = models.DateTimeField(auto_now=True)
     last_modified = models.DateTimeField(auto_now_add=True)
-    description = models.TextField(blank=True, null=True)
-    status = models.CharField(choices=[('1', '1'), ('2', '2'), ('3', '3')], max_length=3, default=3)
-    # status = models.BooleanField(default=False)
-    year = models.IntegerField(null=True, blank=True)
-    month = models.IntegerField(null=True, blank=True)
-    day = models.IntegerField(null=True, blank=True)
-    
-    def save(self, *args, **kwargs):
-        if self.last_modified:
-            self.year = self.last_modified.year
-            self.month = self.last_modified.month
-            self.day = self.last_modified.day
-        super().save(*args, **kwargs)
+    category = models.ForeignKey(Category, related_name="category", on_delete=models.CASCADE)
+    amount = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField()
+    payment_method = models.CharField(choices=choices, default='card', max_length=15)
+    payment_recepient = models.CharField(max_length=100, null=True, blank=True)
+    currency = models.CharField(choices=currency_choices, default='usa', max_length=15)
+    status = models.CharField(choices=status_choices, default='pending', max_length=30)
+    rejection_count = models.IntegerField(default=0)
+
+    @property
+    def list_categories(self):
+        categories = Category.objects.all()
+        choices = list(zip(range(1, len(categories) + 1), categories))
+        return choices
 
     class Meta:
         verbose_name_plural = 'Expenses'
         db_table = 'expenses'
+        indexes = [
+            models.Index(fields=['id']),
+        ]
     
     def __str__(self):
-        return self.name
+        return f'{self.id} - {self.category} - {self.amount}'
     
 class TypeTags(models.Model):
     expense = models.ForeignKey(Expenses, related_name='tag_expense', on_delete=models.CASCADE)

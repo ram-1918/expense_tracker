@@ -1,7 +1,4 @@
 // [position] [border] [width,height] [flex] [padding, margin] [bg] [text] [hover] [media]
-import googlesso from '../../images/google_sso.png'
-import fbsso from '../../images/fb_sso.png'
-import linsso from '../../images/linksso.png'
 import { useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router';
 import BaseField from '../../components/base/BaseField';

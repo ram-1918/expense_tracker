@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlassDollar, faMagnifyingGlassArrowRight, faMagnifyingGlassMinus } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import defaultpic from '../../images/default.png'
+import defaultpic from '../../assets/images/default.png'
 import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../users/usersSlice';
 

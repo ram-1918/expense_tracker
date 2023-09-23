@@ -1,9 +1,9 @@
 // [position] [border] [width,height] [flex] [padding, margin] [bg] [text] [hover] [media]s
 
-import receipt from '../../images/receipt.jpeg';
-import report from '../../images/generatereport.jpeg';
-import invite from '../../images/inviteuser.png';
-import dollar from '../../images/addexpense.png';
+import receipt from '../../assets/images/receipt.jpeg';
+import report from '../../assets/images/generatereport.jpeg';
+import invite from '../../assets/images/inviteuser.png';
+import dollar from '../../assets/images/addexpense.png';
 import { Link, Outlet, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../users/usersSlice';

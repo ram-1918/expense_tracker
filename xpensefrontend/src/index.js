@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import './styles/tailwind.css';
+import './styles/custom.css';
 import 'font-awesome/css/font-awesome.min.css';
 import App from './App';
 

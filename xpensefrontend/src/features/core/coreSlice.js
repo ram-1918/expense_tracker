@@ -9,26 +9,106 @@ export const fetchusers = createAsyncThunk('expenses/fetchusers',
     }
 );
 
-// export const fetchuserinfo = createAsyncThunk('expenses/fetchusers', 
-//     async () => {
-//         const response = await axios.get('http://localhost:8000/user/'+'', {withCredentials:true});
-//         // console.log(response.data, response);
-//         return response.data;
-//     }
-// );
+export const fetchsingleuser = createAsyncThunk('expenses/fetchsingleuser', 
+    async (userid) => {
+        try{
+            const response = await axios.post('http://localhost:8000/users/getsingleuser/', {"userid": userid}, {withCredentials: true});
+            console.log(response, response.data, "TESTING IN SIGNLE USER")
+            return response.data;
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+)
+
+export const updateuserinfo = createAsyncThunk('expenses/updateuser', 
+    async (enteredData) => {
+        try {
+            const response = await axios.put('http://localhost:8000/users/updateuser/', enteredData, {withCredentials:true});
+            console.log(response.data);
+            return response.data;
+        }
+        catch(errors) {
+            console.log(errors, 'update thunk');
+        }
+    }
+);
+
+export const deleteuserbyadmin = createAsyncThunk('expenses/deleteuserbyadmin', 
+    async (id) => {
+        try {
+            const response = await axios.post('http://localhost:8000/users/deleteuserbyadmin/', {"userid": id}, {withCredentials:true});
+            console.log(response.data);
+            return response.data;
+        }
+        catch(errors) {
+            console.log(errors, 'delete thunk');
+        }
+    }
+);
+
+export const registrationrequestsbyadmin = createAsyncThunk('expenses/registrationrequestsbyadmin', 
+    async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/users/registrationrequests/', {withCredentials:true});
+            console.log(response.data);
+            return response.data;
+        }
+        catch(errors) {
+            console.log(errors, 'requests thunk');
+        }
+    }
+);
+
+export const changeregistrationstatus = createAsyncThunk('expenses/changeregistrationstatus', 
+    async (data) => {
+        try {
+            const response = await axios.post('http://localhost:8000/users/changeregistrationstatus/', data, {withCredentials:true});
+            console.log(response.data);
+            return response.data;
+        }
+        catch(errors) {
+            console.log(errors, 'requests thunk');
+        }
+    }
+);
+
+// Expense related
+
+export const listexpenses = createAsyncThunk('expenses/listexpenses', 
+    async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/expenses/list/', {withCredentials:true});
+            console.log("Expense data", response.data);
+            return response.data;
+        }
+        catch(errors) {
+            console.log(errors, 'listexpenses thunk');
+        }
+    }
+);
 
 const initialState = {
     userslist: [],
+    singleuserinfo: [],
+    updatedInfo: [],
     status: 'idle',
     filterStack: [],
+    registrationrequests: [],
+
+    expenselist: [],
 }
 
 export const expenseSlice = createSlice({
-    name:'expenses', 
+    name:'expense', 
     initialState, 
     reducers:{
         setUsersList: (state, action) => {
             state.userslist = action.payload;
+        },
+        setRegistrationRequests: (state, action) => {
+            state.registrationrequests = action.payload
         },
         setFilterStack: (state, action) => {
             state.filterStack = [...state.filterStack, action.payload];
@@ -44,10 +124,38 @@ export const expenseSlice = createSlice({
             console.log(state.status, "INSIDE BUILDER")
             state.userslist = action.payload.data;
         })
+        .addCase(fetchsingleuser.pending, (state, action) => {
+            state.status = "loading";
+        })
+        .addCase(fetchsingleuser.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.singleuserinfo = action.payload;
+        })
+        .addCase(updateuserinfo.pending, (state, action) => {
+            state.status = 'loading';
+        })
+        .addCase(updateuserinfo.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.updatedInfo = action.payload.data;
+        })
+        .addCase(deleteuserbyadmin.fulfilled, (state, action) => {
+            state.status = 'deleted';
+        })
+        .addCase(registrationrequestsbyadmin.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.registrationrequests = action.payload;
+        })
+        .addCase(changeregistrationstatus.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+        })
+        .addCase(listexpenses.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.expenselist = action.payload;
+        })
     }
 });
 
-export const {setUsersList, setFilterStack} = expenseSlice.actions; 
+export const {setUsersList, setRegistrationRequests, setFilterStack} = expenseSlice.actions; 
 
 
 

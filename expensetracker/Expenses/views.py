@@ -1,4 +1,4 @@
-from .models import Expenses, TypeTags, ExpenseProofs
+from .models import Category, Expenses, TypeTags, ExpenseProofs
 from .serializers import TypeTagSerializer, ExpenseSerializer, ExpenseProofSerializer
 from Users.serializers import ListUserSerializer
 from Users.models import Users, AuthorizedUsers
@@ -70,15 +70,40 @@ def post_expenses(request):
         return {"id": Expenseobj.id}
     except:
         return {"msg": "errorocured"}
+    
+def getusername(userid):
+    try:
+        name = Users.objects.filter(id=userid).first().fullname
+        return name
+    except:
+        return {"msg": "error occured"}
+
+def getcategortname(catid):
+    try:
+        name = Category.objects.filter(id=catid).first().name
+        return name
+    except:
+        return {"msg": "error occured"}
 
 @api_view(['GET'])
 @login_required
 def get_expenses(request):
     userid, role = decodeddata()
-    print(userid, role)
-    expenses = Expenses.objects.all()
-    serializer = ExpenseSerializer(expenses, many=True)
-    return serializer.data
+    company_of_the_requester = Users.objects.filter(id = userid, is_active = True).first().company
+    expenses = []
+    if role == 'superadmin':
+        expenses = Expenses.objects.select_related().all()
+    elif role == 'admin':
+        expenses = Expenses.objects.select_related().filter(userid__role = "employee" ).filter(userid__company = company_of_the_requester.id)
+    data = []
+    for  obj in expenses:
+        username, category = obj.userid.fullname, obj.category.name
+        obj = obj.__dict__
+        obj.pop('_state')
+        obj.pop('userid_id')
+        obj.pop('category_id')
+        data.append({**obj, "username": username, "category": category })
+    return data
 
 @api_view(['GET'])
 @login_required
