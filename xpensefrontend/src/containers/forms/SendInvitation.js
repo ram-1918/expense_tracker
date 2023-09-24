@@ -12,10 +12,6 @@ const mark = 'border border-gray-500 rounded-full w-4 h-4 flex-row-style justify
 const resetButtonStyles = 'border border-green-900 rounded-xl p-2 px-4 text-lg font-light text-green-900 cursor-pointer hover:opacity-80';
 const sendButtonStyles = 'border rounded-xl p-2 px-4 text-lg font-light bg-green-600 text-white cursor-pointer hover:opacity-80';
 
-function handleSubmit(){
-    return 
-}
-
 function SendInvitation(){
     const navigate = useNavigate();
     const [name, setName] = useState('');
@@ -23,11 +19,14 @@ function SendInvitation(){
     const [role, setRole] = useState('');
     const [comment, setComment] = useState('');
     const [showOptions, setShowOptions] = useState(false);
+    
+    function handleSubmit(e){
+        e.preventDefault();
+        return 
+    }
 
-    const categories = ['Travel', 'Food', 'Appliances', 'Others'];
-      
     return (
-        <form onSubmit={handleSubmit} className={formStyles}>
+        <form onSubmit={(e) => handleSubmit(e)} className={formStyles}>
             <div className='border-0 w-full h-full flex-row-style justify-center'>
                 <div className='border-0 h-full flex-col-style justify-center space-y-4'>
                     <span className={groupStyles}>
@@ -51,7 +50,7 @@ function SendInvitation(){
             </div>
             <div className='border w-full p-4 text-right space-x-2'>
                 <button className={resetButtonStyles}>Reset</button>
-                <button className={sendButtonStyles}>Send</button>
+                <button type="submit" className={sendButtonStyles}>Send</button>
             </div>
         </form>
     )

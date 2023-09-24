@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 export const fetchusers = createAsyncThunk('expenses/fetchusers', 
-    async (data) => {
+    async (data={"filters": ''}) => {
         const response = await axios.post('http://localhost:8000/users/listusers/', data, {withCredentials:true});
         console.log(response.data, response, "INSIDE FETCH USERS");
         return response.data;

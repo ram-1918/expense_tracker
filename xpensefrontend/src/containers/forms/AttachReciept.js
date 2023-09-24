@@ -6,13 +6,14 @@ import { useState } from 'react';
 import FieldValidations from '../../components/base/FieldValidations';
 import { useNavigate } from 'react-router';
 
+const formStyles = 'border-r border-l w-full h-full flex-col-style justify-start space-y-8 overscroll-hidden';
+const groupStyles = 'border-0 w-fit h-fit flex-col-style space-y-2';
+const listStyles = 'text-sm font-normal p-2';
+const inputStyles = 'border border-gray-400 rounded-full w-72 h-8 p-2 outline-none focus:border-gray-400 placeholder:text-sm';
+const fileButtonStyles = 'border text-slate-400 text-sm font-medium overflow-x-scroll file:cursor-pointer file:border-none file:rounded-full file:bg-slate-100 file:px-2 file:py-[5px] file:text-slate-600 file:font-bold';
+
 function AttachReciept({setCheckIfFull}){
     const navigate = useNavigate();
-    const formStyles = 'border-r border-l w-full h-full flex-col-style justify-start space-y-8 overscroll-hidden';
-    const groupStyles = 'border-0 w-fit h-fit flex-col-style space-y-2';
-    const listStyles = 'text-sm font-normal p-2';
-    const inputStyles = 'border border-gray-400 rounded-full w-72 h-8 p-2 outline-none focus:border-gray-400 placeholder:text-sm';
-    const fileButtonStyles = 'border text-slate-400 text-sm font-medium overflow-x-scroll file:cursor-pointer file:border-none file:rounded-full file:bg-slate-100 file:px-2 file:py-[5px] file:text-slate-600 file:font-bold';
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -21,8 +22,6 @@ function AttachReciept({setCheckIfFull}){
     const [selected_image, setSelectedImage] = useState('sample.png');
     const [showOptions, setShowOptions] = useState(false);
 
-    const categories = ['Travel', 'Food', 'Appliances', 'Others'];
-    const mark = 'border border-gray-500 rounded-full w-4 h-4 flex-row-style justify-center text-sm px-2 cursor-pointer hover:scale-[1.03]';
     const [activeSection, setActiveSection] = useState(1);
 
     const listExpenses = [
@@ -43,9 +42,12 @@ function AttachReciept({setCheckIfFull}){
             <span className='border-0 w-full h-7 flex-row-style justify-around cursor-pointer'>
                 <span onClick={() => setActiveSection(1)} className={`relative w-[50%] text-center ${activeSection === 1 ? 'bg-slate-300':'bg-slate-200'}`}>
                     <span className={`flex-row-style justify-center  after:content-[""] after:absolute after:-right-2 after:border-t after:border-r after:p-2 after:rotate-45 ${activeSection === 1 ? 'after:bg-slate-300 after:border-slate-300':'after:bg-slate-200 after:border-slate-200'} `}>
-                        1. Upload an appropriate image </span>
+                        1. Upload an appropriate image 
+                    </span>
                 </span>
-                <span onClick={() => setActiveSection(2)} className={`w-[50%] text-center ${activeSection === 1 ? 'bg-slate-200':'bg-slate-300'}`}>2. Attach it to your expenses</span>
+                <span onClick={() => setActiveSection(2)} className={`w-[50%] text-center ${activeSection === 1 ? 'bg-slate-200':'bg-slate-300'}`}>
+                    2. Attach it to your expenses
+                </span>
             </span>
 
            <div className={`${activeSection === 1 ? 'flex-col-style justify-between' : 'hidden'} w-full h-full border-2`}>

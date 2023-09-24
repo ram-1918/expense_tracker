@@ -16,6 +16,7 @@ from .authentication import login_required, GlobalAccess, decode_uuid, get_acces
 import json
 import os
 import bcrypt
+import time
 
 # Create your views here.
 
@@ -211,6 +212,7 @@ def update_user_by_admin(request):
         ser = UserSerializer(employee, data = request.data, partial=True)
         ser.is_valid(raise_exception=True)
         ser.save()
+        time.sleep(5)
         return {"msg": "updated succussfully"}
     return {"msg": "not authorized"}
 

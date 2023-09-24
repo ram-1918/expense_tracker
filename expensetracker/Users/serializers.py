@@ -33,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
         return password
     
     def validate_phone(self, phone):
+        if not phone: return phone
         handleObj = HandleService()
         phone = handleObj.handler('phone', phone)
         if not phone: raise serializers.ValidationError('Enter a valid phone number.')

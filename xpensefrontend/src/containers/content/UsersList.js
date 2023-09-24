@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Pagination from "../../components/base/Pagination";
 import TableCaption from "../../components/base/TableCaption";
 import Spinner from "../../components/base/Spinner";
-import { deleteuserbyadmin, setUsersList } from "../../features/core/coreSlice";
+import { deleteuserbyadmin, fetchusers, setUsersList } from "../../features/core/coreSlice";
 import { dateformater } from "../../utils/helper";
 import FilterHeader from "./FilterHeader";
 import { Link, Outlet } from "react-router-dom";
@@ -24,7 +24,7 @@ const thead = ' w-full h-10 rounded-tl-lg rounded-tr-lg flex-row-style justify-b
 const th = 'border-r h-6 text-left text-sm font-bold text-white capitalize tracking-wider px-2';
 
 const tbody = 'flex-col justify-center items-center';
-const tr = 'w-full h-8 flex-row-style justify-between py-5 cursor:pointer odd:bg-white even:bg-slate-100 hover:scale-[1] hover:font-medium';
+const tr = 'border w-full h-8 flex-row-style justify-between py-5 cursor:pointer odd:bg-white even:bg-slate-100 hover:border-teal-500';
 const td = 'border-r overflow-x-hidden flex-row-style text-sm text-gray-700 px-2 py-[5px]';
 const td1 = 'w-20 text-md text-gray-500 px-2 py-[5px]';
 
@@ -35,6 +35,8 @@ function View({obj, keys, fieldStyleMapper}){
   const getStatus = (obj) => obj ? 'Active': 'Inactive';
   const getAuthorized = (obj) => obj ? 'Authorized': 'Unauthorized';
   const getPhone = (obj) => obj ? obj : 'N/A';
+  const getEmpid = (obj) => obj ? obj : 'N/A';
+  const getComment = (obj) => obj ? obj : 'N/A';
   const userslist = useSelector(state => state.expense.userslist);
 
   function deleteUserInfo(){
@@ -53,6 +55,8 @@ function View({obj, keys, fieldStyleMapper}){
           ele === 'is_active' ? getStatus(obj[ele]) : 
           ele === 'phone' ? getPhone(obj[ele]) : 
           ele === 'authorized' ? getAuthorized(obj[ele]) : 
+          ele === 'employee_id' ? getEmpid(obj[ele]) : 
+          ele === 'comment' ? getComment(obj[ele]) : 
           obj[ele]}
         </td>
       ))}
@@ -71,12 +75,14 @@ const fieldStyleMapper = {
     id: 'w-96', fullname: "w-36", email: "w-48", phone: "w-32", company: "w-32", is_active: "w-20",
     role: "w-24", created_at: "w-44", employee_id: "w-44", authorized: "w-24", comment: "w-44"
   }
+
 const dispatch = useDispatch();
 const [keys, setKeys] = useState(initial_active_keys);
 const [active, setActive] = useState(initial_active);
 
 const [pageNumber, setPageNumber] = useState(1);
 const [pageLimit, setPageLimit] = useState(1);
+
 
 // DISPLAY AMOUNT SPENT BY EACH USER
 

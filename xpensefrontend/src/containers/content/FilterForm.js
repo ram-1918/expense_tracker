@@ -27,7 +27,7 @@ function UserFilters() {
   const [isFullname, setIsFullname] = useState('');
   const [isRole, setIsRole] = useState(false);
   const [isCompany, setIsCompany] = useState(false);
-  const [company, setCompany] = useState('Choose Company');
+  const [company, setCompany] = useState('siriinfo');
   const [showCompanies, setShowCompanies] = useState(false);
   const [isactive, setIsActive] = useState('');
   const [isauthorized, setIsAuthorized] = useState('');
@@ -35,7 +35,7 @@ function UserFilters() {
   const [location, setLocation] = useState('Edison');
   const [fromdate, setFromDate] = useState(null);
   const [todate, setToDate] = useState(null);
-  const dropdownOptions = ['Choose Company', 'SiriInfo', 'Cloud5', 'Iniac', 'I5Tech'];
+  const dropdownOptions = {'SiriInfo':'siriinfo', 'Cloud5': 'cloud5', 'Iniac': 'iniac', 'I5Tech':'i5tech'};
 
   const localheader = title => <span className={headerStyles}>{title}</span>
 
@@ -82,7 +82,7 @@ function UserFilters() {
           <span onClick={() => setIsRole('superadmin')} className={`${isRole === 'superadmin' ? activeSortButtonStyles : sortButtonStyles}`}>Super Admin</span>
           <span onClick={() => setIsRole('admin')} className={`${isRole === 'admin' ? activeSortButtonStyles : sortButtonStyles}`}>Admin</span>
           <span onClick={() => setIsRole('employee')} className={`${isRole === 'employee' ? activeSortButtonStyles : sortButtonStyles}`}>Employee</span>
-          <BaseDropdown options={dropdownOptions} setShowFunction={setShowCompanies} show={showCompanies} setValueFunction={setCompany} value={company} selectStyle={selectedOptionStyle} />
+          <BaseDropdown options={dropdownOptions} setValueFunction={setCompany} value={company} />
         </div>
       </section>
       <section className={sectionStyles}>

@@ -33,9 +33,7 @@ def list_users(request):
             [fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate] = filters.values()
             print(fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate)
             if role: users = users.filter(role=role.lower())
-            if company: 
-                users = users.filter(company__name=company.lower()) 
-                print('Worked fine', users)
+            if company: users = users.filter(company__name=company.lower()) 
             if isactive: users = users.filter(is_active = isactive)
             if isauthorized: users = users.filter(authorized = isauthorized)
             if tag: users = users.filter(colortag=tag)
@@ -45,7 +43,6 @@ def list_users(request):
         ser = ListUserSerializer(users, many=True)
         data =[]
         for obj in ser.data: 
-            print(obj['company']['name'], "COMPANY")
             data.append({**obj, 'company':obj['company']['name']})
         return {"data": data, "count":len(ser.data)}
     return {"msg": 'unauthorized'} # Response('Notvalid')
