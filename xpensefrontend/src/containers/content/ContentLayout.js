@@ -13,7 +13,7 @@ const inner_1_1 = "w-full px-4 overflow-y-scroll overscroll-contain";
 const innerdiv_2 = (showTags, showSummary) => `h-full space-y-4 ${showTags || showSummary ? 'w-[25%] ' : 'w-[10%]'} overflow-scroll`;
 const titleStyles = '';
 const inner_2_12 = `border w-full h-fit overflow-y-scroll`;
-const inner_2_2_1 = 'sticky top-0 right-0 w-full flex-row-style justify-between font-medium p-2 bg-white';
+const inner_2_2_1 = 'w-full flex-row-style justify-between font-medium p-2 bg-white';
 const inner_2_2_2 = (showSummary) => `w-full h-full ${showSummary ? 'flex' : 'hidden'}`;
 
 function BaseDisplay() {

@@ -4,7 +4,7 @@ import axios from 'axios';
 export const fetchusers = createAsyncThunk('expenses/fetchusers', 
     async (data) => {
         const response = await axios.post('http://localhost:8000/users/listusers/', data, {withCredentials:true});
-        // console.log(response.data, response);
+        console.log(response.data, response, "INSIDE FETCH USERS");
         return response.data;
     }
 );
@@ -121,8 +121,8 @@ export const expenseSlice = createSlice({
         })
         .addCase(fetchusers.fulfilled, (state, action) => {
             state.status = "succeeded";
-            console.log(state.status, "INSIDE BUILDER")
-            state.userslist = action.payload.data;
+            state.userslist = action.payload;
+            console.log(state.status, state.userslist, "INSIDE BUILDER")
         })
         .addCase(fetchsingleuser.pending, (state, action) => {
             state.status = "loading";

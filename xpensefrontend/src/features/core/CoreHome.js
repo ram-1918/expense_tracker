@@ -4,9 +4,12 @@ import { Outlet } from "react-router";
 import Topnav from './Topnav';
 import SideNav from "./SideNav";
 import { useState } from "react";
-import Spinner from "../../components/base/Spinner";
-import Tooltip from "../../components/base/Tooltip";
 
+
+const outerdiv = "w-full h-screen flex-row-style justify-center";
+const inner_1 = (showSideNav) => `${showSideNav ? 'w-[15%]' : 'w-[4%]'} sticky  h-full flex-col-style justify-start bg-[#282c34] text-white transition-transform ease-linear duration-700`;
+const inner_2 = (showSideNav) => `${showSideNav ? 'w-[85%]' : 'w-[97%]'} h-full flex-col-style justify-center`;
+const inner_2_1 = "border-0 w-full h-screen flex-row-style justify-center";
 
 
 function CoreHome() {
@@ -14,15 +17,13 @@ function CoreHome() {
   return (
     <>
         <Topnav />
-        <div className="w-full h-screen flex-row-style justify-center">
-            <div onMouseOver={() => {setShowSideNav(true)}} className={`${showSideNav ? 'w-[15%]' : 'w-[4%]'} sticky  h-full flex-col-style justify-start bg-[#282c34] text-white transition-transform ease-linear duration-700`}>
+        <div className={outerdiv}>
+            <div className={inner_1(showSideNav)}>
                 <SideNav showSideNav={showSideNav} setShowSideNav={setShowSideNav}/>
             </div>
-            <div className={`${showSideNav ? 'w-[85%]' : 'w-[97%]'} h-full flex-col-style justify-center`}>
-                <div className="border-0 w-full h-screen flex-row-style justify-center">
+            <div className={inner_2(showSideNav)}>
+                <div className={inner_2_1}>
                     <Outlet />
-                    {/* <Tooltip type="password"></Tooltip> */}
-                    {/* <Spinner pagename="dashboard" /> */}
                 </div>
             </div>
         </div>

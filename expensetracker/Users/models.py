@@ -64,7 +64,6 @@ def upload_to(instance, filename):
     print(instance, filename, 'ghvhgvh')
     return 'profilepics/{filename}'.format(filename=filename) if filename else 'profilepics/default.png'
 
-
 class Users(AbstractBaseUser):
     last_login = None
     choices = [('superadmin', 'Superadmin'), ('admin', 'admin'), ('employee', 'employee')]
@@ -86,6 +85,7 @@ class Users(AbstractBaseUser):
     authorized = models.BooleanField(default=False) # status for letting new users
     comment = models.TextField(default='Authorize normally')
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    # gender = models.CharField(choices = [('male', 'Male'), ('female', 'Female')], max_length=10, default='male')
     
     created_at = models.DateTimeField(auto_now=True)
     year = models.IntegerField(null=True, blank=True)

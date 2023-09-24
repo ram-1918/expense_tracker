@@ -23,7 +23,7 @@ function UpdateUserForm() {
     const status = useSelector(state => state.expense.status);
     const singleuser = useSelector(state => state.expense.singleuserinfo);
 
-    const [name, setName] = useState(singleuser.fullname);
+    const [name, setName] = useState(state.userdata.fullname);
     const [email, setEmail] = useState(state.userdata.email);
     const [phone, setPhone] = useState(state.userdata.phone);
     const [role, setRole] = useState(state.userdata.role);

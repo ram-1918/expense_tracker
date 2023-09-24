@@ -42,7 +42,7 @@ const MainRoutes = () => {
                 <Route path='dashboard' element={<Dashboard />} > 
                   <Route path='submit/:formtype' element={<FormLayout />} />
                 </Route>
-                <Route path='manage/:type' element={<ContentLayout />}>
+                <Route path='manage/:type/' element={<ContentLayout />}>
                   <Route path='updateuser/:userid' element={<UpdateUserForm />} />
                 </Route>
                 <Route path='requests/:type' element={<RequestsLayout />}></Route>

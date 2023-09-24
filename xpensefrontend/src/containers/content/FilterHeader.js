@@ -37,7 +37,7 @@ function FilterHeader({ allKeys, setKeys, active, setActive }) {
     }
     return (
         <div className={outerdiv}>
-            {allkeys.map((ele, idx) => <button key={idx} type="submit" onClick={() => handleKeys(ele)} className={`${buttonStyles} ${active[ele] && 'border border-green-500 bg-green-100'}`}>{ele}</button>)}
+            {allkeys.map((ele, idx) => <button key={idx} type="submit" onClick={() => handleKeys(ele)} className={`${buttonStyles} ${active[ele] && 'border border-teal-900 bg-teal-100'}`}>{ele}</button>)}
         </div>
     );
     }

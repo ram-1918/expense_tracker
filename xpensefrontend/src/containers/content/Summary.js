@@ -5,7 +5,11 @@ import { useSelector } from "react-redux";
 
 
 function UserSummary({type}) {
-  const usersData = useSelector((state) => state.expense.userslist);
+  let usersData = useSelector((state) => state.expense.userslist);
+  if (usersData.data === undefined) {
+    return <div>{usersData['msg']}</div>
+  }
+  usersData = usersData.data;
   if (!usersData){
     return <div>Loading...</div>
   }
