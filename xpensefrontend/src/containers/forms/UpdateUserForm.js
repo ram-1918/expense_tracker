@@ -42,6 +42,7 @@ function UpdateUserForm() {
     const [userdetails, setUserdetails] = useState(initial_details);
     const [spinner, setSpinner] = useState(false);
 
+
     const handleUpdate = async () => {
         const enteredData = {...userdetails};
         setSpinner(true);
@@ -62,7 +63,7 @@ function UpdateUserForm() {
             <div className='absolute w-[45%] h-[80%] flex-col-style justify-between bg-white rounded-lg'>
                 <div className='border-0 w-full h-12 flex-row-style justify-between bg-slate-100 rounded-md'>
                     <span className='p-2 text-xl font-medium'>Update User</span>
-                    <span onClick={() => {handleClose()}}
+                    <span onClick={() => {navigate('../')}}
                         className='p-2 px-4 text-lg font-medium cursor-pointer transition duration-300 hover:rotate-90'><i className='fa fa-close'></i>
                     </span>
                 </div>
