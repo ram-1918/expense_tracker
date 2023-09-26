@@ -1,5 +1,5 @@
 from .models import Category, TypeTags, Expenses, ExpenseProofs
-from Users.serializers import UserSerializer, ListUserSerializer
+from Users.serializers import GetUserSerializer
 
 from rest_framework.serializers import ModelSerializer
 from datetime import datetime
@@ -34,7 +34,7 @@ class ExpenseSerializer(ModelSerializer):
     # use related names for nested serializing - proof_expense, tag_expense
     # tag_expense = TypeTagSerializerReadOnly(many=True, read_only=True)
     # expense_proof = ExpenseProofSerializerReadOnly(many=True, read_only=True)
-    user_info = UserSerializer(read_only=True, many=True)
+    user_info = GetUserSerializer(read_only=True, many=True)
 
     class Meta:
         model = Expenses

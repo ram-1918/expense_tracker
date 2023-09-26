@@ -3,22 +3,27 @@ from rest_framework.decorators import APIView, api_view
 from rest_framework.response import Response
 from rest_framework import status, generics, mixins
 from django.utils.decorators import method_decorator
-from django_filters.rest_framework import DjangoFilterBackend # pip3 install django-filter
+# pip3 install django-filter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
 
 from .models import AuthorizedUsers, Company, Users
-from .serializers import SerializerMapper, UserSerializer, ListUserSerializer
+from .serializers import GetUserSerializer, PostUserSerializer, CompanySerializer
 
 from .services import HandleService
 
-from .authentication import login_required, GlobalAccess, decode_uuid, get_access_token, get_refresh_token
+from .authentication import login_required, admin_required, pagination_decorator, GlobalAccess, decode_uuid, get_access_token, get_refresh_token, _debuger
+
 
 import json
 import os
 import bcrypt
 import time
 
+# https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html
+# mypy, autopep8
 # Create your views here.
+
 
 def testing(request):
     return Response('Users app')
@@ -27,235 +32,213 @@ def decodeddata():
     globalobj = GlobalAccess()
     return globalobj.data
 
+def get_hashed_password(plain_password):
+    return bcrypt.hashpw(plain_password, bcrypt.gensalt(12))
+
 def check_password(plain_password, hashed_password):
     return bcrypt.checkpw(plain_password, hashed_password)
 
-@api_view(['GET'])
-@login_required
-def view_users(request):
-    decoded = decodeddata()
-    id = decode_uuid(decoded['sub'])
-    user = Users.objects.filter(id=id).first()
-    serializer = UserSerializer(user)
-    return serializer.data
-
-def modelObjectToDict(obj):
-    return obj.__dict__
-
-def getImage(image):
-    defaultimg = os.path.join('http://127.0.0.1:8000/ExpenseMedia/', 'profilepics/default.png')
-    imageurl = os.path.join('http://127.0.0.1:8000/ExpenseMedia/', image)
-    return imageurl if image else defaultimg
-
 def processFormData(data):
     newData = {}
-    for k,v in dict(data).items():
+    for k, v in dict(data).items():
         newData[k] = v[0]
     return newData
 
-class RegisterAPI(APIView):    
+# PROTECTED - list users, action by superadmin or admin
+# ENDPOINT - /users/listusers/
+@api_view(['GET'])
+@login_required
+@admin_required
+@pagination_decorator
+def getUsersView(request):
+    userid, role, *others = decodeddata().values()
+    adminuser = Users.objects.filter(id=decode_uuid(userid)).first()
+    allusers = Users.objects.all().order_by('fullname')
+    if role == 'admin':
+        allusers = Users.objects.filter(company = adminuser.company).filter(role = 'employee')
+    return allusers, GetUserSerializer
+
+
+# PROTECTED - list of users with filters
+# USE QUERY PARAMS FOR SORTING?FILTERING - try in the morning
+@api_view(['POST'])
+@login_required
+def list_users(request):
+    decoded = decodeddata()
+    id = decode_uuid(decoded['sub'])
+    user = Users.objects.filter(id=id).first()  
+
+    print('DATA REQUESTED BY USER FOR LIST - ', request.data)
+    filters = request.data['filters']
+    if user.role in ['superadmin', 'admin']:
+        if user.role == 'admin':
+            users = Users.objects.filter(company=user.company).exclude(id=id)
+        else:
+            users = Users.objects.all()
+
+        if filters:
+            [fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate] = filters.values()
+            print(fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate)
+            if role: users = users.filter(role=role.lower())
+            if company: users = users.filter(company__name=company.lower()) 
+            if isactive: users = users.filter(is_active = isactive)
+            if isauthorized: users = users.filter(authorized = isauthorized)
+            if tag: users = users.filter(colortag=tag)
+            if fromdate and todate: users = users.filter(created_at__range=[fromdate, todate])
+            if fullname: users = users.order_by(fullname)
+        if not users: return {"msg": "No users found"}
+        ser = GetUserSerializer(users, many=True)
+        data =[]
+        for obj in ser.data: 
+            data.append({**obj, 'company':obj['company']['name']})
+        return {"data": data, "count":len(ser.data)}
+    return {"msg": 'unauthorized'} # Response('Notvalid')
+
+
+
+
+# Register new user
+# ENDPOINT - /users/register/
+class PostUsersView(APIView):
     def post(self, request):
-        # data = request.data.__dict__ 
-        print(request.data['email'], "EMAIL")
-        proceedToRequest = request.data.pop('proceedtorequest')
-        if not request.data['phone']: request.data.pop('phone')
-        serializer = SerializerMapper()
-        data = serializer.mapSerializer('postuser', request.data)
-        print(data, 'INITINALLY')
-        # replace with instance of the company object
-        data['company'] = Company.objects.filter(id=request.data['company']).first()
-        # check if the user is in authorized list of users
-        print('After Company')
-        authorized_users_check = AuthorizedUsers.objects.filter(email=data['email']).first()
-        # Differntiate between admin and superadmins while user creation - create_admin, create_superadmin
-        print('After Check', authorized_users_check, proceedToRequest)
-        if authorized_users_check:
-            data['email'] = authorized_users_check.email
-            data['role'] = authorized_users_check.role
-            data['employee_id'] = authorized_users_check.employeeid
-            data['image'] = 'profilepics/default.png'
-            try: Users.objects.create_user(**data) # once created send an email
-            except: return Response('user creation error', status=status.HTTP_409_CONFLICT)
-            return Response('created', status=status.HTTP_201_CREATED)
-        
-        elif not authorized_users_check and not proceedToRequest:
-            return Response('unauthorized', status=status.HTTP_400_BAD_REQUEST)
-        
+        '''
+            {
+                "email": str,
+                "password": str,
+                "fullname": str,
+                "company": int,
+                "comment": str,
+                "proceedtorequest": bool
+            }
+        '''
+        if Users.objects.filter(email=request.data['email'], authorized=True).exists():
+            return Response({"msg": "already registered"}, status=status.HTTP_409_CONFLICT)
+
+        if Users.objects.filter(email=request.data['email'], authorized=False).exists():
+            return Response('alreadyrequested', status=status.HTTP_409_CONFLICT)
+
+        result = {"msg": ""}
+        proceedToRequest = request.data.get('proceedtorequest', None)
+
+        if authorized_users_check := AuthorizedUsers.objects.filter(email=request.data['email']).first():
+            request.data = {**request.data, 
+                            "role": authorized_users_check.role,
+                            "employee_id": authorized_users_check.employeeid, 
+                            "authorized": True
+                            }
+            result = {"msg": "created"}
+
         elif not authorized_users_check and proceedToRequest:
             # if not authorized, then create a record in requests table and send an email
-            print('inside UNAUTH')
-            already_requested_check = Users.objects.filter(email=data['email'], authorized=False)
-            if already_requested_check: 
-                return Response('alreadyrequested', status=status.HTTP_409_CONFLICT)
-            
-            print('After No clash')
-            data['comment'] = data['comment'].strip()
-            data['image'] = 'profilepics/default.png'
-            print(data, "unauth + workedout")
-            try: 
-                Users.objects.create_user(**data)
-            except: 
-                return Response('usercreationerror', status=status.HTTP_400_BAD_REQUEST)
-            return Response('requestsent', status=status.HTTP_201_CREATED)
+            request.data['comment'] = request.data['comment'].strip()
+            result = {"msg": "requestsent"}
 
-    def patch(self, request, pk):
-        user = Users.objects.filter(id=pk).first()
-        if request.data['authorized']:
-            user.authorized = True
-            user.save()
-            return Response('approved', status=status.HTTP_201_CREATED)
-        try:user.delete() # if status if false, just delete the record
-        except: Response('invaliduser', status=status.HTTP_409_CONFLICT)
-        return Response('rejected', status=status.HTTP_200_OK)
-
-# # PROTECTED - list of users with filters
-# @api_view(['GET'])
-# @login_required
-# def list_users(request):
-#     decoded = decodeddata()
-#     id = decode_uuid(decoded['sub'])
-#     user = Users.objects.filter(id=id).first()  
-
-#     if user.role in ['superadmin', 'admin']:
-#         params = request.query_params      
-#         if params:
-#             if 'ordering' in params.keys():
-#                 print(params.get('ordering'), 'ORDERING')
-#                 users = Users.objects.all().order_by(params.get('ordering'))
-#             else:
-#                 filter_dic = {}
-#                 for key in params.keys(): filter_dic[key] = params.get(key)
-#                 users = Users.objects.filter(**filter_dic)
-#         else:
-#             if user.role == 'admin':
-#                 users = Users.objects.filter(company=user.company).exclude(id=id)
-#             else:
-#                 users = Users.objects.all()
-#         ser = ListUserSerializer(users, many=True)
-#         return {"data": ser.data, "count":len(ser.data)}
-#     return {"msg": 'unauthorized'} # Response('Notvalid')
-    
-
-
-# PROTECTED - Single user info and update
-class UserAPI(APIView):
-    @login_required
-    def get(self, request, pk):
-        user = Users.objects.get(id=pk)
-        if user:
-            data = modelObjectToDict(user)
-            filteredData = {}
-            for k,v in data.items():
-                if k in ['fullname', 'email', 'phone', 'password', 'employee_id', 'company_id', 'image', 'role']:
-                    filteredData[k] = v
-            filteredData['image'] = getImage(filteredData['image'])
-            return filteredData
-        return Response('nouser', status=status.HTTP_400_BAD_REQUEST)
-    
-    @login_required
-    def patch(self, request, pk):
-        handleObj = HandleService()
-        user = Users.objects.filter(id=pk).first()
-        data = processFormData(request.data)
-        print(data,"PATCH")
-        emailChange = data['emailchange']
-        passwordChange = data['passwordchange']
-        if 'image' in data and not data['image']: data.pop('image')
-        if data['phone']:
-            phone = handleObj.handler('phone', data['phone'])
-            if phone: data['phone'] = phone
-            else: return Response('invalidphonenumber',  status=status.HTTP_400_BAD_REQUEST)
         else:
-            data.pop('phone')
+            return Response({"msg": "unauthorized"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if emailChange == 'true':
-            # check and upadate with out clashes
-            email = handleObj.handler('email', data['email'])
-            userCheck = Users.objects.filter(email=email).first()
-            if userCheck and not userCheck.email == email:
-                return Response({"msg":"alreadyexists"}, status=status.HTTP_409_CONFLICT)
-            else:
-                data['email'] = email
-
-        if passwordChange == 'true':
-            password = data['password']
-            if not user.check_password(password): # checking new password against old password
-                user.set_password(password) 
-                user.save()
-                return {"msg": "passwordupdated"}
-            return Response({"msg": "sameasprevious"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        serializer = UserSerializer(user, data = data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return serializer.data
-
-
-@api_view(['POST'])
-@login_required
-def get_single_user(request):
-    print(request.data)
-    user = Users.objects.filter(id=request.data['userid']).first()
-    ser = ListUserSerializer(user)
-    return ser.data
-
-@api_view(['PUT'])
-@login_required
-def update_user_by_admin(request):
-    print(request.data, 'UPDATE USER')
-    decoded = decodeddata()
-    id = decode_uuid(decoded['sub'])
-    user = Users.objects.filter(id=id).first()
-    if user and user.role == "superadmin":
-        employee = Users.objects.filter(id=request.data['id']).first()
-        if not employee: return {"msg": "error occured"}
-        ser = UserSerializer(employee, data = request.data, partial=True)
+        ser = PostUserSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         ser.save()
+
+        return Response(result, status=status.HTTP_201_CREATED)
+
+
+# PROTECTED - Retrieve and update an user info
+# ENDPOINT - /users/user/<uuid:pk>
+class GetAndUpdateUserView(APIView):
+    @login_required
+    def get(self, request, pk) -> dict[str, int]:
+        user = Users.objects.filter(id=pk)
+        if not user.exists():
+            return {"msg": "user not found"}, 204
+        userinfo = GetUserSerializer(user.first())
+        return userinfo.data, 200
+    
+    @login_required
+    def patch(self, request, pk) -> dict:
+        '''
+        Receives form data from the UI
+        {
+            "email": ['email'],
+            ...
+        }
+        '''
+        handleObj = HandleService()
+        user = Users.objects.filter(id=pk)
+        if not user.exists(): return {"msg": "User not found"}, 404
+
+        
+        # Change authorized status of the user
+        if authorized := request.data.get('authorized', None):
+            print(authorized)
+            if authorized == "accept":
+                user.update(authorized = True)
+            elif authorized == 'reject':
+                try:
+                    user.delete()
+                except:
+                    return {"msg": "no user found"}, 409
+
+            return {"msg": "status changed"}, 201
+    
+        data = processFormData(request.data)
+        
+        # update user's password
+        if password := data.get('password', None):
+            handledpassword, status = handleObj.handler('password', password)
+            if not status:
+                return handledpassword, 400
+            hashpass = get_hashed_password(handledpassword)
+            user.update(password=hashpass)
+            return {"msg": "password updated"}, 201
+        
+        # update user's email
+        if email := data.get('email', None):
+            handledemail, status = handleObj.handler('email', email)
+            if not status:
+                return handledemail, 400
+            user.update(email=handledemail)
+            return {"msg": "email updated"}, 201
+        
+        # update user's phone
+        if phone := data.get('phone', None):
+            handledphone, status = handleObj.handler('phone', phone)
+            if not status:
+                return {"msg": "password updated"}, 400
+            data['phone'] = handledphone
+
+        try:
+            user.update(**data)
+        except:
+            return {"msg": "error while updating"}, 400
+        
         time.sleep(5)
-        return {"msg": "updated succussfully"}
-    return {"msg": "not authorized"}
 
+        return {"msg": "data updated"}, 201
+
+
+# PROTECTED - delete user, action by superadmin or admin
+# ENDPOINT - /users/deleteuserbyadmin/
 @api_view(['POST'])
 @login_required
+@admin_required
 def deleteuserbyadmin(request):
-    print(request.data)
-    decoded = decodeddata()
-    id = decode_uuid(decoded['sub'])
-    user = Users.objects.filter(id=id).first()
-    if user and user.role == "superadmin":
-        userid = request.data['userid']
-        user = Users.objects.filter(id=userid).first()
-        user.delete()
-        return {"msg": "deleted succussfully"}
-    return {"msg": "Not Authorized"}
-
-@api_view(['POST'])
-@login_required
-def change_registration_request_status(request):
-    status = request.data['status']
     userid = request.data['userid']
-    print(status, userid, "DATA FOR REQUETS CHANGE")
-    user = Users.objects.filter(id=userid).first()
-    if status == 'accept': 
-        user.authorized = True
-        user.save()
-        return {"msg" : "accepted"}
-    elif status == 'reject': 
+    if user := Users.objects.filter(id=userid).first():
         user.delete()
-        return {"msg": "rejected"}
-    return {"msg" : "Invalid input"}
-
-
+        return {"msg": "deleted succussfully"}, 201
+    return {"msg": "user not found"}, 204
 
 
 # Login and authentication
+# ENDPOINT - /users/login/
 class LoginAPI(APIView):
     def authenticate(self, request):
         handleobj = HandleService()
-        email = handleobj.handleEmail(request.data['email'])
+        email, status = handleobj.handleEmail(request.data['email'])
         password = request.data['password']
-        if not email: return {"msg": 'Enter a valid email address.'} # Response("Enter a valid email address.", status=status.HTTP_401_UNAUTHORIZED)
+        if not status:
+            return {"msg": 'Enter a valid email address.'}
         user = Users.objects.filter(email=email).first()
         if user:
             if user.is_active:
@@ -265,60 +248,93 @@ class LoginAPI(APIView):
                     refresh = get_refresh_token(user)
                     print("ACCESS ", access, "REFRESH ", refresh)
                     return user, access, refresh
-                return Response('Incorrect password.', status=status.HTTP_401_UNAUTHORIZED) # {"msg": 'Incorrect password.'} # 
-            return Response('notactive', status=status.HTTP_403_FORBIDDEN) # {"msg": 'notactive'} # 
-        return Response('No user with this email address.', status=status.HTTP_401_UNAUTHORIZED) # {"msg": 'No user with this email address.'} 
-    
+                # {"msg": 'Incorrect password.'} #
+                return Response('Incorrect password.', status=status.HTTP_401_UNAUTHORIZED)
+            # {"msg": 'notactive'} #
+            return Response('notactive', status=status.HTTP_403_FORBIDDEN)
+        # {"msg": 'No user with this email address.'}
+        return Response('No user with this email address.', status=status.HTTP_401_UNAUTHORIZED)
+
     # If authenticated, setup generated token inside httponly cookies
     def post(self, request):
         user, access, refresh = self.authenticate(request)
-        data = {"id":str(user.id), "role":user.role, "fullname": user.fullname.title()}
+        data = {"id": str(user.id), "role": user.role,
+                "fullname": user.fullname.title()}
         # set JWT into cookies
         response = Response(data, status=status.HTTP_201_CREATED)
-        response.set_cookie(key='refresh', value=refresh, path='/', httponly=True, samesite='Lax') # storing refresh
-        response.set_cookie(key='access', value=access, path='/', httponly=True, samesite='Lax') # storing access
+        response.set_cookie(key='refresh', value=refresh, path='/',
+                            httponly=True, samesite='Lax')  # storing refresh
+        response.set_cookie(key='access', value=access, path='/',
+                            httponly=True, samesite='Lax')  # storing access
         return response
 
+
+# ENDPOINT - /users/logout/
 @api_view(['GET'])
 def logout(request):
     print("DELETE", request.COOKIES)
-    response = Response({"status":True})
+    response = Response({"msg": "logged out"})
     response.delete_cookie('access')
     response.delete_cookie('refresh')
-    return response
+    return response, 
+
+
+# ENDPOINT - /users/registrationrequests/
+@api_view(['GET'])
+@login_required
+@admin_required
+def get_registration_requests(request):
+    decoded_data = decodeddata()
+    role = decoded_data.get('role', None)
+    company = decoded_data.get('company', None)
+    users = Users.objects.filter(authorized = False)
+    if role == 'admin':
+        users = users.filter(role = "employee", company=company)
+    filteredUsers = GetUserSerializer(users, many=True)
+    return filteredUsers.data, 200
+
+# ENDPOINT - /users/list/
+@api_view(['GET'])
+@login_required
+@admin_required
+def list_companies(request):
+    decoded_data = decodeddata()
+    role = decoded_data.get('role', None)
+    company = decoded_data.get('company', None)
+    if role == 'superadmin':
+        companies = Company.objects.all()
+    else:
+        companies = Company.objects.filter(id=company)
+    serializer = CompanySerializer(companies)
+    return serializer.data, 200
+    
+# ENDPOINT - /users/list/<company>
+@api_view(['GET'])
+@login_required
+@admin_required
+def get_users_by_company(request, company):
+    role = decodeddata().get('role', None)
+    users = Users.objects.filter(company=company)
+    if role == 'admin':
+        users = users.filter(role = "employee")
+    serializer = GetUserSerializer(users, many=True)
+    return serializer.data, 200
+
 
 '''
-# registering superadmin
+# registeration
 {
-    "email":"preetu.b@gmail.com",
-    "phone":"1234567845",
-    "password": "12345S@",
-    "fullname":"preetu",
-    "company": 1,
-    "employee_id": "001734",
-    "is_superadmin": false,
-    "is_admin": true,
-    "is_employee": false
+    "email":"ramubhai203@siriinfo.com",
+    "password": "Preetu@19",
+    "fullname":"Ramubhai",
+    "company": 10,
+    "comment": "This is Krishan, my email id has been changed, this is my updated email. please approve my registration, thank you",
+    "proceedtorequest": true
 }
-# registering admin
+# Login
 {
-    "email":"krishna.y@gmail.com",
-    "phone":"1234567845",
-    "password": "12345S@",
-    "fullname":"krishna ",
-    "company": "cloud5",
-    "employee_id": "00234",
-    "is_staff": true,
-    "superadmin": "Srinivas Y"
-}
-# registering user
-{
-    "email":"krishna.y@gmail.com",
-    "phone":"1234567845",
-    "password": "12345S@",
-    "fullname":"krishna ",
-    "company": "cloud5",
-    "employee_id": "00234"
+    "email": "ramchandra.b@gmail.com",
+    "password": "12345S@"
 }
 
 '''

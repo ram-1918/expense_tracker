@@ -1,6 +1,6 @@
 from .models import Category, Expenses, TypeTags, ExpenseProofs
 from .serializers import TypeTagSerializer, ExpenseSerializer, ExpenseProofSerializer
-from Users.serializers import ListUserSerializer
+from Users.serializers import GetUserSerializer
 from Users.models import Users, AuthorizedUsers
 from Users.authentication import login_required, GlobalAccess, decode_uuid
 
@@ -119,7 +119,7 @@ def get_expenses_by_user(request):
 def get_user_for_an_expense(request, expid):
     userid, role = decodeddata()
     user = Expenses.objects.filter(id=expid).first()
-    userinfo = ListUserSerializer(user.userid)
+    userinfo = GetUserSerializer(user.userid)
     return userinfo.data
 
 @api_view(['GET'])

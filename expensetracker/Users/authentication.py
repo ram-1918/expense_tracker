@@ -5,6 +5,26 @@ from django.conf import settings
 from .models import Users
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.paginator import Paginator
+
+def _debuger(msg):
+    if settings.DEBUG:
+        print(msg)
+    else:
+        pass
+
+statuscodemapper = {
+    200: status.HTTP_200_OK,
+    201: status.HTTP_201_CREATED,
+    204: status.HTTP_204_NO_CONTENT,
+    301: status.HTTP_301_MOVED_PERMANENTLY,
+    400: status.HTTP_400_BAD_REQUEST,
+    401: status.HTTP_401_UNAUTHORIZED,
+    404: status.HTTP_404_NOT_FOUND,
+    409: status.HTTP_409_CONFLICT,
+    500: status.HTTP_500_INTERNAL_SERVER_ERROR,
+    502: status.HTTP_502_BAD_GATEWAY
+}
 
 class GlobalAccess():
     def __init__(self):
@@ -13,7 +33,7 @@ class GlobalAccess():
 def get_access_token(user):
     print('GENERATING ACCESS TOKEN: STARTED')
     expiry_days = datetime.now() + timedelta(days=1)
-    payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title()}
+    payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title(), 'company': user.company.id}
     payload['iat'] = datetime.now()
     payload['iss'] = 'etbackend'
     payload['exp'] = int(expiry_days.strftime('%s'))
@@ -24,7 +44,7 @@ def get_access_token(user):
 def get_refresh_token(user):
     print('GENERATING REFRESH TOKEN: STARTED')
     expiry_days = datetime.now() + timedelta(days=7)
-    payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title()}
+    payload = {'sub': str(user.id), 'role': user.role, 'name': user.fullname.title(), 'company': user.company.id}
     payload['iat'] = datetime.now()
     payload['iss'] = 'etbackend'
     payload['exp'] = int(expiry_days.strftime('%s'))
@@ -96,11 +116,11 @@ def login_required(function=None):
                 access, refresh = token['access'], token['refresh']
                 print("EXECUTING API LOGIC: STARTED")
                 start = time.time()
-                data = view_func(request, *args, **kwargs) # Main login
+                data, statuscode = view_func(request, *args, **kwargs) # Main login
                 end = time.time()
                 print("EXECTION: ENDED")
                 print('TOTAL EXECUTION TIME: ', int(end-start))
-                response = Response({"msg": "authorized"}, status=status.HTTP_200_OK)
+                response = Response({"msg": "authorized"}, status=statuscodemapper[statuscode])
                 response.set_cookie('access', access)
                 response.set_cookie('refresh', refresh)
                 response.data = data
@@ -111,4 +131,52 @@ def login_required(function=None):
     
     if function is not None:
         return decorator(function)
+    return decorator
+
+def admin_required(func=None):
+    def decorator(func):
+        @wraps(func)
+        def inner(request, *args, **kwargs):
+            print("------------ admin check, --------------")
+            id, role, *others = decoded_data.values()
+            print(id, role)
+            if role in ['admin', 'superadmin']:
+                result = func(request, *args, **kwargs)
+                return result
+            return {"msg": "not authorized"}
+        return inner
+    if func:
+        return decorator(func)
+    return decorator
+
+def pagination_decorator(func=None):
+    def decorator(func):
+        @wraps(func)
+        def inner(request, *args, **kwargs):
+            print("------------ Paginator check, --------------")
+            alldata, serializer = func(request, *args, **kwargs)
+            # default pageno and pagesize
+            pageno, page_size = 1, 10
+            if(params := request.query_params):
+                pageno, page_size = list(map(int, params.values()))
+                if pageno <= 0 or page_size <= 0: return {"msg": "invalid page number or page size"}, 400
+                total = len(alldata)
+                import math
+                expected_pagenumbers = math.ceil(total/page_size)
+                print(expected_pagenumbers, pageno, 'EXPENSED')
+                if pageno > expected_pagenumbers: return {"msg": "Page contains no result"}, 400
+
+            # dividing all data into a group of size page_size
+            paginator = Paginator(alldata, page_size)
+
+            # retrieving the data from the requested page
+            page = paginator.page(pageno)
+            
+            # serialize data just from that page
+            ser = serializer(page, many=True)
+            
+            return ser.data, 200
+        return inner
+    if func:
+        return decorator(func)
     return decorator

@@ -4,7 +4,7 @@ from rest_framework import status
 
 from .models import AuthorizedUsers, Company, Users
 
-from .serializers import CompanySerializer, ListUserSerializer
+from .serializers import CompanySerializer, GetUserSerializer
 
 from .authentication import login_required, decode_uuid, GlobalAccess
 
@@ -40,7 +40,7 @@ def list_users(request):
             if fromdate and todate: users = users.filter(created_at__range=[fromdate, todate])
             if fullname: users = users.order_by(fullname)
         if not users: return {"msg": "No users found"}
-        ser = ListUserSerializer(users, many=True)
+        ser = GetUserSerializer(users, many=True)
         data =[]
         for obj in ser.data: 
             data.append({**obj, 'company':obj['company']['name']})
@@ -74,17 +74,18 @@ def get_users_by_company(request, company):
     role = decoded_data['role']
     if role in ['admin', 'superadmin']:
         users = Users.objects.filter(company=company)
-        serializer = ListUserSerializer(users, many=True)
+        serializer = GetUserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response('Unauthorized', status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(['GET'])
-@login_required
-def get_registration_requests(request):
-    users = Users.objects.filter(authorized = False)
-    filteredUsers = ListUserSerializer(users, many=True)
-    return filteredUsers.data
+# @api_view(['GET'])
+# @login_required
+# @admin_required
+# def get_registration_requests(request):
+#     users = Users.objects.filter(authorized = False)
+#     filteredUsers = GetUserSerializer(users, many=True)
+#     return filteredUsers.data
 
 
 '''

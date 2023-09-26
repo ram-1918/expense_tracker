@@ -78,19 +78,20 @@ class Users(AbstractBaseUser):
     employee_id = models.CharField(max_length=255, blank=True, null=True)
     role = models.CharField(choices=choices, max_length=24, default='employee')
     is_active = models.BooleanField(default=True)
-    is_superadmin = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
-    is_employee = models.BooleanField(default=True)
-    colortag = models.CharField(choices=colorChoices, max_length=10, default='gray') # for categorizing users on certain criteria
+    gender = models.CharField(choices=[('male', 'Male'), ('female', 'Female')], max_length=12, default='male')
+    # is_superadmin = models.BooleanField(default=False)
+    # is_admin = models.BooleanField(default=False)
+    # is_employee = models.BooleanField(default=True)
+    # colortag = models.CharField(choices=colorChoices, max_length=10, default='gray') # for categorizing users on certain criteria
     authorized = models.BooleanField(default=False) # status for letting new users
     comment = models.TextField(default='Authorize normally')
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     # gender = models.CharField(choices = [('male', 'Male'), ('female', 'Female')], max_length=10, default='male')
     
     created_at = models.DateTimeField(auto_now=True)
-    year = models.IntegerField(null=True, blank=True)
-    month = models.IntegerField(null=True, blank=True)
-    day = models.IntegerField(null=True, blank=True)
+    # year = models.IntegerField(null=True, blank=True)
+    # month = models.IntegerField(null=True, blank=True)
+    # day = models.IntegerField(null=True, blank=True)
 
     @property
     def is_authorized(self):
@@ -115,11 +116,11 @@ class Users(AbstractBaseUser):
         return datetime.now().year
     
     def save(self, *args, **kwargs):
-        print('INSDIE SAVE METHOD IN MODELS', self.created_at, 'HERE')
-        self.year = datetime.now().year
-        self.month = datetime.now().month
-        self.day = datetime.now().day
-        print(self.day, self.year, self.month)
+        # print('INSDIE SAVE METHOD IN MODELS', self.created_at, 'HERE')
+        # self.year = datetime.now().year
+        # self.month = datetime.now().month
+        # self.day = datetime.now().day
+        # print(self.day, self.year, self.month)
         super().save(*args, **kwargs)
 
     objects = UserManager()

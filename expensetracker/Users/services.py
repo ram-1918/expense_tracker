@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
+from .authentication import _debuger
 
 
 # Utilized Factory Patterns
@@ -33,9 +34,9 @@ class HandleService():
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         if(re.fullmatch(regex, email)):
             print(f'Email Handled!')
-            return email.lower()
-        return None
-
+            return email.lower(), True
+        return "Enter a valid email", False
+    
     def handlePassword(self, password):
         if len(password) >= 7:
             ucase_check = list(map(lambda x : x.isupper(), password))
@@ -43,12 +44,12 @@ class HandleService():
                 sym_check = list(map(lambda x : x in '!@#$%^&*+-', password))
                 if any(sym_check):
                     if password[0] != '-':
-                        print(f'Password Handled!')
-                        return password
-                    return 'The firstchar of the password should not be -'
-                return 'Password should have atleast one of the symbols !@#$%^&*+-'
-            return 'Password should have atleast one capital letter.'
-        return 'Password should be atleast of 7 charecter long.'
+                        _debuger(f'Password Handled!')
+                        return password, True
+                    return 'The firstchar of the password should not be -', False
+                return 'Password should have atleast one of the symbols !@#$%^&*+-', False
+            return 'Password should have atleast one capital letter.', False
+        return 'Password should be atleast of 7 charecter long.', False
 
     def handlePhone(self, phone):
         phone = phone.strip()
@@ -61,8 +62,8 @@ class HandleService():
         for pattern in patterns:
             if re.match(pattern, phone):
                 print("phone handled!")
-                return phone
-        return None
+                return phone, True
+        return "Not a valid phone number", False
     
     def handleProfilePic(self, profilepic):
         # check for the format extensions and resize it and rename it with employeeid
