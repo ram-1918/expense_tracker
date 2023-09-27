@@ -44,58 +44,33 @@ def processFormData(data):
         newData[k] = v[0]
     return newData
 
+
 # PROTECTED - list users, action by superadmin or admin
 # ENDPOINT - /users/listusers/
-@api_view(['GET'])
+@api_view(['POST'])
 @login_required
 @admin_required
 @pagination_decorator
 def getUsersView(request):
+    filters = request.data['filters']
     userid, role, *others = decodeddata().values()
     adminuser = Users.objects.filter(id=decode_uuid(userid)).first()
-    allusers = Users.objects.all().order_by('fullname')
+    users = Users.objects.all().order_by('fullname')
     if role == 'admin':
-        allusers = Users.objects.filter(company = adminuser.company).filter(role = 'employee')
-    return allusers, GetUserSerializer
-
-
-# PROTECTED - list of users with filters
-# USE QUERY PARAMS FOR SORTING?FILTERING - try in the morning
-@api_view(['POST'])
-@login_required
-def list_users(request):
-    decoded = decodeddata()
-    id = decode_uuid(decoded['sub'])
-    user = Users.objects.filter(id=id).first()  
-
-    print('DATA REQUESTED BY USER FOR LIST - ', request.data)
-    filters = request.data['filters']
-    if user.role in ['superadmin', 'admin']:
-        if user.role == 'admin':
-            users = Users.objects.filter(company=user.company).exclude(id=id)
-        else:
-            users = Users.objects.all()
-
+        users = Users.objects.filter(company = adminuser.company).filter(role = 'employee').order_by('fullname')
+    try:
         if filters:
-            [fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate] = filters.values()
-            print(fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate)
-            if role: users = users.filter(role=role.lower())
-            if company: users = users.filter(company__name=company.lower()) 
-            if isactive: users = users.filter(is_active = isactive)
-            if isauthorized: users = users.filter(authorized = isauthorized)
-            if tag: users = users.filter(colortag=tag)
-            if fromdate and todate: users = users.filter(created_at__range=[fromdate, todate])
-            if fullname: users = users.order_by(fullname)
-        if not users: return {"msg": "No users found"}
-        ser = GetUserSerializer(users, many=True)
-        data =[]
-        for obj in ser.data: 
-            data.append({**obj, 'company':obj['company']['name']})
-        return {"data": data, "count":len(ser.data)}
-    return {"msg": 'unauthorized'} # Response('Notvalid')
-
-
-
+            # [fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate] = filters.values()
+            if role := filters.get('role', None): users = users.filter(role=role.lower())
+            if company := filters.get('company', None): users = users.filter(company__name=company.lower()) 
+            if isactive := filters.get('isactive', None): users = users.filter(is_active = isactive)
+            if isauthorized := filters.get('isauthorized', None): users = users.filter(authorized = isauthorized)
+            if (fromdate := filters.get('fromdate', None))  and (todate := filters.get('todate', None)): users = users.filter(created_at__range=[fromdate, todate])
+            if fullname := filters.get('fullname', None): users = users.order_by(fullname)
+        if not users: return {"msg": "No users found"}, GetUserSerializer, "users"
+    except:
+        return {"msg": "error occured in filters"}, GetUserSerializer, "users"
+    return users, GetUserSerializer, "users"
 
 # Register new user
 # ENDPOINT - /users/register/

@@ -1,13 +1,31 @@
 from django.urls import path
-from .views import testing, post_expenses, get_expenses, update_status
-from .views import get_user_for_an_expense, get_expenses_by_user, get_expenses_by_role
+from .views import testing, get_expenses, get_approved_expenses, get_pending_expenses, post_expense, update_expense, delete_expense
+# from .views import get_expenses_by_user, get_expenses_by_role, get_expenses_by_company, get_expenses_by_date
+# from .views import update_status 
+# from .views import total_expense_requests, sum_of_approved, sum_of_pending, sum_of_reembersments
 
 urlpatterns = [
     path('', testing),
+    # section 1 - own
     path('list/', get_expenses),
-    path('get_user_for_an_expense/<int:expid>', get_user_for_an_expense),
-    path('list_by_user/', get_expenses_by_user),
-    path('list_by_role/', get_expenses_by_role),
-    path('post/', post_expenses),
-    path('update_status/<uuid:pk>', update_status),
+    path('list_approved/', get_approved_expenses),
+    path('list_pending/', get_pending_expenses),
+    path('post/', post_expense),
+    path('update/<uuid:pk>', update_expense),
+    path('delete/', delete_expense),
+
+    # section 2
+    # path('list_by_role/', get_expenses_by_role), # role specific expenses
+    # path('list_by_user/<uuid:userid>', get_expenses_by_user), 
+    # path('list_by_company/<id:company>', get_expenses_by_company),
+    # path('list_by_date/<str:date>', get_expenses_by_date),
+
+    # # section 3
+    # path('update_status/<uuid:pk>', update_status),
+
+    # # section 4 - aggregations
+    # path('total_expense_requests/', total_expense_requests),
+    # path('sum_of_approved/', sum_of_approved),
+    # path('sum_of_pending/', sum_of_pending),
+    # path('sum_of_reembersements', sum_of_reembersments)
 ]

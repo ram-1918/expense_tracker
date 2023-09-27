@@ -19,19 +19,20 @@ class Category(models.Model):
 # https://www.geeksforgeeks.org/prefetch_related-and-select_related-functions-in-django/
 
 class Expenses(models.Model):
-    choices = [('cash', 'Cash'), ('card', 'Card'), ('cheque', 'Cheque')]
+    choices = [('cash', 'Cash'), ('credit', 'Credit Card'), ('debit', 'Debit Card'), ('cheque', 'Cheque')]
     currency_choices = [('usd', 'USD'), ('inr', 'INR')]
-    status_choices = [('pending', 'Pending'), ('approved', 'Approved')]
+    status_choices = [('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected'), ('invalidate', 'Invalidate')]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     userid = models.ForeignKey(Users, related_name="userid", on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name="category", on_delete=models.CASCADE)
     date_submitted = models.DateTimeField(auto_now=True)
     last_modified = models.DateTimeField(auto_now_add=True)
-    category = models.ForeignKey(Category, related_name="category", on_delete=models.CASCADE)
-    amount = models.CharField(max_length=100, null=True, blank=True)
-    description = models.TextField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
+    description = models.TextField(blank = True)
     payment_method = models.CharField(choices=choices, default='card', max_length=15)
     payment_recepient = models.CharField(max_length=100, null=True, blank=True)
+    message = models.TextField(blank=True)
     currency = models.CharField(choices=currency_choices, default='usa', max_length=15)
     status = models.CharField(choices=status_choices, default='pending', max_length=30)
     rejection_count = models.IntegerField(default=0)

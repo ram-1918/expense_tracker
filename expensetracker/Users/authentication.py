@@ -6,6 +6,7 @@ from .models import Users
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.paginator import Paginator
+import math
 
 def _debuger(msg):
     if settings.DEBUG:
@@ -139,11 +140,10 @@ def admin_required(func=None):
         def inner(request, *args, **kwargs):
             print("------------ admin check, --------------")
             id, role, *others = decoded_data.values()
-            print(id, role)
             if role in ['admin', 'superadmin']:
-                result = func(request, *args, **kwargs)
-                return result
-            return {"msg": "not authorized"}
+                result, code = func(request, *args, **kwargs)
+                return result, code
+            return {"msg": "not authorized"}, 401
         return inner
     if func:
         return decorator(func)
@@ -153,30 +153,32 @@ def pagination_decorator(func=None):
     def decorator(func):
         @wraps(func)
         def inner(request, *args, **kwargs):
-            print("------------ Paginator check, --------------")
-            alldata, serializer = func(request, *args, **kwargs)
+            print("------------ Paginator --------------")
+            alldata, serializer, type = func(request, *args, **kwargs)
+            try:
+                return alldata['msg'], 400
+            except:
+                pass
             # default pageno and pagesize
             pageno, page_size = 1, 10
             if(params := request.query_params):
                 pageno, page_size = list(map(int, params.values()))
                 if pageno <= 0 or page_size <= 0: return {"msg": "invalid page number or page size"}, 400
                 total = len(alldata)
-                import math
                 expected_pagenumbers = math.ceil(total/page_size)
-                print(expected_pagenumbers, pageno, 'EXPENSED')
+                _debuger(f'Max page numbers: {expected_pagenumbers} requested page no: {pageno} Pageno check')
                 if pageno > expected_pagenumbers: return {"msg": "Page contains no result"}, 400
 
-            # dividing all data into a group of size page_size
             paginator = Paginator(alldata, page_size)
-
-            # retrieving the data from the requested page
             page = paginator.page(pageno)
-            
-            # serialize data just from that page
             ser = serializer(page, many=True)
-            
-            return ser.data, 200
+            result = ser.data
+
+            if type == "users":
+                result = [{**obj, "company": obj['company']['name']} for obj in ser.data]
+            return result, 200
         return inner
+    
     if func:
         return decorator(func)
     return decorator
