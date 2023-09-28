@@ -22,6 +22,7 @@ import PrivateRoute from './PrivateRoute';
 import PageNotFound from '../pages/PageNotFound';
 import { selectUserid } from '../features/users/usersSlice';
 import { useSelector } from 'react-redux';
+import ViewExpenseForm from '../containers/forms/ViewExpenseForm';
 
 
 const MainRoutes = () => {
@@ -44,6 +45,7 @@ const MainRoutes = () => {
                 </Route>
                 <Route path='manage/:type/' element={<ContentLayout />}>
                   <Route path='updateuser/:userid' element={<UpdateUserForm />} />
+                  <Route path='viewexpense/:expenseid' element={<ViewExpenseForm />} />
                 </Route>
                 <Route path='requests/:type' element={<RequestsLayout />}></Route>
               </Route>

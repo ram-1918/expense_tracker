@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import testing, getUsersView, PostUsersView, GetAndUpdateUserView, deleteuserbyadmin, LoginAPI, logout
 from .views import get_registration_requests, list_companies, get_users_by_company
+# from .views import total_registration_requests
 
 urlpatterns = [
     path('', testing),
@@ -19,4 +20,8 @@ urlpatterns = [
     path('companies/', list_companies),
     path('list/<int:company>', get_users_by_company),
     path('registrationrequests/', get_registration_requests),
+
+    # section 4
+    # path('total_registration_requests/', total_registration_requests),
+
 ]

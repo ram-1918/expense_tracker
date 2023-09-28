@@ -105,92 +105,32 @@ pdf = pytesseract.image_to_pdf_or_hocr("pil_image", extension='pdf') # image to 
 xml = pytesseract.image_to_alto_xml(pil_image)
 '''
 
-# def image_to_text(pil_image):
-#     # pytesseract.tesseract_cmd = '/Users/vindesil/Documents/tracker/tracker/venv/bin/pytesseract'
-#     pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
-#     # Binarization
-#     pil_image = pil_image.convert('L')  # Convert to grayscale
-#     threshold = 150  # Adjust the threshold as needed
-#     pil_image = pil_image.point(lambda p: p > threshold and 255)
-
-#     import cv2
-
-#     img_cv = cv2.imread(pil_image)
-
-#     # By default OpenCV stores images in BGR format and since pytesseract assumes RGB format,
-#     # we need to convert from BGR to RGB format/mode:
-#     pil_image = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
-
-#     # Use pytesseract to do OCR with custom configurations
-#     extracted_text = pytesseract.image_to_string(pil_image, lang='eng', config='--psm 6 --oem 3')
-#     pdf = pytesseract.image_to_pdf_or_hocr(pil_image, extension='pdf')
-
-#     with open('test.pdf', 'w+b') as f:
-#         f.write(pdf) # pdf type is bytes by default
-
-#     print('Extracted Text:')
-#     with open('extractedtext.txt', 'w') as file:
-#         file.writelines(extracted_text)
-#     return ''
-
-import cv2
-from PIL import Image, ImageEnhance
 def image_to_text(pil_image):
-    image_io = BytesIO()
-    pil_image.save(image_io, format='PNG')
-    imagename = "recepient"+secrets.token_hex(5)+'.png'
-    # Save the BytesIO object as the image file
-    image_file = ContentFile(image_io.getvalue())
-    imagefile = default_storage.save(imagename, image_file)
-    imagefileurl = default_storage.url(imagefile)
-    print(pil_image)
-    # Load the image
-    image = cv2.imread(imagefileurl)
-    print(image)
-    # Convert to grayscale
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    print(gray_image)
-
-    # Thresholding
-    _, binarized_image = cv2.threshold(gray_image, 128, 255, cv2.THRESH_BINARY_INV)
-
-    # Noise reduction (Gaussian blur)
-    blurred_image = cv2.GaussianBlur(binarized_image, (5, 5), 0)
-
-    # Dilation and erosion
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    processed_image = cv2.morphologyEx(blurred_image, cv2.MORPH_CLOSE, kernel)
-
-    # Deskew the image
-    coords = np.column_stack(np.where(processed_image > 0))
-    angle = cv2.minAreaRect(coords)[-1]
-    if angle < -45:
-        angle = -(90 + angle)
-    else:
-        angle = -angle
-    (h, w) = processed_image.shape[:2]
-    center = (w // 2, h // 2)
-    rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
-    processed_image = cv2.warpAffine(processed_image, rotation_matrix, (w, h), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+    # pytesseract.tesseract_cmd = '/Users/vindesil/Documents/tracker/tracker/venv/bin/pytesseract'
+    pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
+    # Binarization
+    # pil_image = pil_image.convert('L')  # Convert to grayscale
+    # threshold = 150  # Adjust the threshold as needed
+    # pil_image = pil_image.point(lambda p: p > threshold and 255)
 
     # Use pytesseract to do OCR with custom configurations
-    print('being processed:')
+    # extracted_text = pytesseract.image_to_string(pil_image, lang='eng', config='--psm 6 --oem 3')
+    pdf = pytesseract.image_to_pdf_or_hocr(pil_image, extension='pdf')
 
-    extracted_text = pytesseract.image_to_string(processed_image, lang='eng', config='--psm 6 --oem 3')
+    with open('test.pdf', 'w+b') as f:
+        f.write(pdf) # pdf type is bytes by default
 
-    # Print the extracted text
-    print('Extracted Text:')
-    print(extracted_text)
+    return ''
+
 
 
 def format_image(image, expid, recepient):
     try:
-        imagename = str(expid)+'/'+recepient+secrets.token_hex(5)+'.png' # f'{str(expid)}/{recepient}_{secrets.token_hex(5)}.png'
-        print(imagename)
+        imagename = recepient+secrets.token_hex(5)+'.png'
         image.name = imagename
 
         pil_image = Image.open(image)
-        # data = image_to_text(pil_image)
+        # data = image_to_text(pil_image) # for extracting text, which is not needed now
         width, height = pil_image.size
         newsize = (800, 600) if width > height else (600, 800)
         pil_image = pil_image.resize(newsize)
@@ -283,14 +223,40 @@ def post_expense_transaction(request):
     except Exception as e:
         return {"msg": "failed to images or tags" + str(e)}, 400
 
+def process_tags(tags):
+    from collections import defaultdict
+    tag_names = defaultdict(list)
+    for tag in tags:
+        tag = dict(tag)
+        tag_names['names'].append(tag['name'])
+    return tag_names
 
 @api_view(['GET'])
 @login_required
 def get_expenses(request):
     userid, role, *others = decodeddata()
-    # retrieve specific user's expenses
-    return userid+role, 200
+    expenses = Expenses.objects.filter(userid = userid)
+    serializer = GetExpenseSerializer(expenses, many=True)
+    result = []
+    for expense in serializer.data:
+        tags = process_tags(expense['expense_tag'])
+        cat_instance = Category.objects.filter(id=expense['category']).first()
+        username = Users.objects.filter(id=expense['userid']).first()
+        result.append({**expense, 'expense_tag': tags, 'category': cat_instance.name, 'username': username.fullname})
+    time.sleep(1)
+    return result, 200
 
+@api_view(['GET'])
+@login_required
+def get_single_expense(request, pk):
+    expense = Expenses.objects.filter(id=pk).first()
+    ser = GetExpenseSerializer(expense)
+    print(expense, ser.data)
+    tags = process_tags(ser.data['expense_tag'])
+    cat_instance = Category.objects.filter(id=ser.data['category']).first()
+    username = Users.objects.filter(id=ser.data['userid']).first()
+    result = {**ser.data, 'expense_tag': tags, 'category': cat_instance.name, 'username': username.fullname}
+    return result, 200
 
 def get_approved_expenses(request):
     return request.data, 200
@@ -306,6 +272,56 @@ def update_expense(request):
 
 def delete_expense(request):
     return request.data, 200
+
+# EXTRACTING TRAILS
+# import cv2
+# from PIL import Image, ImageEnhance
+# def image_to_text(pil_image):
+#     image_io = BytesIO()
+#     pil_image.save(image_io, format='PNG')
+#     imagename = "recepient"+secrets.token_hex(5)+'.png'
+#     # Save the BytesIO object as the image file
+#     image_file = ContentFile(image_io.getvalue())
+#     imagefile = default_storage.save(imagename, image_file)
+#     imagefileurl = default_storage.url(imagefile)
+#     print(pil_image)
+#     # Load the image
+#     image = cv2.imread(imagefileurl)
+#     print(image)
+#     # Convert to grayscale
+#     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#     print(gray_image)
+
+#     # Thresholding
+#     _, binarized_image = cv2.threshold(gray_image, 128, 255, cv2.THRESH_BINARY_INV)
+
+#     # Noise reduction (Gaussian blur)
+#     blurred_image = cv2.GaussianBlur(binarized_image, (5, 5), 0)
+
+#     # Dilation and erosion
+#     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+#     processed_image = cv2.morphologyEx(blurred_image, cv2.MORPH_CLOSE, kernel)
+
+#     # Deskew the image
+#     coords = np.column_stack(np.where(processed_image > 0))
+#     angle = cv2.minAreaRect(coords)[-1]
+#     if angle < -45:
+#         angle = -(90 + angle)
+#     else:
+#         angle = -angle
+#     (h, w) = processed_image.shape[:2]
+#     center = (w // 2, h // 2)
+#     rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
+#     processed_image = cv2.warpAffine(processed_image, rotation_matrix, (w, h), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+
+#     # Use pytesseract to do OCR with custom configurations
+#     print('being processed:')
+
+#     extracted_text = pytesseract.image_to_string(processed_image, lang='eng', config='--psm 6 --oem 3')
+
+#     # Print the extracted text
+#     print('Extracted Text:')
+#     print(extracted_text)
 
 
 # @api_view(['POST'])

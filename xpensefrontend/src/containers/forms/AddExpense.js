@@ -39,7 +39,7 @@ function AddExpense({setCheckIfFull}){
         const newlist = data['images'].filter((obj, index) => index != idx)
         setData(prev => ({...prev, ['images']: newlist}));
     }
-
+    // navigating or expense page & error handling is still needed
     const post_expense = async (e) => {
         e.preventDefault();
         const formdata = new FormData();

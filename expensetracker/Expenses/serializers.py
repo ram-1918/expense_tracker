@@ -17,12 +17,12 @@ class TypeTagSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class ExpenseProofSerializerReadOnly(ModelSerializer):
+class GetExpenseProofSerializer(ModelSerializer):
     class Meta:
         model = ExpenseProofs
-        fields = ['name', 'image']
+        fields = ['id', 'filename', 'image']
 
-class TypeTagSerializerReadOnly(ModelSerializer):
+class GetTypeTagSerializer(ModelSerializer):
     class Meta:
         model = TypeTags
         fields = ['name']
@@ -34,16 +34,22 @@ class Category(ModelSerializer):
     
 class GetExpenseSerializer(ModelSerializer):
     # use related names for nested serializing - proof_expense, tag_expense
-    # tag_expense = TypeTagSerializerReadOnly(many=True, read_only=True)
-    # expense_proof = ExpenseProofSerializerReadOnly(many=True, read_only=True)
+    expense_tag = GetTypeTagSerializer(many=True, read_only=True)
+    expense_proof = GetExpenseProofSerializer(many=True, read_only=True)
     user_info = GetUserSerializer(read_only=True, many=True)
 
     class Meta:
-        fields = [field.name for field in Expenses._meta.get_fields()]
+        fields = [field.name for field in Expenses._meta.get_fields()] + ['user_info', 'expense_proof', 'expense_tag']
         fields = sorted(fields, key = lambda x: len(x))
         _debuger(f'Expensesfeilds: {fields}')
         model = Expenses
         fields = fields # ['id', 'category', 'userid', 'amount', 'description', 'date_submitted', 'last_modified',  'payment_recepient', 'payment_method', 'status', 'currency', 'rejection_count', 'user_info']
+
+    def validate(self, data):
+        print(data, "VLAIDITN")
+        # cat_instance = Category.objects.filter(id=category).first()
+        # return cat_instance.name if cat_instance else category
+        return data
 
 class PostExpenseSerializer(ModelSerializer):
     class Meta:
@@ -51,5 +57,5 @@ class PostExpenseSerializer(ModelSerializer):
         fields = "__all__"
 
     def validate(self, validated_data):
-        print(validated_data, "FROM VALIDATE")
+        # print(validated_data, "FROM VALIDATE")
         return validated_data

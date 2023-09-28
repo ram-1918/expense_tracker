@@ -16,6 +16,20 @@ export const Updateuserinfobyadmin = async (data) => {
     return result;
 }
 
+export const listsingleexpense = async (expenseid) => {
+    let result = null;
+    await axios.get(`${API_URL}expenses/list_single/${expenseid}`, {withCredentials:true})
+    .then((res) => {
+        console.log(res.data, "UPDATE AFTER");
+        result = res.data;
+    })
+    .catch((error) => {
+        console.log(error);
+        result = error.data;
+    })
+    return result;
+}
+
 export const postexpense = async (data) => {
     let result = null;
     await axios.post(`${API_URL}expenses/post/`, data, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } }
