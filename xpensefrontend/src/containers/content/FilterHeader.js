@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const outerdiv = "w-full grid grid-flow-col grid-rows-2 gap-2 font-light p-4";
+const outerdiv = "w-full grid grid-flow-col grid-rows-2 gap-2 font-light p-4 bg-white";
 const buttonStyles = 'border border-slate-400 w-32 h-8 flex-row-style text-[0.8rem] justify-center rounded-lg px-2 cursor-pointer';
 
 function FilterHeader({ allKeys, setKeys, active, setActive }) {

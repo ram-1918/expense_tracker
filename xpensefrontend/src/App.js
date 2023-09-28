@@ -7,7 +7,7 @@ import MainRoutes from './routing/MainRoutes';
 import { get_user_info } from './features/users/apicalls';
 import axios from 'axios';
 import { API_URL } from './store/constants';
-import { fetchusers } from './features/core/coreSlice';
+import { fetchusers, listexpenses } from './features/core/coreSlice';
 // import { FetchData } from './components/customhooks/FetchData';
 
 const axiosInstance = axios.create({
@@ -23,14 +23,11 @@ function App() {
   console.log(userid, "STATE TEST IN APP");
   useEffect(() => {
     dispatch(fetchusers({"filters": ''}));
+    dispatch(listexpenses());
     dispatch(fetchuserinfo(userid));
   }, [dispatch])
 
   console.log(userinfo, 'AFTER USERONFO')
-  // Object.entries(users) // [[k1,v1],[k2,v2]...]
-  // if (!users){
-  //   return <div>Loading....</div>
-  // }
 
   return (
       <MainRoutes />

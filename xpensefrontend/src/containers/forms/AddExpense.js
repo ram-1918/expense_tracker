@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollar } from '@fortawesome/free-solid-svg-icons';
 import {useNavigate} from 'react-router-dom';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { useEffect, useState } from 'react';
 import FieldValidations from '../../components/base/FieldValidations';
 import { capitalize } from '../../utils/helper';
@@ -11,6 +11,7 @@ import Popup from '../../components/base/Popup';
 import BaseDropdown from '../../components/base/BaseDropdown';
 import Spinner from '../../components/base/Spinner';
 import { postexpense } from './apicalls';
+import { setExpenseList } from '../../features/core/coreSlice';
 
 const formStyles = 'border-r border-l w-full h-full flex-col-style justify-between space-y-4 overscroll-hidden';
 const groupStyles = 'border-0 w-full h-fit flex-col-style space-y-0';
@@ -24,12 +25,14 @@ function handleSubmit(){
 
 function AddExpense({setCheckIfFull}){
     const navigate = useNavigate();
-    const userid = useSelector(state => state.user.userid)
+    const dispatch = useDispatch();
+    const userid = useSelector(state => state.user.userid);
+    const expenselist = useSelector(state => state.expense.expenselist);
     const categories = {'Regular':'regular', 'Travel':'travel', 'Food':'food', 'Appliances':'appliances'}
     const paymentoptions = {'Cash':'cash', 'Credit Card':'credit', 'Cheque':'cheque', 'Debit Card':'debit'}
     const initialValues = {
         userid: userid, payment_recepient: '', amount: '', tags: '',
-        category: 'regular', payment_method: 'credit', 
+        category: 'Regular', payment_method: 'Credit Card', 
         description: '', images: []
     }
     const [data, setData] = useState(initialValues);
@@ -43,7 +46,6 @@ function AddExpense({setCheckIfFull}){
     const post_expense = async (e) => {
         e.preventDefault();
         const formdata = new FormData();
-        console.log(data)
         Object.entries(data).map((
             [key, value]) => 
             key !== 'images' && (
@@ -51,11 +53,10 @@ function AddExpense({setCheckIfFull}){
                 key.includes('payment_method') ? formdata.append(key, paymentoptions[value]) : 
                 formdata.append(key, value)));
         data['images'].map((image, idx) => formdata.append('image'+(idx+1), image));
-        console.log(formdata.get('category'), data['category']);
-        console.log(formdata.get('payment_method'), data['payment_method']);
         setSpinner(true);
         try{
             const result = await postexpense(formdata);
+            dispatch(setExpenseList(result));
             setSpinner(false);
             console.log(result, "POST EXPENSE");
             navigate('../'); // Later navigate to MyExpenses page

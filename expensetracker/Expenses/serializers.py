@@ -46,7 +46,7 @@ class GetExpenseSerializer(ModelSerializer):
         fields = fields # ['id', 'category', 'userid', 'amount', 'description', 'date_submitted', 'last_modified',  'payment_recepient', 'payment_method', 'status', 'currency', 'rejection_count', 'user_info']
 
     def validate(self, data):
-        print(data, "VLAIDITN")
+        # print(data, "VLAIDITN")
         # cat_instance = Category.objects.filter(id=category).first()
         # return cat_instance.name if cat_instance else category
         return data

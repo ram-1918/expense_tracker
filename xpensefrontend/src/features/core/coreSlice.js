@@ -93,11 +93,13 @@ const initialState = {
     userslist: [],
     singleuserinfo: [],
     updatedInfo: [],
+
+    expenselist: [],
+
     status: 'idle',
     filterStack: [],
     registrationrequests: [],
 
-    expenselist: [],
 }
 
 export const expenseSlice = createSlice({
@@ -106,6 +108,10 @@ export const expenseSlice = createSlice({
     reducers:{
         setUsersList: (state, action) => {
             state.userslist = action.payload;
+        },
+        setExpenseList: (state, action) => {
+            console.log('NEW EXPENSE RECORD ADDED')
+            state.expenselist = [ action.payload, ...state.expenselist];
         },
         setRegistrationRequests: (state, action) => {
             state.registrationrequests = action.payload
@@ -155,7 +161,7 @@ export const expenseSlice = createSlice({
     }
 });
 
-export const {setUsersList, setRegistrationRequests, setFilterStack} = expenseSlice.actions; 
+export const {setUsersList, setRegistrationRequests, setExpenseList, setFilterStack} = expenseSlice.actions; 
 
 
 
