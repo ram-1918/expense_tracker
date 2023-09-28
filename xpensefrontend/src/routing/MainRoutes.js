@@ -44,6 +44,7 @@ const MainRoutes = () => {
                   <Route path='submit/:formtype' element={<FormLayout />} />
                 </Route>
                 <Route path='manage/:type/' element={<ContentLayout />}>
+                  <Route path='submit/:formtype' element={<FormLayout />} />
                   <Route path='updateuser/:userid' element={<UpdateUserForm />} />
                   <Route path='viewexpense/:expenseid' element={<ViewExpenseForm />} />
                 </Route>

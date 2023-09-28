@@ -28,8 +28,8 @@ function FormLayout() {
 
     function handleClose(){
         const msg = "Details will not be saved, Proceed?";
-        if (checkIfFull && window.confirm(msg)) navigate('/user/'+userid+'/home/dashboard/');
-        else navigate('/user/'+userid+'/home/dashboard/');
+        if (checkIfFull && window.confirm(msg)) navigate('../'); // /user/'+userid+'/home/dashboard/
+        else navigate('../');
     }
 
   return (

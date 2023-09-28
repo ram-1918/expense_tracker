@@ -20,6 +20,7 @@ const outerdiv = "sticky top-0 left-0 border-b-2 pb-2";
 const innerdiv_reset = "text-sm px-2 underline underline-offset-4 cursor-pointer";
 const innerdiv_1_2 = "w-full grid grid-flow-col grid-rows-1 place-items-end text-right";
 const innerdiv_1_2_download = "text-sm border border-black rounded-md flex-row-style justify-center p-2 bg-slate-600 text-white cursor-pointer hover:opacity-80";
+const innerdiv_1_2_add = "text-sm border border-black rounded-md flex-row-style justify-center p-2 bg-white text-black cursor-pointer hover:opacity-80";
 
 const table = "table-auto shadow-xl rounded-md";
 const thead = ' w-full h-10 rounded-tl-lg rounded-tr-lg flex-row-style justify-between bg-teal-600 '; // bg-[#0284c7]
@@ -45,7 +46,7 @@ function View({obj, keys, fieldStyleMapper, setviewobj}){
 }
 
 function ExpensesList() {
-  const initial_active_keys = ['id', 'category', 'username', 'amount', 'status'];
+  const initial_active_keys = ['id', 'payment_recepient', 'category', 'username', 'amount', 'status'];
   const initial_active = {
     id: true,  category: true, username: true, amount: true, 
     status: true, date_submitted: false, last_modified: false,
@@ -88,8 +89,12 @@ const cols = ['id', 'username', 'category', 'date_submitted', 'last_modified', '
         <span onClick={() => {setActive(initial_active); setKeys(initial_active_keys);}} className={innerdiv_reset}>Reset</span>
         <FilterHeader allKeys={cols} setKeys={setKeys} active={active} setActive={setActive}/>
         <div className={innerdiv_1_2}>
-          <span className={innerdiv_1_2_download}>Download (.pdf)</span>
+          
         </div>
+      </div>
+      <div className="sticky top-0 left-0 w-full h-fit flex-row-style justify-between mt-2">
+        <span className="flex-row-style justify-end flex-grow px-4"><Link to={'./submit/addexpense'} className={innerdiv_1_2_add}>+ Add expense</Link></span>
+        <span className={innerdiv_1_2_download}>Download (.pdf) </span>
       </div>
       <table className={table}>
         <TableCaption caption="Expense Details" />

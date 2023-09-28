@@ -211,7 +211,7 @@ def post_expense_transaction(request):
     expense_id = serializer.data['id']
     expense_name = serializer.data['payment_recepient']
     try:
-        if tag_ser := post_tags(data['tags'], expense_id):
+        if tag_ser := post_tags(data['tags'].strip(','), expense_id):
             if tag_ser:
                 if images:
                     proof_ser = post_proofs(images, expense_id, expense_name)

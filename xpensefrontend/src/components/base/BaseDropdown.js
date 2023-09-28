@@ -4,7 +4,7 @@ const optionStyles = 'appearence-none border-none bg-[#fff] text-[#333] hover:bg
 
 const BaseDropdown = ({options, setValueFunction, value, rarecase=''}) => {
     return (
-        <select className={dropdownStyles} value={value} onChange={(e) => rarecase ? setValueFunction(prev => ({...prev, [rarecase]: e.target.value })) : setValueFunction(e.target.value)}>
+        <select className={dropdownStyles} value={value} onChange={(e) => rarecase ? setValueFunction(prev => {console.log(prev, rarecase, e.target.value); return {...prev, [rarecase]: e.target.value }}) : setValueFunction(e.target.value)}>
             {Object.keys(options).map((option, idx) => (
                 <option key={idx} className={optionStyles}>
                     {option}

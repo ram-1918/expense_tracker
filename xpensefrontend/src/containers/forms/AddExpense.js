@@ -39,19 +39,26 @@ function AddExpense({setCheckIfFull}){
         const newlist = data['images'].filter((obj, index) => index != idx)
         setData(prev => ({...prev, ['images']: newlist}));
     }
-    // navigating or expense page & error handling is still needed
+    // navigating or expense paerror handling is still needed
     const post_expense = async (e) => {
         e.preventDefault();
         const formdata = new FormData();
-        Object.entries(data).map(([key, value]) => key !== 'images' && formdata.append(key, value));
+        console.log(data)
+        Object.entries(data).map((
+            [key, value]) => 
+            key !== 'images' && (
+                key.includes('category') ? formdata.append(key, categories[value]) : 
+                key.includes('payment_method') ? formdata.append(key, paymentoptions[value]) : 
+                formdata.append(key, value)));
         data['images'].map((image, idx) => formdata.append('image'+(idx+1), image));
-        // formdata.append('payment_recepient', data['payment_recepient'])
+        console.log(formdata.get('category'), data['category']);
+        console.log(formdata.get('payment_method'), data['payment_method']);
         setSpinner(true);
         try{
             const result = await postexpense(formdata);
             setSpinner(false);
             console.log(result, "POST EXPENSE");
-            // navigate('../'); // Later navigate to MyExpenses page
+            navigate('../'); // Later navigate to MyExpenses page
         }
         catch(error){
             console.log(error, "ERROR while posting expense");
