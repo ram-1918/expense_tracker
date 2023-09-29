@@ -56,7 +56,9 @@ function AddExpense({setCheckIfFull}){
         setSpinner(true);
         try{
             const result = await postexpense(formdata);
-            dispatch(setExpenseList(result));
+            // Modified when working on delete expense
+            const newexpenselist = expenselist.unshift(result);
+            dispatch(setExpenseList(newexpenselist));
             setSpinner(false);
             console.log(result, "POST EXPENSE");
             navigate('../'); // Later navigate to MyExpenses page

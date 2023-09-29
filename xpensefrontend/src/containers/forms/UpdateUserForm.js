@@ -7,7 +7,7 @@ import { useLocation, useNavigate, useParams } from 'react-router';
 import BaseDropdown from '../../components/base/BaseDropdown';
 import Spinner from '../../components/base/Spinner';
 import { fetchsingleuser, fetchusers, updateuserinfo } from '../../features/core/coreSlice';
-import { Updateuserinfobyadmin } from './apicalls';
+import { updateuser, Updateuserinfobyadmin } from './apicalls';
 
 const formStyles = 'border-r border-l w-full h-full flex-col-style justify-between space-y-8 overscroll-hidden';
 const groupStyles = 'border-0 w-fit h-fit flex-col-style space-y-2';
@@ -32,23 +32,24 @@ function UpdateUserForm() {
     const { userid } = useParams();
     const { state } = useLocation();
 
-    const dropdownOptions = {'Cloud5': 'cloud5', 'I5Tech': 'i5tech'}
+    const dropdownOptions = {'Cloud5': 'cloud5', 'I5Tech': 'i5tech', 'Siriinfo': 'siriinfo'}
     const initial_details = {
-        id: state.userdata.id, fullname: state.userdata.fullname,
-        email: state.userdata.email, phone: state.userdata.phone,
+        fullname: state.userdata.fullname, phone: state.userdata.phone,
         role: state.userdata.role, is_active: state.userdata.is_active,
         authorized: state.userdata.authorized, company: state.userdata.company,
     }
+    const [email, setEmail] = useState(state.userdata.email);
+
     const [userdetails, setUserdetails] = useState(initial_details);
     const [spinner, setSpinner] = useState(false);
 
 
     const handleUpdate = async () => {
-        const enteredData = {...userdetails};
+        let enteredData = {...userdetails};
+        console.log(enteredData, "TESTING UPDATE USER")
         setSpinner(true);
         try{
-            const response = await Updateuserinfobyadmin(enteredData);
-            console.log(response);
+            const response = await updateuser(userid, enteredData);
             setSpinner(false);
             dispatch(fetchusers());
             navigate('../');
@@ -77,7 +78,7 @@ function UpdateUserForm() {
                                 <input className={`${inputStyles} w-[28rem]`} type="text" value={userid} disabled />
                             </span>
                             <LocalField label="Name" placeholder="Change username" type="text" value={userdetails.fullname} setFunction={setUserdetails} field="fullname"/>
-                            <LocalField label="Email" placeholder="Change user's email" type="text" value={userdetails.email} setFunction={setUserdetails} field="email" />
+                            <LocalField label="Email" placeholder="Change user's email" type="text" value={email} setFunction={setUserdetails} field="email" />
                             <LocalField label="Phone" placeholder="Change user's phone number" type="text" value={userdetails.phone} setFunction={setUserdetails} field="phone" />
                             <LocalField label="Role" placeholder="Change user's role" type="text" value={userdetails.role} setFunction={setUserdetails} field="role" />
                             <div className='w-full flex-row-style justify-around'>

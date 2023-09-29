@@ -258,6 +258,23 @@ def get_single_expense(request, pk):
     result = {**ser.data, 'expense_tag': tags, 'category': cat_instance.name, 'username': username.fullname}
     return result, 200
 
+@api_view(['PATCH'])
+@login_required
+def update_expense(request, pk):
+
+    return request.data, 201
+
+@api_view(['DELETE'])
+@login_required
+def delete_expense(request, pk):
+    try:
+        Expenses.objects.filter(id=pk).first().delete()
+        print("deleted")
+        return {"msg": "deleted"}, 200
+    except Exception as e:
+        return {"msg": "error occured "+str(e)}
+
+
 def get_approved_expenses(request):
     return request.data, 200
 
@@ -266,12 +283,7 @@ def get_pending_expenses(request):
     return request.data, 200
 
 
-def update_expense(request):
-    return request.data, 201
 
-
-def delete_expense(request):
-    return request.data, 200
 
 # EXTRACTING TRAILS
 # import cv2

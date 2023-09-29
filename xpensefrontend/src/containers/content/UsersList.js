@@ -87,11 +87,11 @@ const [pageLimit, setPageLimit] = useState(1);
 // DISPLAY AMOUNT SPENT BY EACH USER
 
 let userslist = useSelector(state => state.expense.userslist);
-console.log(userslist);
-if (userslist.data === undefined){
-  return <div>{userslist['msg']}</div>
-}
-userslist = userslist.data;
+console.log(userslist, "USERLIST");
+// if (userslist.data === undefined){
+//   return <div>{userslist['msg']}</div>
+// }
+// userslist = userslist.data;
 
 if(!userslist.length){
   return <Spinner name="users" />
@@ -111,7 +111,7 @@ const cols = ['id', 'fullname', 'email', 'phone', 'company', 'is_active', 'role'
         </div>
       </div>
       <table className={table}>
-        <TableCaption caption="User Details" />
+        <TableCaption caption={`User Details (${userslist.length})`} />
         <thead className={`${thead}`}>
             <tr>
               <th className={`${th} w-20`}>Picture</th>

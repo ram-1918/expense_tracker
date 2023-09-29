@@ -65,7 +65,6 @@ function UserFilters() {
       'company': company !== 'Choose Company' ? company.toLowerCase() : '',
       'isactive': isactive,
       'isauthorized': isauthorized,
-      'tag': activeTag,
       'location': location,
       'from': fromdate,
       'to': todate

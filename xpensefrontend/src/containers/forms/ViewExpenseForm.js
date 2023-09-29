@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useOutletContext, useParams } from 'react-router';
 import BaseDropdown from '../../components/base/BaseDropdown';
 import Spinner from '../../components/base/Spinner';
-import { fetchsingleuser, fetchusers, updateuserinfo } from '../../features/core/coreSlice';
+import { fetchsingleuser, fetchusers, setExpenseList, updateuserinfo } from '../../features/core/coreSlice';
 import { capitalize, dateformater } from '../../utils/helper';
-import { listsingleexpense, Updateuserinfobyadmin } from './apicalls';
+import { deleteExpense, listsingleexpense, Updateuserinfobyadmin } from './apicalls';
 
 const formStyles = 'border-r border-l w-full h-full flex-col-style justify-between space-y-8 overscroll-hidden';
 const groupStyles = 'border-0 w-fit h-fit flex-col-style space-y-2';
@@ -88,6 +88,7 @@ function ViewExpenseForm() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     // const role = useSelector(state => state.user.userinfo.role)
+    const expenses = useSelector(state => state.expense.expenselist);
     const { expenseid } = useParams();
     const [expense, setExpense] = useState([]);
     const [tags, setTags] = useState([]);
@@ -102,6 +103,20 @@ function ViewExpenseForm() {
         'date_submitted': 'Date Submitted', 'last_modified': 'Last Updated', 'rejection_count': 'Rejection Count'
     }
     const [spinner, setSpinner] = useState(false);
+    const [updateMode, setUpdateMode] = useState(false);
+
+    useEffect(() => {
+        let singleexpense = [];
+        try{
+            singleexpense = expenses.filter((obj) => obj.id === expenseid)[0];
+            setExpense(singleexpense);
+            setTags(singleexpense.expense_tag.names);
+            setImages(singleexpense['expense_proof']);
+        }
+        catch(err){
+            console.error(err);
+        }
+    }, [])
 
     // 'id', 'userid', 'amount', 'status', 'message', 'category', 'currency', 'description', 'last_modified', 'date_submitted', 'payment_method', 'rejection_count', 'payment_recepient', 'username'
     // const dropdownOptions = {'Cloud5': 'cloud5', 'I5Tech': 'i5tech'}
@@ -111,28 +126,28 @@ function ViewExpenseForm() {
     //     role: state.userdata.role, is_active: state.userdata.is_active,
     //     authorized: state.userdata.authorized, company: state.userdata.company,
     // }
+// -----------------------
+    // const getexpenseinfo = async () => {
+    //     setSpinner(true);
+    //     try{
+    //         const data = await listsingleexpense(expenseid);
+    //         setExpense(data);
+    //         // const keys = Object.keys(data).filter((key) => !(key.includes('expense_tag') || key.includes('expense_proof')))
+    //         setSpinner(false);
+    //         setTags([...data['expense_tag']['names']]);
+    //         setImages([...data['expense_proof']]);
+    //         console.log(data, images, tags, "SINGLE EXPENSE INFO", '___----_-------_')
+    //     }
+    //     catch(error){
+    //         setSpinner(false);
+    //         console.log(error);
+    //     }
+    // }
 
-    const getexpenseinfo = async () => {
-        setSpinner(true);
-        try{
-            const data = await listsingleexpense(expenseid);
-            setExpense(data);
-            // const keys = Object.keys(data).filter((key) => !(key.includes('expense_tag') || key.includes('expense_proof')))
-            setSpinner(false);
-            setTags([...data['expense_tag']['names']]);
-            setImages([...data['expense_proof']]);
-            console.log(data, images, tags, "SINGLE EXPENSE INFO", '___----_-------_')
-        }
-        catch(error){
-            setSpinner(false);
-            console.log(error);
-        }
-    }
-
-    useEffect(() => {
-        getexpenseinfo()
-    }, [])
-
+    // useEffect(() => {
+    //     getexpenseinfo()
+    // }, [])
+// ------------------------
     // useEffect(() => {
     //     if (expense.expense_tag){
     //         setTags(expense['expense_tag']['names'])
@@ -150,22 +165,21 @@ function ViewExpenseForm() {
     //     return <Spinner name="Loading expense..." />
     // }
 
-    // const handleUpdate = async () => {
-    //     const enteredData = {...userdetails};
-    //     setSpinner(true);
-    //     try{
-    //         const response = await Updateuserinfobyadmin(enteredData);
-    //         console.log(response);
-    //         setSpinner(false);
-    //         dispatch(fetchusers());
-    //         navigate('../');
-    //     }
-    //     catch{
-    //         console.log("error occured");
-    //         setSpinner(false);
-    //     }
-    // }
-    const tagstyles = 'border-2 px-[5px] rounded-md mx-2'
+    const handleDelete = async () => {
+        setSpinner(true);
+        try{
+            await deleteExpense(expense.id);
+            const newexpenselist = expenses.filter((obj) => obj.id !== expense.id);
+            dispatch(setExpenseList(newexpenselist));
+            setSpinner(false);
+            navigate('../');
+        }
+        catch{
+            console.log("error occured");
+            setSpinner(false);
+        }
+    }
+    const tagstyles = 'border-2 px-[5px] rounded-md mx-2 bg-neutral-100 '
     return (
         <div className={`fixed top-0 left-0 bottom-0 w-[100%] h-full flex-col-style justify-start bg-[rgba(0,0,0,0.8)] text-sm`}>
             {spinner && <Spinner name="Loading expense..." />}
@@ -196,13 +210,19 @@ function ViewExpenseForm() {
                         </table>
                     </div>
                 </div>
-                <div className='border-t w-full flex-row-style justify-center p-2'>
-                    <span className='border-r w-[70%] h-full flex-row-style justify-start px-2 list-none'>
+                <div className='border-t w-full flex-row-style justify-between p-2'>
+                    <span className='border-r w-[80%] h-full flex-row-style justify-start px-2 list-none'>
                         <span className='text-base font-medium'>TAGS: </span>
                         {tags && tags.map((obj, idx) => <li key={idx} className={tagstyles}>{obj}</li>)}
                     </span>
-                    <span className='w-[30%] h-full flex-row-style justify-end px-2 font-medium text-base'>
-                        {expense['status']}
+                    <span className={`${expense['status'] !== 'pending' ? 'w-fit' : 'w-[20%]'} h-full flex-row-style justify-start space-x-4 px-2 font-medium text-base`}>
+                        {expense['status'] === 'pending' &&
+                            <>
+                                <span onClick={() => {setUpdateMode(prev => !prev)}}><i className='fa fa-edit'></i></span>
+                                <span onClick={() => {handleDelete(expense.id)}}><i className='fa fa-trash'></i></span>
+                            </>
+                        }
+                        <span>{expense['status']}...</span>
                     </span>
                 </div>
             </div>

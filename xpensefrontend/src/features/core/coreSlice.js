@@ -111,7 +111,7 @@ export const expenseSlice = createSlice({
         },
         setExpenseList: (state, action) => {
             console.log('NEW EXPENSE RECORD ADDED')
-            state.expenselist = [ action.payload, ...state.expenselist];
+            state.expenselist = [...action.payload];
         },
         setRegistrationRequests: (state, action) => {
             state.registrationrequests = action.payload

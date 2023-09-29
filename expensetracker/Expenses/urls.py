@@ -13,7 +13,7 @@ urlpatterns = [
     path('list_approved/', get_approved_expenses),
     path('list_pending/', get_pending_expenses),
     path('update/<uuid:pk>', update_expense),
-    path('delete/', delete_expense),
+    path('delete/<uuid:pk>', delete_expense),
 
     # section 2
     # path('list_by_role/', get_expenses_by_role), # role specific expenses

@@ -17,14 +17,14 @@ const innerdiv_button = "text-sm border rounded-md flex-row-style justify-center
 const innerdiv_1_2_download = `${innerdiv_button} bg-slate-600 text-white`;
 const innerdiv_1_2_add = `${innerdiv_button} bg-white text-black`;
 
-const table = "table-auto shadow-3xl rounded-lg bg-red-400";
+const table = "table-auto shadow-3xl rounded-lg";
 const thead = "w-full h-10 rounded-tl-lg rounded-tr-lg flex-row-style justify-between flex-grow bg-teal-600";
 const th = "border-r h-6 text-left text-sm font-bold text-white capitalize tracking-wider px-2";
 
 const tbody = "flex-col-style justify-center";
-const tr = "border w-full h-8 flex-row-style justify-between py-5 cursor-pointer odd:bg-white even:bg-slate-100 hover:border-teal-500";
+const tr = "border w-full h-8 flex-row-style justify-between py-5 cursor-pointer odd:bg-white even:bg-slate-100 hover:border-teal-500 hover:bg-[rgba(0,0,0,0.1)]";
 const td = "border-r overflow-x-hidden flex-row-style text-sm text-gray-700 px-2 py-[5px]";
-const td1 = "text-md text-gray-500 px-2 py-[5px]";
+const td1 = "border-r text-md text-gray-500 px-2 py-[5px]";
 
 function View({ obj, keys, fieldStyleMapper, setviewobj }) {
   const deleteUserInfo = () => {};
@@ -38,10 +38,10 @@ function View({ obj, keys, fieldStyleMapper, setviewobj }) {
         </td>
       ))}
       {obj.status === "pending" && (
-        <td className={`${td1} w-32 flex-row-style justify-center space-x-2`}>
-          <Link to={`./updateuser/${obj.id}`} state={{ userdata: obj }}>
+        <td className={`${td1} w-20 flex-row-style justify-center space-x-2`}>
+          {/* <Link to={`./updateuser/${obj.id}`} state={{ userdata: obj }}>
             <i className="fa fa-edit"></i>
-          </Link>
+          </Link> */}
           <span onClick={() => {deleteUserInfo()}}>
             <i className="fa fa-trash"></i>
           </span>
@@ -168,7 +168,7 @@ function ExpensesList() {
                 {obj}
               </th>
             ))}
-            <th className={`${th} w-32`}>Edit/Delete</th>
+            <th className={`${th} w-20 text-center`}>Delete</th>
             <th className={`${th} w-32`}></th>
           </tr>
         </thead>

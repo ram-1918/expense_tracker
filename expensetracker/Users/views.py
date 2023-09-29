@@ -60,9 +60,10 @@ def getUsersView(request):
         users = Users.objects.filter(company = adminuser.company).filter(role = 'employee').order_by('fullname')
     try:
         if filters:
+            print(filters)
             # [fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate] = filters.values()
             if role := filters.get('role', None): users = users.filter(role=role.lower())
-            if company := filters.get('company', None): users = users.filter(company__name=company.lower()) 
+            if company := filters.get('company', None): users = users.filter(company__name=company.lower().strip()) 
             if isactive := filters.get('isactive', None): users = users.filter(is_active = isactive)
             if isauthorized := filters.get('isauthorized', None): users = users.filter(authorized = isauthorized)
             if (fromdate := filters.get('fromdate', None))  and (todate := filters.get('todate', None)): users = users.filter(created_at__range=[fromdate, todate])
@@ -153,11 +154,10 @@ class GetAndUpdateUserView(APIView):
                     user.delete()
                 except:
                     return {"msg": "no user found"}, 409
-
-            return {"msg": "status changed"}, 201
+            # return {"msg": "status changed"}, 201
     
-        data = processFormData(request.data)
-        
+        # data = processFormData(request.data)
+        data = request.data
         # update user's password
         if password := data.get('password', None):
             handledpassword, status = handleObj.handler('password', password)
@@ -181,14 +181,14 @@ class GetAndUpdateUserView(APIView):
             if not status:
                 return {"msg": "password updated"}, 400
             data['phone'] = handledphone
-
-        try:
-            user.update(**data)
-        except:
-            return {"msg": "error while updating"}, 400
         
-        time.sleep(5)
-
+        companyobj = Company.objects.filter(name = data['company']).first()
+        try:
+            data['company'] = companyobj.id
+            user.update(**data)
+        except Exception as e:
+            return {"msg": "error while updating"+str(e)}, 400
+        time.sleep(2)
         return {"msg": "data updated"}, 201
 
 
@@ -203,6 +203,7 @@ def deleteuserbyadmin(request):
         user.delete()
         return {"msg": "deleted succussfully"}, 201
     return {"msg": "user not found"}, 204
+
 
 
 # Login and authentication
@@ -294,6 +295,8 @@ def get_users_by_company(request, company):
         users = users.filter(role = "employee")
     serializer = GetUserSerializer(users, many=True)
     return serializer.data, 200
+
+
 
 
 '''

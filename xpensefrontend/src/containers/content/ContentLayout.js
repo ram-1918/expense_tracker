@@ -8,9 +8,9 @@ import FilterForm from "./FilterForm";
 import Summary from "./Summary";
 
 const outerdiv = 'border-0 w-full h-full flex-row-style justify-center space-x-2 p-2';
-const innerdiv_1 = (showTags, showSummary) => `border border-t-0 border-b-0 ${showTags || showSummary ? 'w-[85%]' : 'w-[90%]'} h-full rounded-lg shadow shadow-lg flex-col-style`;
+const innerdiv_1 = (showTags, showSummary) => `border border-t-0 border-b-0 ${showTags || showSummary ? 'w-[75%]' : 'w-[90%]'} h-full rounded-lg shadow shadow-lg flex-col-style`;
 const inner_1_1 = " w-full h-screen overflow-x-scroll overflow-y-scroll";
-const innerdiv_2 = (showTags, showSummary) => `h-full space-y-4 ${showTags || showSummary ? 'w-[15%] ' : 'w-[10%]'} overflow-scroll`;
+const innerdiv_2 = (showTags, showSummary) => `h-full space-y-4 ${showTags || showSummary ? 'w-[25%] ' : 'w-[10%]'} overflow-scroll`;
 const titleStyles = '';
 const inner_2_12 = `border w-full h-fit overflow-y-scroll`;
 const inner_2_2_1 = 'w-full flex-row-style justify-between font-medium p-2 bg-white';
