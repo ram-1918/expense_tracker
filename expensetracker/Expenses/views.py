@@ -1,5 +1,5 @@
 from .models import Category, Expenses, TypeTags, ExpenseProofs
-from .serializers import TypeTagSerializer, GetExpenseSerializer, PostExpenseSerializer, ExpenseProofSerializer
+from .serializers import TypeTagSerializer, GetExpenseSerializer, PostExpenseSerializer, GetExpenseProofSerializer, GetTypeTagSerializer, ExpenseProofSerializer
 from Users.serializers import GetUserSerializer
 from Users.models import Users, AuthorizedUsers
 from Users.authentication import login_required, GlobalAccess, decode_uuid
@@ -124,21 +124,21 @@ def image_to_text(pil_image):
 
 
 
-def format_image(image, expid, recepient):
+def format_image(image, recepient):
     try:
+        print(image)
         imagename = recepient+secrets.token_hex(5)+'.png'
         image.name = imagename
-
         pil_image = Image.open(image)
         # data = image_to_text(pil_image) # for extracting text, which is not needed now
         width, height = pil_image.size
         newsize = (800, 600) if width > height else (600, 800)
         pil_image = pil_image.resize(newsize)
-        
+        print(pil_image.size)
         imageio = BytesIO()
         pil_image.save(imageio, format='PNG')
         image_content = imageio.getvalue()
-
+        print('OK')
         image_file = InMemoryUploadedFile(
             ContentFile(image_content),
             None,
@@ -147,6 +147,7 @@ def format_image(image, expid, recepient):
             len(image_content),
             None
         )
+        print("OKKK")
         return image_file
     except Exception as e:
         print(e)
@@ -158,7 +159,7 @@ def post_proofs(images, expid, recepient):
         # imagedata = [{"expense": decode_uuid(expid), "filename": '', "image": format_image(image, expid, recepient)} for _, image in images.items()]
         imagedata = []
         for _, image in images.items():
-            if formatedimage := format_image(image, expid, recepient):
+            if formatedimage := format_image(image, recepient):
                 imagedata.append({
                     "expense": decode_uuid(expid),
                     "filename": formatedimage.name,
@@ -261,8 +262,58 @@ def get_single_expense(request, pk):
 @api_view(['PATCH'])
 @login_required
 def update_expense(request, pk):
+    expense = Expenses.objects.filter(id = pk).first()
+    if not expense: return {"msg": "Invalid expense"}, 400
+    try: 
+        category = Category.objects.filter(name = request.data['category']).first()
+        request.data['category'] = category.id
+        ser = PostExpenseSerializer(expense, data=request.data, partial=True)
+        ser.is_valid(raise_exception=True)
+        ser.save()
+        print(ser.data)
+    except Exception as e: return {"msg": "error while updating " + str(e)}, 400
+    return ser.data, 201
 
-    return request.data, 201
+@api_view(['PATCH'])
+@login_required
+def update_expense_proof(request, pk):
+    submitted_proof = request.FILES['image']
+    proof = ExpenseProofs.objects.filter(id = pk).first()
+    if not proof: return {"msg": "No proof found with this id"}, 400
+    try: 
+        expense = ExpenseProofs.objects.prefetch_related('expense').filter(id=pk).first()
+        formattedimg = format_image(submitted_proof, expense.expense.payment_recepient)
+        ser = GetExpenseProofSerializer(proof, data={'image':formattedimg, 'filename': formattedimg.name}, partial=True)
+        ser.is_valid(raise_exception=True)
+        ser.save()
+    except Exception as e: return {"msg": "error while updating " + str(e)}, 400
+    return ser.data, 201
+
+@api_view(['POST'])
+@login_required
+def update_expense_tag(request):
+    newTags = request.data['tags'] # {id: tagid, newname: tagname}
+    print(newTags)
+    expenseid = request.data['expense']
+    tags = TypeTags.objects.filter(expense = expenseid).all()
+    tags.delete()
+    print(tags, TypeTags.objects.filter(expense = expenseid))
+    if result := post_tags(newTags, expenseid):
+        result.save()
+        print(result.data)
+        return result.data, 200
+    else : 
+        return {"msg": "Error occured"}, 400
+    # tagobj = TypeTags.objects.filter(id = tag['id']).first()
+    # if not tagobj: return {"msg": "Invalid tag detail"}, 400
+    # try: 
+    #     ser = GetTypeTagSerializer(tagobj, data=tag, partial=True)
+    #     ser.is_valid(raise_exception=True)
+    #     ser.save()
+    #     print(ser.data)
+    #     result.append(ser.data)
+    # except Exception as e: return {"msg": "error while updating " + str(e)}, 400
+    # return "done", 201
 
 @api_view(['DELETE'])
 @login_required

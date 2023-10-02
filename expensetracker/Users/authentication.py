@@ -155,6 +155,7 @@ def pagination_decorator(func=None):
         def inner(request, *args, **kwargs):
             print("------------ Paginator --------------")
             alldata, serializer, type = func(request, *args, **kwargs)
+            if not alldata: return {'data': [], 'max_pages': 0}, 200
             try:
                 return alldata['msg'], 400
             except:
@@ -173,10 +174,10 @@ def pagination_decorator(func=None):
             page = paginator.page(pageno)
             ser = serializer(page, many=True)
             result = ser.data
-
+            print(result, "------")
             if type == "users":
                 result = [{**obj, "company": obj['company']['name']} for obj in ser.data]
-            return result, 200
+            return {'data': result, 'max_pages':expected_pagenumbers}, 200
         return inner
     
     if func:

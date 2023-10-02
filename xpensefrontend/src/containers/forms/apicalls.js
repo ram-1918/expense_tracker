@@ -45,6 +45,50 @@ export const postexpense = async (data) => {
     return result;
 }
 
+export const updateExpense = async (expenseid, newExpense) => {
+    let result = null;
+    await axios.patch(`${API_URL}expenses/update/${expenseid}`, newExpense, { withCredentials: true })
+    .then((res) => {
+        console.log(res.data, "Updated expense info");
+        result = res.data;
+    })
+    .catch((error) => {
+        console.log(error);
+        result = error.data;
+    })
+    return result;
+}
+
+export const updateExpenseProof = async (proofid, newProof) => {
+    let result = null;
+    await axios.patch(`${API_URL}expenses/update_proof/${proofid}`, newProof, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } })
+    .then((res) => {
+        console.log(res.data, "Updated expense info");
+        result = res.data;
+    })
+    .catch((error) => {
+        console.log(error);
+        result = error.data;
+    })
+    return result;
+}
+
+export const updateExpenseTags = async (newTags) => {
+    let result = null;
+    await axios.post(`${API_URL}expenses/update_tag/`, newTags, { withCredentials: true })
+    .then((res) => {
+        console.log(res.data, "Updated Tag info");
+        result = res.data;
+    })
+    .catch((error) => {
+        console.log(error);
+        result = error.data;
+    })
+    return result;
+}
+
+
+
 export const deleteExpense = async (expenseid) => {
     let result = null;
     await axios.delete(`${API_URL}expenses/delete/${expenseid}`, { withCredentials: true })

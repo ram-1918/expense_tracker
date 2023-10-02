@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 export const fetchusers = createAsyncThunk('expenses/fetchusers', 
-    async (data={"filters": ''}) => {
-        const response = await axios.post('http://localhost:8000/users/listusers/', data, {withCredentials:true});
+    async (data={"filters": '', page: 1, size: 1 }) => {
+        const {page, size} = data
+        const response = await axios.post(`http://localhost:8000/users/listusers/?page=${page}&page_size=${size}`, data, {withCredentials:true});
         console.log(response.data, response, "INSIDE FETCH USERS");
         return response.data;
     }
@@ -91,6 +93,7 @@ export const listexpenses = createAsyncThunk('expenses/listexpenses',
 
 const initialState = {
     userslist: [],
+    maxpagesForUsers: null,
     singleuserinfo: [],
     updatedInfo: [],
 
@@ -127,7 +130,8 @@ export const expenseSlice = createSlice({
         })
         .addCase(fetchusers.fulfilled, (state, action) => {
             state.status = "succeeded";
-            state.userslist = action.payload;
+            state.userslist = action.payload['data'];
+            state.maxpagesForUsers = action.payload['max_pages'];
             console.log(state.status, state.userslist, "INSIDE BUILDER")
         })
         .addCase(fetchsingleuser.pending, (state, action) => {

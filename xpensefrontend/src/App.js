@@ -22,7 +22,7 @@ function App() {
   // let status = useSelector((state) => state.expense.status);
   console.log(userid, "STATE TEST IN APP");
   useEffect(() => {
-    dispatch(fetchusers({"filters": ''}));
+    dispatch(fetchusers());
     dispatch(listexpenses());
     dispatch(fetchuserinfo(userid));
   }, [dispatch])

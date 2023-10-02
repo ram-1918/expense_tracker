@@ -4,17 +4,10 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 
-function UserSummary({type}) {
+function UserSummary() {
   let usersData = useSelector((state) => state.expense.userslist);
-  if (usersData.data === undefined) {
-    return <div>{usersData['msg']}</div>
-  }
-  usersData = usersData.data;
   if (!usersData){
     return <div>Loading...</div>
-  }
-  if(type === 'users'){
-    console.log(usersData, "SUMMARY")
   }
   const titleStyle = 'font-light';
   const summaryTable = {

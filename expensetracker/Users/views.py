@@ -14,6 +14,8 @@ from .services import HandleService
 
 from .authentication import login_required, admin_required, pagination_decorator, GlobalAccess, decode_uuid, get_access_token, get_refresh_token, _debuger
 
+from django.forms import ValidationError
+from django.utils.dateparse import parse_date
 
 import json
 import os
@@ -44,6 +46,31 @@ def processFormData(data):
         newData[k] = v[0]
     return newData
 
+def apply_filters(users, filters):
+    if role := filters.get('role', None): 
+        users = users.filter(role=role.lower())
+
+    if company := filters.get('company', None): 
+        users = users.filter(company__name=company.lower().strip()) 
+
+    if isactive := filters.get('isactive', None):
+        activestatus = {'active': True, 'inactive': False}
+        users = users.filter(is_active = activestatus[isactive])
+
+    if isauthorized := filters.get('isauthorized', None): 
+        authorizedStatus = {'authorized': True, 'unauthorized': False}
+        users = users.filter(authorized = authorizedStatus[isauthorized])
+
+    if (fromdate := filters.get('fromdate', None))  and (todate := filters.get('todate', None)): 
+        fromdate = parse_date(fromdate)
+        todate = parse_date(todate)
+        users = users.filter(created_at__range=[fromdate, todate])
+        print(users)
+
+    if fullname := filters.get('fullname', None): 
+        users = users.order_by(fullname)
+    
+    return users
 
 # PROTECTED - list users, action by superadmin or admin
 # ENDPOINT - /users/listusers/
@@ -56,19 +83,14 @@ def getUsersView(request):
     userid, role, *others = decodeddata().values()
     adminuser = Users.objects.filter(id=decode_uuid(userid)).first()
     users = Users.objects.all().order_by('fullname')
+    print(users)
     if role == 'admin':
         users = Users.objects.filter(company = adminuser.company).filter(role = 'employee').order_by('fullname')
     try:
         if filters:
-            print(filters)
-            # [fullname, role, company, isactive, isauthorized, tag, location, fromdate, todate] = filters.values()
-            if role := filters.get('role', None): users = users.filter(role=role.lower())
-            if company := filters.get('company', None): users = users.filter(company__name=company.lower().strip()) 
-            if isactive := filters.get('isactive', None): users = users.filter(is_active = isactive)
-            if isauthorized := filters.get('isauthorized', None): users = users.filter(authorized = isauthorized)
-            if (fromdate := filters.get('fromdate', None))  and (todate := filters.get('todate', None)): users = users.filter(created_at__range=[fromdate, todate])
-            if fullname := filters.get('fullname', None): users = users.order_by(fullname)
-        if not users: return {"msg": "No users found"}, GetUserSerializer, "users"
+            users = apply_filters(users, filters)
+            print(filters, users)
+        # if not users: return {"msg": "No users found"}, GetUserSerializer, "users"
     except:
         return {"msg": "error occured in filters"}, GetUserSerializer, "users"
     return users, GetUserSerializer, "users"
@@ -267,7 +289,8 @@ def get_registration_requests(request):
     if role == 'admin':
         users = users.filter(role = "employee", company=company)
     filteredUsers = GetUserSerializer(users, many=True)
-    return filteredUsers.data, 200
+    result = [{**obj, 'company': obj['company']['name']} for obj in filteredUsers.data]
+    return result, 200
 
 # ENDPOINT - /users/list/
 @api_view(['GET'])

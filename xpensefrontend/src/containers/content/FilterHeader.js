@@ -1,6 +1,7 @@
 // [position] [border] [width,height] [flex] [padding, margin] [bg] [text] [hover] [media]
 
 import { useEffect, useState } from "react";
+import FilterForm from "./FilterForm";
 
 const outerdiv = "w-full grid grid-flow-col grid-rows-2 gap-2 font-light p-4 bg-white";
 const buttonStyles = 'border border-slate-400 w-32 h-8 flex-row-style text-[0.8rem] justify-center rounded-lg px-2 cursor-pointer';
@@ -36,9 +37,11 @@ function FilterHeader({ allKeys, setKeys, active, setActive }) {
         sortedKeys(allKeys);
     }
     return (
-        <div className={outerdiv}>
-            {allkeys.map((ele, idx) => <button key={idx} type="submit" onClick={() => handleKeys(ele)} className={`${buttonStyles} ${active[ele] && 'border border-teal-900 bg-teal-100'}`}>{ele}</button>)}
-        </div>
+        <>
+            <div className={outerdiv}>
+                {allkeys.map((ele, idx) => <button key={idx} type="submit" onClick={() => handleKeys(ele)} className={`${buttonStyles} ${active[ele] && 'border border-teal-900 bg-teal-100'}`}>{ele}</button>)}
+            </div>
+        </>
     );
     }
 

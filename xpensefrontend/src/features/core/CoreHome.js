@@ -8,8 +8,8 @@ import { useState } from "react";
 
 const outerdiv = "w-full h-screen flex-row-style justify-center";
 const inner_1 = (showSideNav) => `${showSideNav ? 'w-[15%]' : 'w-[4%]'} sticky  h-full flex-col-style justify-start bg-[#282c34] text-white transition-transform ease-linear duration-700`;
-const inner_2 = (showSideNav) => `${showSideNav ? 'w-[85%]' : 'w-[97%]'} h-full flex-col-style justify-center`;
-const inner_2_1 = "border-0 w-full h-screen flex-row-style justify-center";
+const inner_2 = (showSideNav) => ` ${showSideNav ? 'w-[85%]' : 'w-[97%]'} h-full flex-col-style justify-center flex-grow`; //
+const inner_2_1 = "border-0 w-full h-screen flex-col-style justify-center";
 
 
 function CoreHome() {

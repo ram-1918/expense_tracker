@@ -2,112 +2,112 @@
 
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import BaseDropdown from "../../components/base/BaseDropdown";
-import BaseSwitch from "../../components/base/BaseSwitch";
 import { fetchusers } from "../../features/core/coreSlice";
+import Tooltip from "../../components/base/Tooltip";
+import BaseDropdown from "../../components/base/BaseDropdown";
 
+const sectionStyles = 'w-full h-fit grid grid-flow-row grid-cols-5 justify-items-center justify-self-auto gap-4 text-[0.9rem] font-light'; // 'w-fit h-fit flex-row-style justify-center space-x-2';
+const dateStyles = (inputErr) => `w-32 h-6 text-sm outline-none border rounded-md focus:border-gray-500 font-light px-2 ${inputErr && 'border-2 border-red-500'}`
+const resetbutton = 'border border-teal-500 w-16 h-8 px-2 rounded-lg font-medium hover:opacity-70';
+const applybutton = 'appearence-none bg-teal-500 w-16 h-8 px-2 rounded-lg text-white font-medium hover:opacity-80';
 
-const filterFormStyle = 'border rounded-lg bg-gray-50 px-[5px] text-sm cursor-pointer hover:bg-gray-200 ';
-const filterFormSearch = `border-b w-full px-2 bg-inherit outline-none text-md placeholder:text-sm mb-4`;
-const sectionStyles = 'shadow w-full h-fit flex-col-style justify-start space-y-2';
-const headerStyles = 'py-2 w-full text-[0.9rem] font-semibold px-2';
-const sortButtonStyles = 'border border-slate-400 w-32 h-8 flex-row-style justify-center rounded-lg cursor-pointer';
-const activeSortButtonStyles = 'border border-blue-500 w-32 h-8 flex-row-style justify-evenly rounded-lg bg-blue-100 cursor-pointer before:border-b-2 before:border-l-2 before:border-blue-400 before:w-4 before:h-2 before:-rotate-45';
-const selectedOptionStyle = 'w-full flex-row-style h-full justify-evenly rounded-lg cursor-pointer before:border-b-2 before:border-l-2 before:border-blue-400 before:w-4 before:h-2 before:-rotate-45';
-const activebutton = `border-4 border-stone-200 w-4 h-4 rounded-full p-[5px]`;
-const tagStyles = 'border list-none min-w-fit flex-row-style justify-center rounded-full cursor-pointer';
-const dateStyles = 'text-sm outline-none border focus:border-gray-500 font-light '
-// const dateStyles = 'dark:bg-dark-bg mt-1 block w-full rounded border-gray-400 text-sm dark:border-gray-600 dark:text-white dark:[color-scheme:dark]'
-const resetbutton = 'border border-teal-500 w-16 p-2 rounded-lg font-medium hover:opacity-70';
-const applybutton = 'appearence-none bg-teal-500 w-16 p-2 rounded-lg text-white font-medium hover:opacity-80';
+const companies = { 'SiriInfo': 'siriinfo', 'Cloud5': 'cloud5', 'Iniac': 'iniac', 'I5Tech': 'i5tech' };
+const fullname_orders = { 'Fullnane Asc': '-fullname', 'Fullname Desc': 'fullname' };
+const roles = { 'Super Admin': 'superadmin', 'Admin': 'admin', 'Employee': 'employee' };
+const activeOptions = { 'Active': 'active', 'Inactive': 'inactive' }
+const authorizedOptions = { 'Authorized': 'authorized', 'UnAuthorized': 'unauthorized' }
 
+const initialValues = {
+  'fullname': '',
+  'role': '',
+  'company': '',
+  'isactive': null,
+  'isauthorized': null,
+  'location': 'Edison',
+  'fromdate': null,
+  'todate': null
+}
+
+const Label = ({ title, msg }) => {
+  return (
+    <div className="w-full h-6 flex">
+      <span className="w-fit flex-row-style justify-start space-x-1">
+        <span>{title}</span> <Tooltip type="custom" msg={msg} />
+      </span>
+    </div>)
+}
+
+const FilterForm = ({ type }) => {
+  let result = null;
+  if (type === 'users') result = <UserFilters />;
+  else if (type === 'expenses') result = <ExpenseFilters />;
+  return result;
+}
+
+export default FilterForm;
 
 function UserFilters() {
   const dispatch = useDispatch();
-  const [isFullname, setIsFullname] = useState('');
-  const [isRole, setIsRole] = useState(false);
-  const [isCompany, setIsCompany] = useState(false);
-  const [company, setCompany] = useState('siriinfo');
-  const [showCompanies, setShowCompanies] = useState(false);
-  const [isactive, setIsActive] = useState('');
-  const [isauthorized, setIsAuthorized] = useState('');
-  const [activeTag, setActiveTag] = useState('');
-  const [location, setLocation] = useState('Edison');
-  const [fromdate, setFromDate] = useState(null);
-  const [todate, setToDate] = useState(null);
-  const dropdownOptions = {'SiriInfo':'siriinfo', 'Cloud5': 'cloud5', 'Iniac': 'iniac', 'I5Tech':'i5tech'};
-
-  const localheader = title => <span className={headerStyles}>{title}</span>
-
-  const localswitch = (type, setFunction) => (
-    <div className="w-full flex-row-style justify-between px-2">
-      <span className={headerStyles}>{type}</span>
-      <BaseSwitch setValue={setFunction} />
-    </div>
-  )
-  
-  const tagOptions = ['red', 'green', 'purple', 'yellow', 'gray'].map((obj, idx) => 
-      <li key={idx} onClick={() => setActiveTag(obj)} className={`${tagStyles} ${activeTag === obj ? `bg-${activeTag}-100 border-${activeTag}-500` : 'bg-white'}`}>
-        <span className={`bg-${obj}-500 rounded w-2 h-2 mx-2`}></span>
-        <span>{obj}</span>
-      </li>
-  )
-
-  const resetFilters = () => {
-    setIsFullname(''); setIsRole(false); setCompany('Choose Company'); setShowCompanies(false); setIsActive('');
-    setIsAuthorized(''); setActiveTag(''); setLocation('Edison'); setFromDate(null); setToDate(null)
-  }
+  const [fields, setFields] = useState(initialValues);
+  const [inputErr, setInputErr] = useState(false);
 
   const applyFilters = () => {
     const filteroptions = {
-      'fullname': isFullname === 'asc' ? 'fullname' : isFullname === 'desc' ? '-fullname' : '',
-      'role': isRole ? isRole : '',
-      'company': company !== 'Choose Company' ? company.toLowerCase() : '',
-      'isactive': isactive,
-      'isauthorized': isauthorized,
-      'location': location,
-      'from': fromdate,
-      'to': todate
+      'fullname': fullname_orders[fields['fullname']] || '',
+      'role': roles[fields['role']] || '',
+      'company': companies[fields['company']] || '',
+      'isactive': activeOptions[fields['isactive']],
+      'isauthorized': authorizedOptions[fields['isauthorized']],
+      'fromdate': fields['fromdate'] || '',
+      'todate': fields['todate'] || ''
     }
-    dispatch(fetchusers({ "filters": filteroptions }));
+    dispatch(fetchusers({ "filters": filteroptions, page: 1, size: 5 }));
   }
+
+  const handleFromDate = (e) => {
+    const fromdate = new Date(e.target.value);
+    const today = new Date();
+    if (fromdate.getFullYear() - 2021 < 0) {
+      console.log('enterDate later than 2021')
+    }
+    const [year, month, day] = [today.getFullYear(), today.getMonth(), today.getDate()]
+    console.log(fromdate, year, month, day)
+    setFields(prev => ({ ...prev, ['fromdate']: e.target.value }))
+  }
+  const handleToDate = (e) => {
+    const fromdate = new Date(fields['fromdate']);
+    const todate = new Date(e.target.value);
+    console.log(fromdate, todate, fromdate > todate)
+    if(fromdate <= todate){
+      setFields(prev => ({ ...prev, ['todate']: e.target.value }))
+      setInputErr(false);
+    } else {
+      setInputErr(true);
+    }
+  }
+
+  const resetFilters = () => {
+    setFields(initialValues);
+  }
+
   return (
-    <div className="w-full flex-col-style justify-start space-y-2 text-[0.9rem] font-light">
+    <div className="sticky border-b w-full flex-col-styles justify-start space-y-2 px-4 transition duration-700 ease-linear">
       <section className={sectionStyles}>
-        {localheader("Sort by")}
-        <div className={`w-full h-full flex justify-around grid grid-cols-2 grid-flow-row gap-4 p-2`}>
-          <span onClick={() => setIsFullname('asc')} className={`${isFullname === 'asc' ? activeSortButtonStyles : sortButtonStyles}`}>Fullname ASC</span>
-          <span onClick={() => setIsFullname('desc')} className={`${isFullname === 'desc' ? activeSortButtonStyles : sortButtonStyles}`}>Fullname DESC</span>
-          <span onClick={() => setIsRole('superadmin')} className={`${isRole === 'superadmin' ? activeSortButtonStyles : sortButtonStyles}`}>Super Admin</span>
-          <span onClick={() => setIsRole('admin')} className={`${isRole === 'admin' ? activeSortButtonStyles : sortButtonStyles}`}>Admin</span>
-          <span onClick={() => setIsRole('employee')} className={`${isRole === 'employee' ? activeSortButtonStyles : sortButtonStyles}`}>Employee</span>
-          <BaseDropdown options={dropdownOptions} setValueFunction={setCompany} value={company} />
+        <BaseDropdown options={fullname_orders} setValueFunction={setFields} value={fields['fullname']} rarecase="fullname" />
+        <BaseDropdown options={roles} setValueFunction={setFields} value={fields['role']} rarecase="role" />
+        <BaseDropdown options={companies} setValueFunction={setFields} value={fields['company']} rarecase="company" />
+        <BaseDropdown options={activeOptions} setValueFunction={setFields} value={fields['isactive']} rarecase="isactive" />
+        <BaseDropdown options={authorizedOptions} setValueFunction={setFields} value={fields['isauthorized']} rarecase="isauthorized" />
+        <div className="flex-col-style w-fit">
+          <Label title="From" msg="Date should be after the year 2022" />
+          <input type="date" onChange={(e) => handleFromDate(e)} className={dateStyles(inputErr)}></input>
+        </div>
+        <div className="flex-col-style w-fit">
+          <Label title="To" msg="Date should be before today" />
+          <input type="date" onChange={(e) => handleToDate(e)} className={dateStyles(inputErr)}></input>
         </div>
       </section>
-      <section className={sectionStyles}>
-        {localswitch("Show only Active", setIsActive)}
-        {localswitch("Show only Authorized", setIsAuthorized)}
-      </section>
-      <section className={sectionStyles}>
-        <div className="shadow w-full p-2 flex-col-style justify-around space-y-2">
-          {localheader("Tags")}
-          <span className="w-full grid grid-rows-2 grid-flow-col gap-2">
-            {tagOptions}
-          </span>
-        </div>
-        <div className = "shadow w-full flex-row-style justify-between p-2 ">
-          {localheader("Location")}
-          <span className="w-[50%] flex-row-style justify-center">{location}</span> <i className="fa fa-angle-right"></i>
-        </div>
-      </section>
-      <section className='w-full flex-row-style justify-between'>
-        <div className="w-full flex-row-style justify-between px-2">
-          <input type="date" onChange={(e) => setFromDate(e.target.value)} className={dateStyles}></input>
-          <span className="px-[4px]">To</span>
-          <input type="date" onChange={(e) => setToDate(e.target.value)} className={dateStyles}></input>
-        </div>
-      </section>
-      <section className='w-full flex-row-style justify-between p-2'>
+      <section className='w-full flex-row-style justify-end space-x-2 p-2'>
         <button type="button" className={resetbutton} onClick={() => { resetFilters() }}>Reset</button>
         <button type="button" className={applybutton} onClick={() => { applyFilters() }}>Apply</button>
       </section>
@@ -118,12 +118,3 @@ function UserFilters() {
 const ExpenseFilters = () => {
   return <div>Fliters</div>
 }
-
-const FilterForm = ({type}) => {
-  let result = null;
-  if (type === 'users') result = <UserFilters />;
-  else if (type === 'expenses') result = <ExpenseFilters />;
-  return result;
-}
-
-export default FilterForm;

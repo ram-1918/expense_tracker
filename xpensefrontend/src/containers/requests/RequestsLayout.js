@@ -27,15 +27,6 @@ function RequestsLayout() {
         'registration' : <RegistrationRequestsList />,
         'expenses': <ExpenseRequestsList />,
     }
-
-    // helpers
-    // const title = (title) => <span className={titleStyles}>{title}</span>
-    // const showHideButtons = (showValue, setFunction) => (
-    //     showValue ? 
-    //     <span onClick={() => { setFunction((prev) => !prev) }}><i className="fa fa-minus"></i></span> 
-    //     : <span onClick={() => { setFunction((prev) => !prev) }}><i className="fa fa-plus"></i></span>
-    // )
-
     return (
         <div className={outerdiv}>
             {/* Left */}

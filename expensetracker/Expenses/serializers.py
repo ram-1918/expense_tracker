@@ -25,7 +25,7 @@ class GetExpenseProofSerializer(ModelSerializer):
 class GetTypeTagSerializer(ModelSerializer):
     class Meta:
         model = TypeTags
-        fields = ['name']
+        fields = ['id', 'name']
 
 class Category(ModelSerializer):
     class Meta:

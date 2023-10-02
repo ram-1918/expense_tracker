@@ -10,6 +10,7 @@ import { deleteuserbyadmin, fetchusers, setUsersList } from "../../features/core
 import { dateformater } from "../../utils/helper";
 import FilterHeader from "./FilterHeader";
 import { Link, Outlet } from "react-router-dom";
+import FilterForm from "./FilterForm";
 
 const API_URL = 'http://127.0.0.1:8000';
 
@@ -30,7 +31,109 @@ const td1 = 'w-20 text-md text-gray-500 px-2 py-[5px]';
 
 const profileImage = 'w-6 h-6 rounded-full object-cover ';
 
+function UsersList() {
+  const initial_active_keys = ['id', 'fullname', 'email', 'is_active', 'role'];
+  const initial_active = {
+    id: true, fullname: true, email: true, phone: false, company: false,
+    is_active: true, role: true, created_at: false, employee_id: false, authorized: false, comment: false,
+  }
+const fieldStyleMapper = {
+    id: 'w-96', fullname: "w-36", email: "w-48", phone: "w-32", company: "w-32", is_active: "w-20",
+    role: "w-24", created_at: "w-44", employee_id: "w-44", authorized: "w-24", comment: "w-44"
+  }
+
+const dispatch = useDispatch();
+const [keys, setKeys] = useState(initial_active_keys);
+const [active, setActive] = useState(initial_active);
+const [toggleFilterHeader, setToggleFilterHeader] = useState(false);
+const [toggleFilterOptions, setToggleFilterOptions] = useState(false);
+const userslist = useSelector(state => state.expense.userslist);
+const max_pages = useSelector(state => state.expense.maxpagesForUsers);
+
+const [pageNumber, setPageNumber] = useState(1);
+const [pageSize, setPageSize] = useState(1);
+const pageLimit = max_pages;
+
+useEffect(() => {
+  if(pageNumber === max_pages && pageSize > max_pages){
+    console.log("Content already loaded", pageNumber, pageLimit, pageSize)
+  }
+  else {
+    dispatch(fetchusers({"filters":'', "page": pageNumber, "size": pageSize}));
+  }
+
+}, [dispatch, pageNumber, pageSize])
+
+// DISPLAY AMOUNT SPENT BY EACH USER
+
+
+const cols = ['id', 'fullname', 'email', 'phone', 'company', 'is_active', 'role', 'created_at', 'employee_id', 'authorized', 'comment'];
+
+const head = (title, setToggleFunc, toggleValue, keys=[], column) =>
+<>
+  <div className="flex-row-style justify-evenly">
+    <span className="text-lg">{title}</span>
+    {column && <>
+    <span>({keys.length})</span>
+    <span onClick={() => {
+          setActive(initial_active);
+          setKeys(initial_active_keys);
+        }}
+        className={innerdiv_reset} > Reset </span>
+    </>}
+  </div>
+  <span className="text-lg" onClick={() => {setToggleFunc((prev) => !prev)}}>
+    {toggleValue ? <i className="fa fa-angle-up"></i> : <i className="fa fa-angle-down"></i>}
+  </span>
+</> 
+
+  return (
+    <>
+      <div className={outerdiv}>
+        <div className="flex-row-style justify-between px-4">
+            {head('Columns Filters', setToggleFilterHeader, toggleFilterHeader, keys, true)}
+        </div>
+        {toggleFilterHeader && <FilterHeader allKeys={cols} setKeys={setKeys} active={active} setActive={setActive}/>}
+      </div>
+      <div className={outerdiv}>
+        <div className="flex-row-style justify-between px-4">
+          {head('Sort By', setToggleFilterOptions, toggleFilterOptions)}
+        </div>
+        {toggleFilterOptions && <FilterForm type='users' />}
+      </div>
+
+      {!userslist.length && <div className="w-full h-full flex-col-style justify-start bg-gray-100 text-xl font-light"><span>No users found</span></div>}
+      {userslist.length && 
+      <>
+        <table className={table}>
+          <TableCaption caption={`User Details (${userslist.length})`} />
+          <thead className={`${thead}`}>
+              <tr>
+                <th className={`${th} w-20`}>Picture</th>
+                {keys.map((obj, idx) => (
+                <th key={idx} className={`${th} ${obj === 'amount' ? 'w-32' : fieldStyleMapper[obj]}`}>
+                  {obj}
+                </th>
+                ))}
+                <th className={`${th} w-32`}>Edit/Delete</th>
+              </tr>
+          </thead>
+          <tbody className={`${tbody}`}>
+            {userslist.map((obj, idx) => <View key={idx} obj={obj} keys={keys} fieldStyleMapper={fieldStyleMapper}/>)}
+          </tbody>
+        </table>
+        {max_pages && <Pagination pageLimit={pageLimit} setPageSize={setPageSize} pageNumber={pageNumber} setPageNumber={setPageNumber} pageSize={pageSize} /> }
+      </>}
+      <Outlet />
+    </>
+  );
+}
+
+export default UsersList;
+
+
 function View({obj, keys, fieldStyleMapper}){
+  
   const dispatch = useDispatch();
   const getStatus = (obj) => obj ? 'Active': 'Inactive';
   const getAuthorized = (obj) => obj ? 'Authorized': 'Unauthorized';
@@ -45,7 +148,6 @@ function View({obj, keys, fieldStyleMapper}){
     dispatch(deleteuserbyadmin(id));
     dispatch(setUsersList(updatedList));
   }
-
   return (
     <tr className={`${tr}`}>
       <td className={`border-r overflow-x-hidden flex-row-style text-sm text-gray-700 px-2 w-20 justify-center`}><img srcSet={`${API_URL}${obj.image}`} alt="profile" className={profileImage}></img></td>
@@ -65,75 +167,7 @@ function View({obj, keys, fieldStyleMapper}){
   )
 }
 
-function UsersList() {
-  const initial_active_keys = ['id', 'fullname', 'email', 'is_active', 'role'];
-  const initial_active = {
-    id: true, fullname: true, email: true, phone: false, company: false,
-    is_active: true, role: true, created_at: false, employee_id: false, authorized: false, comment: false,
-  }
-const fieldStyleMapper = {
-    id: 'w-96', fullname: "w-36", email: "w-48", phone: "w-32", company: "w-32", is_active: "w-20",
-    role: "w-24", created_at: "w-44", employee_id: "w-44", authorized: "w-24", comment: "w-44"
-  }
 
-const dispatch = useDispatch();
-const [keys, setKeys] = useState(initial_active_keys);
-const [active, setActive] = useState(initial_active);
-
-const [pageNumber, setPageNumber] = useState(1);
-const [pageLimit, setPageLimit] = useState(1);
-
-
-// DISPLAY AMOUNT SPENT BY EACH USER
-
-let userslist = useSelector(state => state.expense.userslist);
-console.log(userslist, "USERLIST");
-// if (userslist.data === undefined){
-//   return <div>{userslist['msg']}</div>
-// }
-// userslist = userslist.data;
-
-if(!userslist.length){
-  return <Spinner name="users" />
-}
-
-const cols = ['id', 'fullname', 'email', 'phone', 'company', 'is_active', 'role', 'created_at', 'employee_id', 'authorized', 'comment'];
-
-  return (
-    <>
-      <div className={outerdiv}>
-        <span className="text-lg">Columns Filters</span> 
-        <span>({keys.length})</span>
-        <span onClick={() => {setActive(initial_active); setKeys(initial_active_keys);}} className={innerdiv_reset}>Reset</span>
-        <FilterHeader allKeys={cols} setKeys={setKeys} active={active} setActive={setActive}/>
-        <div className={innerdiv_1_2}>
-          <span className={innerdiv_1_2_download}>Download (.pdf)</span>
-        </div>
-      </div>
-      <table className={table}>
-        <TableCaption caption={`User Details (${userslist.length})`} />
-        <thead className={`${thead}`}>
-            <tr>
-              <th className={`${th} w-20`}>Picture</th>
-              {keys.map((obj, idx) => (
-              <th key={idx} className={`${th} ${obj === 'amount' ? 'w-32' : fieldStyleMapper[obj]}`}>
-                {obj}
-              </th>
-              ))}
-              <th className={`${th} w-32`}>Edit/Delete</th>
-            </tr>
-        </thead>
-        <tbody className={`${tbody}`}>
-          {userslist.map((obj, idx) => <View key={idx} obj={obj} keys={keys} fieldStyleMapper={fieldStyleMapper}/>)}
-        </tbody>
-      </table>
-      <Pagination setPageLimit={setPageLimit} setPageNumber={setPageNumber} />
-      <Outlet />
-    </>
-  );
-}
-
-export default UsersList;
 
 // Multiple API calls - https://stackoverflow.com/questions/75693156/multiple-api-calling-in-functional-component-react-js
 
