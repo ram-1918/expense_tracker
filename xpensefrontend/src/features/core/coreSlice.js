@@ -1,98 +1,12 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { createSlice } from '@reduxjs/toolkit';
 
-export const fetchusers = createAsyncThunk('expenses/fetchusers', 
-    async (data={"filters": '', page: 1, size: 1 }) => {
-        const {page, size} = data
-        const response = await axios.post(`http://localhost:8000/users/listusers/?page=${page}&page_size=${size}`, data, {withCredentials:true});
-        console.log(response.data, response, "INSIDE FETCH USERS");
-        return response.data;
-    }
-);
+import {listexpenses, fetchusers, fetchsingleuser, updateuserinfo, deleteuserbyadmin, registrationrequestsbyadmin, changeregistrationstatus, fetchsummaries} from './state/coreThunks'
 
-export const fetchsingleuser = createAsyncThunk('expenses/fetchsingleuser', 
-    async (userid) => {
-        try{
-            const response = await axios.post('http://localhost:8000/users/getsingleuser/', {"userid": userid}, {withCredentials: true});
-            console.log(response, response.data, "TESTING IN SIGNLE USER")
-            return response.data;
-        }
-        catch(error) {
-            console.log(error);
-        }
-    }
-)
-
-export const updateuserinfo = createAsyncThunk('expenses/updateuser', 
-    async (enteredData) => {
-        try {
-            const response = await axios.put('http://localhost:8000/users/updateuser/', enteredData, {withCredentials:true});
-            console.log(response.data);
-            return response.data;
-        }
-        catch(errors) {
-            console.log(errors, 'update thunk');
-        }
-    }
-);
-
-export const deleteuserbyadmin = createAsyncThunk('expenses/deleteuserbyadmin', 
-    async (id) => {
-        try {
-            const response = await axios.post('http://localhost:8000/users/deleteuserbyadmin/', {"userid": id}, {withCredentials:true});
-            console.log(response.data);
-            return response.data;
-        }
-        catch(errors) {
-            console.log(errors, 'delete thunk');
-        }
-    }
-);
-
-export const registrationrequestsbyadmin = createAsyncThunk('expenses/registrationrequestsbyadmin', 
-    async () => {
-        try {
-            const response = await axios.get('http://localhost:8000/users/registrationrequests/', {withCredentials:true});
-            console.log(response.data);
-            return response.data;
-        }
-        catch(errors) {
-            console.log(errors, 'requests thunk');
-        }
-    }
-);
-
-export const changeregistrationstatus = createAsyncThunk('expenses/changeregistrationstatus', 
-    async (data) => {
-        try {
-            const response = await axios.post('http://localhost:8000/users/changeregistrationstatus/', data, {withCredentials:true});
-            console.log(response.data);
-            return response.data;
-        }
-        catch(errors) {
-            console.log(errors, 'requests thunk');
-        }
-    }
-);
-
-// Expense related
-
-export const listexpenses = createAsyncThunk('expenses/listexpenses', 
-    async () => {
-        try {
-            const response = await axios.get('http://localhost:8000/expenses/list/', {withCredentials:true});
-            console.log("Expense data", response.data);
-            return response.data;
-        }
-        catch(errors) {
-            console.log(errors, 'listexpenses thunk');
-        }
-    }
-);
 
 const initialState = {
+    dashboard_summaries: null,
     userslist: [],
+    userreport: null,
     maxpagesForUsers: null,
     singleuserinfo: [],
     updatedInfo: [],
@@ -109,8 +23,14 @@ export const expenseSlice = createSlice({
     name:'expense', 
     initialState, 
     reducers:{
+        setDashboardSummaries: (state, action) => {
+            state.dashboard_summaries = action.payload
+        },
         setUsersList: (state, action) => {
             state.userslist = action.payload;
+        },
+        setUserReport: (state, action) => {
+            state.userreport = action.payload;
         },
         setExpenseList: (state, action) => {
             console.log('NEW EXPENSE RECORD ADDED')
@@ -125,6 +45,9 @@ export const expenseSlice = createSlice({
     },
     extraReducers(builder) {
         builder
+        .addCase(fetchsummaries.fulfilled, (state, action) => {
+            state.dashboard_summaries = JSON.parse(action.payload)
+        })
         .addCase(fetchusers.pending, (state, action) => {
             state.status = "loading";
         })
@@ -165,7 +88,7 @@ export const expenseSlice = createSlice({
     }
 });
 
-export const {setUsersList, setRegistrationRequests, setExpenseList, setFilterStack} = expenseSlice.actions; 
+export const {setUsersList, setUserReport, setRegistrationRequests, setExpenseList, setFilterStack} = expenseSlice.actions; 
 
 
 

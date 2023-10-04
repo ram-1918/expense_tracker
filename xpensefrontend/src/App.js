@@ -7,7 +7,7 @@ import MainRoutes from './routing/MainRoutes';
 import { get_user_info } from './features/users/apicalls';
 import axios from 'axios';
 import { API_URL } from './store/constants';
-import { fetchusers, listexpenses } from './features/core/coreSlice';
+import { fetchusers, listexpenses, fetchsummaries } from './features/core/state/coreThunks';
 // import { FetchData } from './components/customhooks/FetchData';
 
 const axiosInstance = axios.create({
@@ -25,6 +25,7 @@ function App() {
     dispatch(fetchusers());
     dispatch(listexpenses());
     dispatch(fetchuserinfo(userid));
+    dispatch(fetchsummaries());
   }, [dispatch])
 
   console.log(userinfo, 'AFTER USERONFO')

@@ -10,21 +10,28 @@ from rest_framework.pagination import PageNumberPagination
 from .models import AuthorizedUsers, Company, Users
 from .serializers import GetUserSerializer, PostUserSerializer, CompanySerializer
 
+from Expenses.models import Expenses
+
 from .services import HandleService
 
 from .authentication import login_required, admin_required, pagination_decorator, GlobalAccess, decode_uuid, get_access_token, get_refresh_token, _debuger
 
 from django.forms import ValidationError
 from django.utils.dateparse import parse_date
+from django.db.models import Sum, Avg, Max, Min
 
 import json
 import os
 import bcrypt
 import time
+import logging
 
 # https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html
 # mypy, autopep8
 # Create your views here.
+
+logger = logging.basicConfig(filename='mylog.log')
+logger = logging.getLogger(__name__)
 
 
 def testing(request):
@@ -318,6 +325,51 @@ def get_users_by_company(request, company):
         users = users.filter(role = "employee")
     serializer = GetUserSerializer(users, many=True)
     return serializer.data, 200
+
+
+# --------------- Dashboard related ----------------
+
+# Admin summary
+@api_view(['GET'])
+@login_required
+@admin_required
+def summaries_for_dashboard(request) -> dict:
+    logger.info("This is an info message.")
+    result = {
+        'total_registration_requests': '',
+        'total_expense_requests': '',
+        'sum_of_submitted_expenses': [],
+        'sum_of_pending_expenses': [],
+        'sum_of_reembersements': '',
+    }
+    expenses = Expenses.objects.all()
+    users = Users.objects.all()
+
+    # total registration requests - Users - who is not authorized - SA only
+    regi_requests = users.filter(authorized=False).count()
+    result['total_registration_requests'] = regi_requests
+
+    # total expense requests - Expeneses - whose expense status is False
+    expense_requests = expenses.filter(status='pending').count()
+    result['total_expense_requests'] = expense_requests
+
+    # total sum of the amounts of the submitted expenses - Expenses - whose expense status is True
+    sum_of_submitted = expenses.filter(status='approved')
+    sum_ = sum_of_submitted.aggregate(Sum('amount'))['amount__sum']
+    result['sum_of_submitted_expenses'] = [float(round(sum_, 2)) if sum_ is not None else 0, sum_of_submitted.count()]
+
+    # total sum of the amounts of the submitted expenses - Expenses - whose expense status is False
+    sum_of_pending = expenses.filter(status='pending')
+    sum_ = sum_of_pending.aggregate(Sum('amount'))['amount__sum']
+    result['sum_of_pending_expenses'] = [float(round(sum_, 2)) if sum_ is not None  else 0, sum_of_pending.count()]
+
+    # total sum of the amounts of the submitted expenses - Expenses - whose payment method is CASH
+    sum_of_reembersements = expenses.filter(status='approved', payment_method='cash')
+    sum_ = sum_of_reembersements.aggregate(Sum('amount'))['amount__sum']
+    result['sum_of_reembersements'] = [float(round(sum_, 2)) if sum_ is not None  else 0, sum_of_reembersements.count()]
+
+    result = json.dumps(result)
+    return result, 200
 
 
 

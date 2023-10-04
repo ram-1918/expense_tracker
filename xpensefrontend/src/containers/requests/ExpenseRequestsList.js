@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import Pagination from "../../components/base/Pagination";
 import { useDispatch, useSelector } from "react-redux";
-import { changeregistrationstatus, deleteuserbyadmin, registrationrequestsbyadmin, setRegistrationRequests, setUsersList } from "../../features/core/coreSlice";
-import { Link, Outlet } from "react-router-dom";
+import { setUsersList, setRegistrationRequests } from "../../features/core/coreSlice";
+import {changeregistrationstatus, registrationrequestsbyadmin} from '../../features/core/state/coreThunks';
 
 
 const thead = 'sticky top-0 left-0 right-0 w-full h-10 m-0 flex-row-style justify-between bg-slate-300';

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import BaseDropdown from '../../components/base/BaseDropdown';
 import Spinner from '../../components/base/Spinner';
-import { fetchsingleuser, fetchusers, updateuserinfo } from '../../features/core/coreSlice';
+import { fetchsingleuser, fetchusers, updateuserinfo } from '../../features/core/state/coreThunks';
 import { updateuser, Updateuserinfobyadmin } from './apicalls';
 
 const formStyles = 'border-r border-l w-full h-full flex-col-style justify-between space-y-8 overscroll-hidden';

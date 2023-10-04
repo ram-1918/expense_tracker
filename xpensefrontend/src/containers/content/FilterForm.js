@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { fetchusers } from "../../features/core/coreSlice";
+import { fetchusers } from "../../features/core/state/coreThunks";
 import Tooltip from "../../components/base/Tooltip";
 import BaseDropdown from "../../components/base/BaseDropdown";
 

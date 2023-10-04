@@ -9,7 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import Pagination from "../../components/base/Pagination";
 import TableCaption from "../../components/base/TableCaption";
 import Spinner from "../../components/base/Spinner";
-import { changeregistrationstatus, deleteuserbyadmin, registrationrequestsbyadmin, setRegistrationRequests, setUsersList } from "../../features/core/coreSlice";
+import { setRegistrationRequests } from "../../features/core/coreSlice";
+import {changeregistrationstatus, registrationrequestsbyadmin} from '../../features/core/state/coreThunks';
+
 import { dateformater } from "../../utils/helper";
 import FilterHeader from "../content/FilterHeader";
 import { Link, Outlet } from "react-router-dom";
