@@ -70,44 +70,21 @@ const userslist = useSelector(state => state.expense.userslist);
 
 
 const cols = ['id', 'fullname', 'email', 'phone', 'company', 'is_active', 'role', 'created_at', 'employee_id', 'authorized', 'comment'];
-
-const head = (title, setToggleFunc, toggleValue, keys=[], column) =>
-<>
-  <div className="flex-row-style justify-evenly">
-    <span className="text-lg">{title}</span>
-    {column && <>
-    <span>({keys.length})</span>
-    <span onClick={() => {
-          setActive(initial_active);
-          setKeys(initial_active_keys);
-        }}
-        className={innerdiv_reset} > Reset </span>
-    </>}
-  </div>
-  <span className="text-lg" onClick={() => {setToggleFunc((prev) => !prev)}}>
-    {toggleValue ? <i className="fa fa-angle-up"></i> : <i className="fa fa-angle-down"></i>}
-  </span>
-</> 
+const refreshFunc = () => {
+  return {
+    caption: 'User Details',
+    dispatch: dispatch,
+    apifunc: fetchusers,
+    otherArgs: null
+  }
+}
 
   return (
     <div className="w-full overscroll-contain">
-      {/* <div className={outerdiv}>
-        <div className="flex-row-style justify-between px-4">
-            {head('Columns Filters', setToggleFilterHeader, toggleFilterHeader, keys, true)}
-        </div>
-        {toggleFilterHeader && <FilterHeader allKeys={cols} setKeys={setKeys} active={active} setActive={setActive}/>}
-      </div>
-      <div className={outerdiv}>
-        <div className="flex-row-style justify-between px-4">
-          {head('Sort By', setToggleFilterOptions, toggleFilterOptions)}
-        </div>
-        {toggleFilterOptions && <FilterForm type='users' />}
-      </div> */}
-
       {!userslist.length && <div className="w-full h-full flex-col-style justify-start bg-gray-100 text-xl font-light"><span>No users found</span></div>}
       {userslist.length && 
         <table className={table}>
-          <TableCaption caption={`User Details`} />
+          <TableCaption args={refreshFunc()} />
           <thead className={`${thead}`}>
               <tr>
                 <th className={`${th} w-20`}>Picture</th>
@@ -118,6 +95,7 @@ const head = (title, setToggleFunc, toggleValue, keys=[], column) =>
                 ))}
                 {activeAction && <th className={`${th} w-32`}>{activeAction === 'update' ? "Edit" : 'Delete'}</th>}
               </tr>
+              <tr className={`${th} w-28`}></tr>
           </thead>
           <tbody className={`${tbody}`}>
             {userslist.map((obj, idx) => <View key={idx} obj={obj} keys={activecolumns} fieldStyleMapper={fieldStyleMapper} activeAction={activeAction} />)}
@@ -162,6 +140,11 @@ function View({obj, keys, fieldStyleMapper, activeAction}){
           obj[ele]}
         </td>
       ))}
+      <td className={`${td1} w-32 flex-row-style justify-center space-x-2 cursor-pointer`}>
+        <Link to={`viewprofile/${obj.id}`}>
+          View
+        </Link>
+      </td>
       {activeAction && 
         <td className={`${td1} w-32 flex-row-style justify-center space-x-2`}>
           {activeAction === 'update' ? 

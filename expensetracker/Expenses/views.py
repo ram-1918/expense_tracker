@@ -2,7 +2,7 @@ from .models import Category, Expenses, TypeTags, ExpenseProofs
 from .serializers import TypeTagSerializer, GetExpenseSerializer, PostExpenseSerializer, GetExpenseProofSerializer, GetTypeTagSerializer, ExpenseProofSerializer
 from Users.serializers import GetUserSerializer
 from Users.models import Users, AuthorizedUsers
-from Users.authentication import login_required, GlobalAccess, decode_uuid
+from Users.authentication import login_required, admin_required, GlobalAccess, decode_uuid
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -129,9 +129,12 @@ def format_image(image, recepient):
         print(image)
         imagename = recepient+secrets.token_hex(5)+'.png'
         image.name = imagename
+        print('1. ', image)
         pil_image = Image.open(image)
+        print('2. ', pil_image)
         # data = image_to_text(pil_image) # for extracting text, which is not needed now
         width, height = pil_image.size
+        print('3. ', pil_image)
         newsize = (800, 600) if width > height else (600, 800)
         pil_image = pil_image.resize(newsize)
         print(pil_image.size)
@@ -243,7 +246,7 @@ def get_expenses(request):
         tags = process_tags(expense['expense_tag'])
         cat_instance = Category.objects.filter(id=expense['category']).first()
         username = Users.objects.filter(id=expense['userid']).first()
-        result.append({**expense, 'expense_tag': tags, 'category': cat_instance.name, 'username': username.fullname})
+        result.append({**expense, 'expense_tag': tags, 'category': cat_instance.name, 'username': username.fullname, 'company': username.company.name})
     time.sleep(1)
     return result, 200
 
@@ -329,9 +332,48 @@ def delete_expense(request, pk):
 def get_approved_expenses(request):
     return request.data, 200
 
-
+@api_view(['GET'])
+@login_required
+@admin_required
 def get_pending_expenses(request):
-    return request.data, 200
+    expenses = Expenses.objects.filter(status='pending')
+    serializer = GetExpenseSerializer(expenses, many=True)
+    result = []
+    for expense in serializer.data:
+        tags = process_tags(expense['expense_tag'])
+        cat_instance = Category.objects.filter(id=expense['category']).first()
+        username = Users.objects.filter(id=expense['userid']).first()
+        result.append({**expense, 'expense_tag': tags, 'category': cat_instance.name, 'username': username.fullname, 'company': username.company.name})
+    return result, 200
+
+@api_view(['POST'])
+@login_required
+@admin_required
+def change_expense_status(request):
+    expense_id = request.data.get('expense_id', None)
+    try:
+        expense = Expenses.objects.filter(status='pending').filter(id=expense_id).first()
+        status = request.data['status']
+        if expense.rejection_count > 2: expense.status = 'invalidated'
+        else:
+            if status == 'accept':
+                expense.status = 'approved'
+            else: 
+                expense.status = 'rejected'
+                expense.message = 'Please modify your expense with approptiate proofs or contact adminstrator'
+                expense.rejection_count += 1
+        expense.save()
+    except Exception as e:
+        print(str(e))
+    return {"msg": "status changed"}, 200
+
+'''
+APPROVED: CANNOT DELETE + CANNOT UPDATE
+REJECTED: CANNOT DELETE + CAN UPDATE + Message
+PENDING: CAN DELETE + CAN UPDATE
+INVALIDATED: CANNOT DELETE + CANNOT UPDATE + Message + SHOULD UPLOAD A NEW ONE
+'''
+
 
 
 

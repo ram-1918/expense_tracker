@@ -59,35 +59,55 @@
 
 # raxccarz
 
-s = 'raxccarzt'
+# def func2():
+#     return 2
 
-def get_count(s):
-    count = 0
-    left, right = 0, len(s)-1
-    while left <= right:
-        if s[left] == s[right]:
-            left += 1
-            right -= 1
-            continue
-        if s[left] == s[right - 1]:
-            count += 1
-            left += 1
-            right -= 2
-        elif s[left + 1] == s[right]:
-            count += 1
-            left += 2
-            right -= 1
-        else:
-            return False
-    return count
+# def square_decorator(func):
+#     value = func()
+#     return value**2
 
-def is_one_deletion_away_from_palindrome(s):
-    count = get_count(s)
-    if count and count <= 1:
-        return True
-    return False
+# result = square_decorator
+# final_result = result(func2)
 
-print(is_one_deletion_away_from_palindrome(s))
+
+
+# @square_decorator
+# def func1():
+#     return 2
+
+# print(func1)
+
+    
+
+# s = 'raxccarzt'
+
+# def get_count(s):
+#     count = 0
+#     left, right = 0, len(s)-1
+#     while left <= right:
+#         if s[left] == s[right]:
+#             left += 1
+#             right -= 1
+#             continue
+#         if s[left] == s[right - 1]:
+#             count += 1
+#             left += 1
+#             right -= 2
+#         elif s[left + 1] == s[right]:
+#             count += 1
+#             left += 2
+#             right -= 1
+#         else:
+#             return False
+#     return count
+
+# def is_one_deletion_away_from_palindrome(s):
+#     count = get_count(s)
+#     if count and count <= 1:
+#         return True
+#     return False
+
+# print(is_one_deletion_away_from_palindrome(s))
 
 
 

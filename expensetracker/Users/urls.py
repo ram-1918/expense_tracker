@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import testing, getUsersView, PostUsersView, GetAndUpdateUserView, deleteuserbyadmin, LoginAPI, logout
-from .views import get_registration_requests, list_companies, get_users_by_company, summaries_for_dashboard
+from .views import get_registration_requests, change_registration_status, list_companies, get_users_by_company, summaries_for_dashboard
 # from .views import total_registration_requests
 
 urlpatterns = [
@@ -20,6 +20,7 @@ urlpatterns = [
     path('companies/', list_companies),
     path('list/<int:company>', get_users_by_company),
     path('registrationrequests/', get_registration_requests),
+    path('changeregistrationstatus/', change_registration_status),
 
     # section 4
     path('user_summaries_for_dashboard/', summaries_for_dashboard),

@@ -29,9 +29,10 @@ def phoneValidation(phone):
     if not status: raise serializers.ValidationError('Enter a valid phone number')
     return phone
 
-def imageValidation(image):
-    if image: return os.path.join('http://127.0.0.1:8000/ExpenseMedia/', image)
-    return os.path.join('http://127.0.0.1:8000/ExpenseMedia/', 'profilepics/default.png')
+# def imageValidation(image):
+#     print('SERIALIFE')
+#     if image: return os.path.join('http://127.0.0.1:8000/ExpenseMedia/profilepics/', image)
+#     return os.path.join('http://127.0.0.1:8000/ExpenseMedia/', 'profilepics/default.png')
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:

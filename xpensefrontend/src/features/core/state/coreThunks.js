@@ -85,6 +85,32 @@ export const changeregistrationstatus = createAsyncThunk('expenses/changeregistr
     }
 );
 
+export const expenserequestsbyadmin = createAsyncThunk('expenses/expenserequestsbyadmin', 
+    async (data) => {
+        try {
+            const response = await axios.get('http://localhost:8000/expenses/list_pending/', {withCredentials:true});
+            console.log("Expense request data", response.data);
+            return response.data;
+        }
+        catch(errors) {
+            console.log(errors, 'expense requests thunk');
+        }
+    }
+);
+
+export const changeexpensestatus = createAsyncThunk('expenses/changeexpensestatus', 
+    async (data) => {
+        try {
+            const response = await axios.post('http://localhost:8000/expenses/changeexpensestatus/', data, {withCredentials:true});
+            console.log(response.data);
+            return response.data;
+        }
+        catch(errors) {
+            console.log(errors, 'epxpense request change thunk');
+        }
+    }
+);
+
 export const listexpenses = createAsyncThunk('expenses/listexpenses', 
     async () => {
         try {

@@ -7,6 +7,7 @@ import dollar from '../../assets/images/addexpense.png';
 import { Link, Outlet, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../users/usersSlice';
+import ChartComponent from './ChartComponent';
 
 
 let box_70 = 'border-0 w-full h-56 flex-col-style justify-between';

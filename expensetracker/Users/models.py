@@ -60,9 +60,9 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
     
 
-def upload_to(instance, filename):
-    print(instance, filename, 'ghvhgvh')
-    return 'profilepics/{filename}'.format(filename=filename) if filename else 'profilepics/default.png'
+def upload_to(instance, filenamee):
+    print(f'Uploading to: profilepics/{filenamee}')
+    return f'profilepics/{filenamee}'
 
 class Users(AbstractBaseUser):
     last_login = None

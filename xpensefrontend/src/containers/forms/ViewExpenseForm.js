@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useOutletContext, useParams } from 'react-router';
 import BaseDropdown from '../../components/base/BaseDropdown';
 import Spinner from '../../components/base/Spinner';
-import { fetchsingleuser, fetchusers, updateuserinfo } from '../../features/core/state/coreThunks';
-import {setExpenseList} from '../../features/core/coreSlice';
+import { changeexpensestatus, fetchsingleuser, fetchusers, updateuserinfo } from '../../features/core/state/coreThunks';
+import {setExpenseList, setExpenseRequests} from '../../features/core/coreSlice';
 import { capitalize, dateformater } from '../../utils/helper';
 import { deleteExpense, listsingleexpense, updateExpense, updateExpenseProof, updateExpenseTags, Updateuserinfobyadmin } from './apicalls';
 import ImageSlider from '../../components/base/ImageSlider';
@@ -41,8 +41,12 @@ function ViewExpenseForm() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const formdata = new FormData();
+    const expenserequests = useSelector(state => state.expense.expenserequests);
     const expenses = useSelector(state => state.expense.expenselist);
-    const { expenseid } = useParams();
+    const status = useSelector((state) => state.expense.status);
+
+    const { userid, expenseid } = useParams();
+    const userinfo = useSelector(state => state.user.userinfo);
     const [expense, setExpense] = useState({});
     const [tags, setTags] = useState([]);
     const [images, setImages] = useState([]);
@@ -53,11 +57,15 @@ function ViewExpenseForm() {
     const [newTags, setNewTags] = useState(null);
 
     useEffect(() => {
-        const singleexpense = expenses.filter((obj) => obj.id === expenseid)[0];
-        setExpense(singleexpense);
-        setTags(singleexpense.expense_tag.names);
-        setImages(singleexpense['expense_proof']);
-    }, [])
+        const singleexpense = (expenserequests.length ? expenserequests : expenses ).filter((obj) => obj.id === expenseid)[0];
+
+        console.log(singleexpense, expenses, "FROM VIEW EXPENSE FORM")
+        if (singleexpense) {
+            setExpense(singleexpense);
+            setTags(singleexpense.expense_tag.names);
+            setImages(singleexpense['expense_proof']);
+        }
+    }, [expenses])
 
     const handleUpdate = async () => {
         setSpinner(true);
@@ -123,6 +131,21 @@ function ViewExpenseForm() {
             setSpinner(false);
         }
     }
+
+    function handleRequest(data){
+        const id = expense.id;
+        dispatch(changeexpensestatus({...data, "expense_id":id}));
+        if (status === 'succeeded'){
+            const result = expenserequests.filter(request => request.id !== id);
+            dispatch(setExpenseRequests(result));
+            navigate('../')
+            console.log(expense);
+        }
+        else{
+            alert('Action failed')
+        }
+    }
+
     const [keys, setKeys] = useState([
         'username', 
         'payment_recepient', 
@@ -144,17 +167,53 @@ function ViewExpenseForm() {
         'last_modified': 'Last Updated', 
         'rejection_count': 'Rejection Count'
     }
+    const statusStyleMapper = {
+        'pending': 'capitalize text-blue-700 font-medium after:content-["..."]',
+        'approved': 'capitalize text-green-500 font-medium',
+        'rejected': 'capitalize text-red-500 font-medium',
+        'invalidated': 'capitalize text-red-600 font-medium',
+    }
+
+    const afterUpdateOptions = (
+        <span className='flex-row-style justify-around space-x-2'>
+            <span className='cursor-pointer'onClick={() => {setUpdateMode(prev => !prev)}}>Cancel</span>
+            <span onClick={() => {handleUpdate()}} className='cursor-pointer border rounded-md px-2 bg-slate-200 hover:opacity-80'>Update</span>
+        </span>
+    )
+    const beforeUpdateOptions = <span className='cursor-pointer' onClick={() => {setUpdateMode(prev => !prev)}}><i className='fa fa-edit text-blue-700'></i></span>
+    const deleteButton = <span onClick={() => {handleDelete(expense.id)}}><i className='fa fa-trash text-red-500'></i></span>
+    const statusDiv = <span className={statusStyleMapper[expense['status']]}>{expense['status']}</span>;
+
+    function handleStatusDisplay() {
+        if(expense['userid'] === userid){
+            if (expense['status'] === 'pending') return <>{!updateMode ? <>{beforeUpdateOptions} {deleteButton}</> : <>{afterUpdateOptions}</>} {statusDiv} </>
+            if (expense['status'] === 'approved') return <>{statusDiv} </>
+            if (expense['status'] === 'rejected') return <>{!updateMode ? <> {beforeUpdateOptions} </> : <> {afterUpdateOptions} </>} {statusDiv} </>
+            if (expense['status'] === 'invalidated') return <>{statusDiv} </>
+        } else {
+            if (userinfo && ((userinfo['role'] === 'superadmin') || (userinfo['role'] === 'admin'))) {
+                return (
+                    <>
+                        <span onClick={() => handleRequest({status:'accept'})} className='btn-save text-sm'>Approve</span>
+                        <span onClick={() => handleRequest({status:'reject'})} className='btn-delete text-sm'>Reject</span>
+                    </>
+                )
+            }
+        }
+    }
+
+
 
     return (
-        <div className={`fixed top-0 left-0 bottom-0 w-[100%] h-full flex-col-style justify-start bg-[rgba(0,0,0,0.8)] text-sm`}>
+        <div className={`z-30 fixed top-0 left-0 bottom-0 w-[100%] h-full flex-col-style justify-start bg-[rgba(0,0,0,0.8)] text-sm`}>
             {spinner && <Spinner name="Loading expense..." />}
             <div className='w-fit h-fit shadow-lg rounded-lg flex-col-style justify-center m-2 bg-white'>
                 <div className='border-b w-full flex-row-style justify-between px-2'>
                     <span className='w-fit h-fit flex-row-style justify-center p-0 text-md font-light'><span className='text-base font-medium'>Expense details</span> - {expense.id} <sup>{expense.rejection_count}</sup></span>
                     <span className='w-fit h-full p-2 flex-row-style justify-center cursor-pointer' onClick={() => navigate('../')}><i className='fa fa-close text-lg'></i></span>
                 </div>
-                <div className='border w-full flex flex-row-style justify-center flex-grow'>
-                    <div className='border-r w-fit h-fit'>
+                <div className='border w-full flex flex-row-style justify-center flex-grow px-2'>
+                    <div className='border-r w-fit h-fit px-2'>
                         {<ImageSlider slides={images} setNewProof={setNewProof} />}
                         <div className='flex-row-style justify-around'>
                             <div className='flex-col-style justify-center'>
@@ -169,13 +228,13 @@ function ViewExpenseForm() {
                             }
                         </div>
                     </div>
-                    <div className='w-[28rem] h-full px-2 overflow-x-scroll'>
+                    <div className='w-fit h-full px-2 overflow-x-scroll'>
                         <table className='w-full h-full'>
                             <tbody>
                                 {!updateMode && keys.map((key, idx) => (
-                                <tr key={idx} className='w-full'>
-                                    <td className='text-base font-medium'>{keyMapper[key]}</td>
-                                    <td className={`${key.includes('amount') ? 'before:content-["$"] before:font-bold' : ''} text-base px-2`}>
+                                <tr key={idx} className='w-full px-2'>
+                                    <td className='text-base font-medium text-left'>{keyMapper[key]}</td>
+                                    <td className={`${key.includes('amount') ? 'before:content-["$"] before:font-bold' : ''} text-base font-normal px-2 text-left`}>
                                         {(key.includes('date_submitted') || key.includes('last_modified')) ? 
                                         dateformater(expense[key]) : 
                                         (key.includes('username') && expense[key]) ? capitalize(expense[key]) :
@@ -195,20 +254,26 @@ function ViewExpenseForm() {
                         {updateMode && <input type='text' value={newTags} onChange={(e) => setNewTags(e.target.value)} />}
                         {updateMode && <span onClick={() => {handleTags()}}>Update tags</span>}
                     </span>
-                    <span className={`${expense['status'] === 'pending' ? 'flex-grow' : 'w-[35%]'} h-full flex-row-style justify-start space-x-4 px-2 font-medium text-base`}>
-                        {expense['status'] === 'pending' &&
+                    {/* 
+                    1. if expense_user === current_user => 
+                        if status == pending => delete & update
+                        if status == approved => n/a
+                        if status == rejected => update
+                        if status == invalidated => n/a => re-send new one
+                    2. else if role === 'superadmin' or 'admin' => approve or reject => delete
+                    */}
+                    <span className={`${expense['status'] === 'pending' ? 'flex-grow' : 'w-[35%]'} h-full flex-row-style justify-end space-x-4 px-2 font-medium text-base`}>
+                        {handleStatusDisplay()}
+                        
+                        
+                        {/* {expense['status'] === 'pending' &&
                             <>
-                                {updateMode ? 
-                                <span className='flex-row-style justify-around space-x-2'>
-                                    <span className='cursor-pointer'onClick={() => {setUpdateMode(prev => !prev)}}>Cancel</span>
-                                    <span onClick={() => {handleUpdate()}} className='cursor-pointer border rounded-md px-2 bg-slate-200 hover:opacity-80'>Update</span>
-                                </span> : 
-                                <span className='cursor-pointer'onClick={() => {setUpdateMode(prev => !prev)}}><i className='fa fa-edit'></i></span>
-                                }
-                                <span onClick={() => {handleDelete(expense.id)}}><i className='fa fa-trash'></i></span>
+                                {updateMode ? afterUpdateOptions : beforeUpdateOptions}
+                                {deleteButton}
                             </>
-                        }
-                        <span>{expense['status']}...</span>
+                        } */}
+                        {/* <span>{expense['status']}...</span> */}
+
                     </span>
                 </div>
             </div>

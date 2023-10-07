@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 
 import UsersList from "./UsersList";
 import ExpenseList from "./ExpenseList";
-import FilterForm from "./FilterForm";
-import Summary from "./Summary";
 import BaseDropdown from "../../components/base/BaseDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { processUsersDownloadReport, processUsersSearchData } from "../../features/core/state/processors";
@@ -22,13 +20,15 @@ const inner_2_12 = `border w-full h-fit overflow-y-scroll`;
 const inner_2_2_1 = 'w-full flex-row-style justify-between font-medium p-2 bg-white';
 const inner_2_2_2 = (showSummary) => `w-full h-full ${showSummary ? 'flex' : 'hidden'}`;
 
-const list_actions = {'Delete': 'delete', 'Update': 'update'}
-const initial_user_active_keys = ['id', 'fullname', 'email', 'is_active', 'role']
+const list_actions = {'Delete': 'delete', 'Update': 'update'};
+const initial_user_active_keys = ['id', 'fullname', 'email', 'is_active', 'role'];
+const initial_expense_active_keys = ['id', 'payment_recepient', 'status'];
 
 function ContentLayout() {
     const dispatch = useDispatch();
     const { type } = useParams();
     const users = useSelector(state => state.expense.userslist);
+    const expenses = useSelector(state => state.expense.expenselist);
     const userreport = useSelector(state => state.expense.userreport);
     const max_pages = useSelector(state => state.expense.maxpagesForUsers);
     
@@ -36,6 +36,7 @@ function ContentLayout() {
     
     // ---------------- Columns state -------------------
     const [activeUserCols, setActiveUserCols] = useState(initial_user_active_keys);
+    const [activeExpenseCols, setActiveExpenseCols] = useState(initial_expense_active_keys);
 
     // ---------------- Pagination state ------------------
     const [pageNumber, setPageNumber] = useState(1);
@@ -54,8 +55,8 @@ function ContentLayout() {
       }, [dispatch, pageNumber, pageSize])
 
     const typeContentMapper = {
-        'expenses' : <ExpenseList />,
-        'users': <UsersList activecolumns={activeUserCols} activeAction={list_actions[action]}/>
+        'expenses' : <ExpenseList activecolumns={activeExpenseCols} activeAction={list_actions[action]}/>,
+        'users': <UsersList activecolumns={activeUserCols} activeAction={list_actions[action]}/>,
     }
 
     const handleDownloadReport = () => {
@@ -76,9 +77,11 @@ function ContentLayout() {
             }
         } else if (type === 'expenses') {
             return {
-                values: activeUserCols,
-                setFunc: setActiveUserCols,
-                columns: (users.length && Object.keys(users[0])) || []
+                values: activeExpenseCols,
+                setFunc: setActiveExpenseCols,
+                columns: (expenses.length && Object.keys(expenses[0]).filter((column) => !(column === 'expense_proof' || column === 'expense_tag'))) || [],
+                initialColumns: initial_expense_active_keys
+
             }
         }
     }
@@ -93,7 +96,13 @@ function ContentLayout() {
                 pageSize: pageSize
             }
         } else if (type === 'expenses') {
-
+            return {
+                pageLimit: pageLimit,
+                setPageSize: setPageSize,
+                pageNumber: pageNumber,
+                setPageNumber: setPageNumber,
+                pageSize: pageSize
+            }
         }
     }
     const handleSeachTextMapper = (e) => {
@@ -119,16 +128,16 @@ function ContentLayout() {
                 <button className="border rounded-md w-fit h-8 px-2 text-md font-light opacity-90 bg-[#334155] text-white" onClick={handleDownloadReport}>Generate report <i className="fa fa-download"></i></button>
             </div>
             <div className="w-full flex-row-style justify-between py-2 px-6">
-                <span className="border border-slate-400 flex-row-style justify-center bg-white px-2">
-                    <input placeholder={`Search ${type === 'users' ? 'users' : 'expenses'} by keyword...`} className={`w-80 h-7 bg-inherit outline-none px-2 text-sm`} type="text" value={searchText} onChange={(e) => {handleSeachTextMapper(e)}} /> 
-                    <i className="fa fa-search opacity-70"></i>
+                <span className="border border-slate-400 flex-row-style justify-center bg-white px-2 rounded-full">
+                    <input placeholder={`Search ${type === 'users' ? 'users' : 'expenses'} by keyword...`} className={`border-none w-80 h-7 bg-inherit outline-none px-2 text-sm rounded-full`} type="text" value={searchText} onChange={(e) => {handleSeachTextMapper(e)}} /> 
+                    <i className="fa fa-search opacity-70 hover:opacity-50 cursor-pointer"></i>
                 </span>
                 <ColumnsDropdown args={columnsMapper()} />
             </div>
-            <div className="w-full h-fit flex-row-style justify-between px-6">
+            <div className="border-b w-full h-fit flex-row-style justify-between px-6 pb-4">
                 <div className="flex-row-style justify-start flex-grow space-x-2">
-                    {action && <span className="opacity-70">Action </span>}<BaseDropdown options={list_actions} setValueFunction={setAction} title='Actions'/>
-                    <span><FetchUsersCount /></span>
+                    {/* {action && <span className="opacity-70">Action </span>}<BaseDropdown options={list_actions} setValueFunction={setAction} title='Actions'/> */}
+                    {type === 'users' ? <span><FetchUsersCount /></span> : type === 'expenses' ? <span><FetchExpensesCount /></span> : <></>}
                 </div>
                 <div className="w-fit flex-row-style justify-end space-x-2">
                     <Pagination args={paginationMapper()} />
@@ -149,9 +158,8 @@ const FetchUsersCount = () => {
 }
 
 const FetchExpensesCount = () => {
-    // const expenselist = useSelector(state => state.expense.expenselist);
-    const topuser = useSelector(state => state.expense.topuser);
-    return topuser.id // expenselist.length
+    const expenselist = useSelector(state => state.expense.expenselist);
+    return <span className="text-base font-light">Total expenses: {expenselist.length}</span>
 }
 
 const ColumnsDropdown = ({args: {values, setFunc, columns, initialColumns}}) => {
@@ -176,14 +184,14 @@ const ColumnsDropdown = ({args: {values, setFunc, columns, initialColumns}}) => 
     return (
         <div className="group/dropdown relative text-sm">
             <span onClick={() => {setShowDropdownContent(prev => !prev)}} className="border-l border-slate-400 w-fit px-2 cursor-pointer"><i className="fa fa-cog opacity-70"></i> Columns({values.length}) <i className="fa fa-caret-down opacity-70"></i></span>
-            <div className="absolute right-0 z-10 w-36 shadow-lg invisible grid grid-flow-row grid-cols-1 space-y-2 group-hover/dropdown:visible bg-white py-2">
+            <div className="absolute right-0 w-48 shadow-lg invisible grid grid-flow-row grid-cols-1 space-y-2 group-hover/dropdown:visible bg-white py-2">
                 <span className="w-full flex-row-style justify-around"><span onClick={() => {setAllColumns()}} className="cursor-pointer hover:bg-gray-100 py-2 px-4">All</span><span onClick={() => {resetColumns()}} className="cursor-pointer hover:bg-gray-100 py-2 px-4"><i className='fa fa-refresh'></i> Reset</span></span>
                 {columns.map((obj, idx) => <span className="cursor-pointer hover:bg-gray-100 px-4 tracking-wider capitalize" key={idx} onClick={() => handleColumnSelection(obj)}><input type="checkbox" checked={is_checked(obj)} readOnly/> {obj}</span>)}
             </div>
         </div>
     )
 }
-
+ 
 {/* Implement colored tags */ }
 {/* Tags related to component */ }
 {/* Summary of the data from the called component */ }

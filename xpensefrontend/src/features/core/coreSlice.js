@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import {listexpenses, fetchusers, fetchsingleuser, updateuserinfo, deleteuserbyadmin, registrationrequestsbyadmin, changeregistrationstatus, fetchsummaries} from './state/coreThunks'
+import {listexpenses, fetchusers, fetchsingleuser, updateuserinfo, deleteuserbyadmin, registrationrequestsbyadmin, changeregistrationstatus, expenserequestsbyadmin, changeexpensestatus, fetchsummaries} from './state/coreThunks'
 
 
 const initialState = {
@@ -15,7 +15,9 @@ const initialState = {
 
     status: 'idle',
     filterStack: [],
+
     registrationrequests: [],
+    expenserequests: [],
 
 }
 
@@ -37,7 +39,10 @@ export const expenseSlice = createSlice({
             state.expenselist = [...action.payload];
         },
         setRegistrationRequests: (state, action) => {
-            state.registrationrequests = action.payload
+            state.registrationrequests = action.payload;
+        },
+        setExpenseRequests: (state, action) => {
+            state.expenserequests = action.payload;
         },
         setFilterStack: (state, action) => {
             state.filterStack = [...state.filterStack, action.payload];
@@ -81,6 +86,13 @@ export const expenseSlice = createSlice({
         .addCase(changeregistrationstatus.fulfilled, (state, action) => {
             state.status = 'succeeded';
         })
+        .addCase(expenserequestsbyadmin.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.expenserequests = action.payload;
+        })
+        .addCase(changeexpensestatus.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+        })
         .addCase(listexpenses.fulfilled, (state, action) => {
             state.status = 'succeeded';
             state.expenselist = action.payload;
@@ -88,7 +100,7 @@ export const expenseSlice = createSlice({
     }
 });
 
-export const {setUsersList, setUserReport, setRegistrationRequests, setExpenseList, setFilterStack} = expenseSlice.actions; 
+export const {setUsersList, setUserReport, setRegistrationRequests, setExpenseList, setExpenseRequests, setFilterStack} = expenseSlice.actions; 
 
 
 

@@ -26,6 +26,8 @@ import bcrypt
 import time
 import logging
 
+from Expenses.views import format_image
+
 # https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html
 # mypy, autopep8
 # Create your views here.
@@ -126,7 +128,7 @@ class PostUsersView(APIView):
         proceedToRequest = request.data.get('proceedtorequest', None)
 
         if authorized_users_check := AuthorizedUsers.objects.filter(email=request.data['email']).first():
-            request.data = {**request.data, 
+            res = {**request.data, 
                             "role": authorized_users_check.role,
                             "employee_id": authorized_users_check.employeeid, 
                             "authorized": True
@@ -136,12 +138,12 @@ class PostUsersView(APIView):
         elif not authorized_users_check and proceedToRequest:
             # if not authorized, then create a record in requests table and send an email
             request.data['comment'] = request.data['comment'].strip()
+            res = request.data
             result = {"msg": "requestsent"}
-
         else:
             return Response({"msg": "unauthorized"}, status=status.HTTP_400_BAD_REQUEST)
 
-        ser = PostUserSerializer(data=request.data)
+        ser = PostUserSerializer(data=res)
         ser.is_valid(raise_exception=True)
         ser.save()
 
@@ -157,7 +159,9 @@ class GetAndUpdateUserView(APIView):
         if not user.exists():
             return {"msg": "user not found"}, 204
         userinfo = GetUserSerializer(user.first())
-        return userinfo.data, 200
+        res = {**userinfo.data, 'company': user.first().company.name}
+        print(res, 'FR___--_-_--_-_-_-_-_-_-__')
+        return res, 200
     
     @login_required
     def patch(self, request, pk) -> dict:
@@ -168,6 +172,7 @@ class GetAndUpdateUserView(APIView):
             ...
         }
         '''
+        image = request.FILES.get('image', None)
         handleObj = HandleService()
         user = Users.objects.filter(id=pk)
         if not user.exists(): return {"msg": "User not found"}, 404
@@ -184,8 +189,18 @@ class GetAndUpdateUserView(APIView):
                 except:
                     return {"msg": "no user found"}, 409
             # return {"msg": "status changed"}, 201
-    
-        # data = processFormData(request.data)
+        
+        if image:
+            print(image)
+            import secrets
+            # image.name = user.first().fullname + secrets.token_hex(5)+'.png'
+            # print('afetr ', image)
+            ser = PostUserSerializer(user, data={'image': image}, partial=True)
+            ser.is_valid(raise_exception = True)
+            ser.save()
+            print(ser.data)
+            return ser.data['image'], 200
+
         data = request.data
         # update user's password
         if password := data.get('password', None):
@@ -211,9 +226,10 @@ class GetAndUpdateUserView(APIView):
                 return {"msg": "password updated"}, 400
             data['phone'] = handledphone
         
-        companyobj = Company.objects.filter(name = data['company']).first()
+        # companyobj = Company.objects.filter(name = data['company']).first()
         try:
-            data['company'] = companyobj.id
+            # data['company'] = companyobj.id
+            print(data, user)
             user.update(**data)
         except Exception as e:
             return {"msg": "error while updating"+str(e)}, 400
@@ -278,10 +294,13 @@ class LoginAPI(APIView):
 @api_view(['GET'])
 def logout(request):
     print("DELETE", request.COOKIES)
-    response = Response({"msg": "logged out"})
-    response.delete_cookie('access')
-    response.delete_cookie('refresh')
-    return response, 
+    try:
+        response = Response({"msg": "logged out"})
+        response.delete_cookie('access')
+        response.delete_cookie('refresh')
+        return Response({"msg": "logout succuss"}, status=status.HTTP_200_OK)
+    except:
+        return Response({"msg": "logout error"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # ENDPOINT - /users/registrationrequests/
@@ -298,6 +317,22 @@ def get_registration_requests(request):
     filteredUsers = GetUserSerializer(users, many=True)
     result = [{**obj, 'company': obj['company']['name']} for obj in filteredUsers.data]
     return result, 200
+
+@api_view(['PATCH'])
+@login_required
+@admin_required
+def change_registration_status(request):
+    decoded_data = decodeddata()
+    role = decoded_data.get('role', None)
+    given_userid = request.data.get('userid')
+    status = request.data.get('status')
+    user = Users.objects.filter(id = given_userid, authorized = False)
+    if role in ['admin', 'employee']:
+        return {"msg": "unauthorized"}, 400
+    if status == 'accept': user.status = True
+    else: user.status = False
+    user.save()
+    return {"msg": "status updated"}, 200
 
 # ENDPOINT - /users/list/
 @api_view(['GET'])
@@ -330,47 +365,26 @@ def get_users_by_company(request, company):
 # --------------- Dashboard related ----------------
 
 # Admin summary
+
 @api_view(['GET'])
 @login_required
 @admin_required
-def summaries_for_dashboard(request) -> dict:
-    logger.info("This is an info message.")
+def summaries_for_dashboard(request):
+    users = Users.objects.filter(authorized=False)
+    expenses_approved = Expenses.objects.filter(status='approved')
+    expenses_pending = Expenses.objects.filter(status='pending')
+    expenses_cash = Expenses.objects.filter(status='approved', payment_method='cash')
+
     result = {
-        'total_registration_requests': '',
-        'total_expense_requests': '',
-        'sum_of_submitted_expenses': [],
-        'sum_of_pending_expenses': [],
-        'sum_of_reembersements': '',
+        'total_registration_requests': users.count(),
+        'total_expense_requests': expenses_pending.count(),
+        'sum_of_submitted_expenses': [float(round(expenses_approved.aggregate(Sum('amount'))['amount__sum'] or 0, 2)), expenses_approved.count()],
+        'sum_of_pending_expenses': [float(round(expenses_pending.aggregate(Sum('amount'))['amount__sum'] or 0, 2)), expenses_pending.count()],
+        'sum_of_reembersements': [float(round(expenses_cash.aggregate(Sum('amount'))['amount__sum'] or 0, 2)), expenses_cash.count()],
     }
-    expenses = Expenses.objects.all()
-    users = Users.objects.all()
-
-    # total registration requests - Users - who is not authorized - SA only
-    regi_requests = users.filter(authorized=False).count()
-    result['total_registration_requests'] = regi_requests
-
-    # total expense requests - Expeneses - whose expense status is False
-    expense_requests = expenses.filter(status='pending').count()
-    result['total_expense_requests'] = expense_requests
-
-    # total sum of the amounts of the submitted expenses - Expenses - whose expense status is True
-    sum_of_submitted = expenses.filter(status='approved')
-    sum_ = sum_of_submitted.aggregate(Sum('amount'))['amount__sum']
-    result['sum_of_submitted_expenses'] = [float(round(sum_, 2)) if sum_ is not None else 0, sum_of_submitted.count()]
-
-    # total sum of the amounts of the submitted expenses - Expenses - whose expense status is False
-    sum_of_pending = expenses.filter(status='pending')
-    sum_ = sum_of_pending.aggregate(Sum('amount'))['amount__sum']
-    result['sum_of_pending_expenses'] = [float(round(sum_, 2)) if sum_ is not None  else 0, sum_of_pending.count()]
-
-    # total sum of the amounts of the submitted expenses - Expenses - whose payment method is CASH
-    sum_of_reembersements = expenses.filter(status='approved', payment_method='cash')
-    sum_ = sum_of_reembersements.aggregate(Sum('amount'))['amount__sum']
-    result['sum_of_reembersements'] = [float(round(sum_, 2)) if sum_ is not None  else 0, sum_of_reembersements.count()]
-
     result = json.dumps(result)
+    print(result)
     return result, 200
-
 
 
 

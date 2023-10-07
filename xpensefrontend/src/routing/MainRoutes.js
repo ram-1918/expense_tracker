@@ -23,6 +23,7 @@ import PageNotFound from '../pages/PageNotFound';
 import { selectUserid } from '../features/users/usersSlice';
 import { useSelector } from 'react-redux';
 import ViewExpenseForm from '../containers/forms/ViewExpenseForm';
+import ViewUserProfile from '../containers/forms/ViewUserProfile';
 
 
 const MainRoutes = () => {
@@ -42,13 +43,17 @@ const MainRoutes = () => {
                 <Route index element={<Navigate replace to={`/user/${userid}/home/dashboard`} /> } />
                 <Route path='dashboard' element={<Dashboard />} > 
                   <Route path='submit/:formtype' element={<FormLayout />} />
+                  <Route path='viewprofile/:curruser' element={<ViewUserProfile />} />
                 </Route>
                 <Route path='manage/:type/' element={<ContentLayout />}>
                   <Route path='submit/:formtype' element={<FormLayout />} />
                   <Route path='updateuser/:userid' element={<UpdateUserForm />} />
                   <Route path='viewexpense/:expenseid' element={<ViewExpenseForm />} />
+                  <Route path='viewprofile/:curruser' element={<ViewUserProfile />} />
                 </Route>
-                <Route path='requests/:type' element={<RequestsLayout />}></Route>
+                <Route path='requests/:type/' element={<RequestsLayout />} >
+                  <Route path='viewexpense/:expenseid' element={<ViewExpenseForm />} />
+                </Route>
               </Route>
             </Route>
             <Route path='*' element={<PageNotFound />} />
