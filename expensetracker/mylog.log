@@ -2210,3 +2210,682 @@ INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expens
 INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
 INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
 WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+ERROR:django.request:Internal Server Error: /users/user/cb7ba7be-26ea-43ce-8246-14a418dbee7f
+Traceback (most recent call last):
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/authentication.py", line 120, in inner
+    data, statuscode = view_func(request, *args, **kwargs) # Main login
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py", line 163, in get
+    history = Expenses.objects.filter(user__id=pk).aaggregate(Sum('amount'))
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1436, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1454, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1461, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1545, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1576, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1426, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1236, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1724, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'user' into field. Choices are: amount, category, category_id, currency, date_submitted, description, expense_proof, expense_tag, id, last_modified, message, payment_method, payment_recepient, rejection_count, status, userid, userid_id
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+ERROR:django.request:Internal Server Error: /users/user/cb7ba7be-26ea-43ce-8246-14a418dbee7f
+Traceback (most recent call last):
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/authentication.py", line 120, in inner
+    data, statuscode = view_func(request, *args, **kwargs) # Main login
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py", line 163, in get
+    history = Expenses.objects.filter(user__id=pk).aaggregate(Sum('amount'))
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1436, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1454, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1461, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1545, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1576, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1426, in build_filter
+    lookups, parts, reffed_expression = self.solve_lookup_type(arg, summarize)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1236, in solve_lookup_type
+    _, field, _, lookup_parts = self.names_to_path(lookup_splitted, self.get_meta())
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1724, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'user' into field. Choices are: amount, category, category_id, currency, date_submitted, description, expense_proof, expense_tag, id, last_modified, message, payment_method, payment_recepient, rejection_count, status, userid, userid_id
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+ERROR:django.request:Internal Server Error: /users/user/cb7ba7be-26ea-43ce-8246-14a418dbee7f
+Traceback (most recent call last):
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/authentication.py", line 120, in inner
+    data, statuscode = view_func(request, *args, **kwargs) # Main login
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py", line 164, in get
+    print('+=+=++=+=+=++==+=+=', history.total)
+AttributeError: 'dict' object has no attribute 'total'
+ERROR:django.request:Internal Server Error: /users/user/cb7ba7be-26ea-43ce-8246-14a418dbee7f
+Traceback (most recent call last):
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/authentication.py", line 120, in inner
+    data, statuscode = view_func(request, *args, **kwargs) # Main login
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py", line 164, in get
+    print('+=+=++=+=+=++==+=+=', history.total)
+AttributeError: 'dict' object has no attribute 'total'
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /users/user/7a98aa45-a10d-4c8c-8091-886e97687bb2/
+WARNING:django.request:Not Found: /users/user/7a98aa45-a10d-4c8c-8091-886e97687bb2/
+WARNING:django.request:Not Found: /users/user/7a98aa45-a10d-4c8c-8091-886e97687bb2/
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Bad Request: /users/register/
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Bad Request: /users/register/
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Method Not Allowed: /users/changeregistrationstatus/
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Method Not Allowed: /users/changeregistrationstatus/
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /users/changeregistrationstatus/
+Traceback (most recent call last):
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/authentication.py", line 120, in inner
+    data, statuscode = view_func(request, *args, **kwargs) # Main login
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/authentication.py", line 144, in inner
+    result, code = func(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py", line 339, in change_registration_status
+    user.save()
+AttributeError: 'QuerySet' object has no attribute 'save'
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /ExpenseMedia/auth1237eeaeb1be9.png
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Bad Request: /users/register/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Bad Request: /users/register/
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Expenses/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Expenses/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Expenses/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Expenses/views.py changed, reloading.
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Bad Request: /users/listusers/
+WARNING:django.request:Bad Request: /users/listusers/
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/serializers.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/serializers.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+WARNING:django.request:Method Not Allowed: /users/listusers/
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/urls.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /users/allcompanies/
+Traceback (most recent call last):
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/authentication.py", line 120, in inner
+    data, statuscode = view_func(request, *args, **kwargs) # Main login
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py", line 382, in all_companies
+    result = [key.name for key in ser.data]
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py", line 382, in <listcomp>
+    result = [key.name for key in ser.data]
+AttributeError: 'collections.OrderedDict' object has no attribute 'name'
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /users/allcompanies/
+Traceback (most recent call last):
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/venv/lib/python3.10/site-packages/rest_framework/decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/authentication.py", line 120, in inner
+    data, statuscode = view_func(request, *args, **kwargs) # Main login
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py", line 382, in all_companies
+    result = [key.name for key in ser.data]
+  File "/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py", line 382, in <listcomp>
+    result = [key.name for key in ser.data]
+AttributeError: 'collections.OrderedDict' object has no attribute 'name'
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Users/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Expenses/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Expenses/urls.py changed, reloading.
+WARNING:django.request:Not Found: /
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /expenses/list/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/listusers/
+WARNING:django.request:Unauthorized: /users/user_summaries_for_dashboard/
+WARNING:django.request:Not Found: /users/user/"073fe3b0-8f3e-4b11-b8a2-1a167e1f76ae"
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Expenses/views.py changed, reloading.
+INFO:django.utils.autoreload:/Users/ramchandrab/Documents/expense_tracker/expensetracker/Expenses/views.py changed, reloading.
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null
+WARNING:django.request:Not Found: /users/user/null

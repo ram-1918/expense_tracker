@@ -30,6 +30,7 @@ const initial_expense_active_keys = ['id', 'payment_recepient', 'status'];
 
 
 function RequestsLayout() {
+    console.log('INSIDE REQUESTS LAYOUT')
     const { type } = useParams();
     const dispatch = useDispatch();
     const regis_requests = useSelector(state => state.expense.registrationrequests);

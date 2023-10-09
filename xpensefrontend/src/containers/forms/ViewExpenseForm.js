@@ -168,9 +168,9 @@ function ViewExpenseForm() {
         'rejection_count': 'Rejection Count'
     }
     const statusStyleMapper = {
-        'pending': 'capitalize text-blue-700 font-medium after:content-["..."]',
-        'approved': 'capitalize text-green-500 font-medium',
-        'rejected': 'capitalize text-red-500 font-medium',
+        'pending': 'capitalize text-blue-600 font-medium after:content-["..."]',
+        'approved': 'capitalize text-green-600 font-medium',
+        'rejected': 'capitalize text-red-600 font-medium',
         'invalidated': 'capitalize text-red-600 font-medium',
     }
 
@@ -228,8 +228,8 @@ function ViewExpenseForm() {
                             }
                         </div>
                     </div>
-                    <div className='w-fit h-full px-2 overflow-x-scroll'>
-                        <table className='w-full h-full'>
+                    <div className='w-96 h-full px-2 overflow-x-scroll'>
+                        <table className='w-full h-full bg-red-300'>
                             <tbody>
                                 {!updateMode && keys.map((key, idx) => (
                                 <tr key={idx} className='w-full px-2'>
@@ -264,7 +264,7 @@ function ViewExpenseForm() {
                     */}
                     <span className={`${expense['status'] === 'pending' ? 'flex-grow' : 'w-[35%]'} h-full flex-row-style justify-end space-x-4 px-2 font-medium text-base`}>
                         {handleStatusDisplay()}
-                        
+                        <span>APPROVE OR REJECT && JUST TO VIEW/EDIT EXPENSE</span>
                         
                         {/* {expense['status'] === 'pending' &&
                             <>
@@ -299,8 +299,8 @@ const UpdateExpense = ({expense, newExpense, setNewExpense}) => {
     }, [])
     const t_row = (idx, title, value) => (
         <tr key={idx} className='w-full h-8 my-8'>
-            <td>{title}</td>
-            <td><input type='text' className={`${commonIputstyles} border-b border-gray-300 `} value={newExpense[value]} onChange={(e) => setNewExpense(prev => ({...prev, [value]: e.target.value}))} /> </td>
+            <td className='text-left'>{title}</td>
+            <td><input type='text' className={`${commonIputstyles} border border-gray-300 text-left`} value={newExpense[value]} onChange={(e) => setNewExpense(prev => ({...prev, [value]: e.target.value}))} /> </td>
         </tr>
     )
     const display = [
@@ -311,19 +311,19 @@ const UpdateExpense = ({expense, newExpense, setNewExpense}) => {
   const payment_methods = {'Cash':'cash', 'Credit Card': 'credit', 'Debit Card': 'debit card', 'Cheque':'cheque'};
 
     return (
-        <tbody className='bg-red-200 h-full'>
+        <tbody className='h-full w-full px-4'>
             {display.map((obj, idx) => (t_row(idx, obj.title, obj.value)))}
-            <tr>
-                <td>Description</td>
-                <td><textarea rows="3" value={newExpense.description} className={`border border-gray-300 ${commonIputstyles}`} onChange={(e) => setNewExpense(prev => ({...prev, ['description']: e.target.value}))}></textarea></td>
+            <tr className='h-fit'>
+                <td className='h-10 text-left'>Description</td>
+                <td className=''><textarea rows="3" value={newExpense.description} className={`border border-gray-300 ${commonIputstyles}`} onChange={(e) => setNewExpense(prev => ({...prev, ['description']: e.target.value}))}></textarea></td>
             </tr>
-            <tr>
-                <td>Category</td>
-                <td><BaseDropdown options={categories} setValueFunction={setNewExpense} value={newExpense['category']} rarecase="category" mapper={categories} /></td>
+            <tr className='h-fit'>
+                <td className='h-8 text-left'>Category</td>
+                <td className=''><BaseDropdown options={categories} setValueFunction={setNewExpense} value={newExpense['category']} rarecase="category" mapper={categories} /></td>
             </tr>
-            <tr>
-                <td>Payment Method</td>
-                <td><BaseDropdown options={payment_methods} setValueFunction={setNewExpense} value={newExpense['payment_method']} rarecase="payment_method" mapper={payment_methods} /></td>
+            <tr className='h-fit'>
+                <td className='h-8 text-left'>Payment Method</td>
+                <td className=''><BaseDropdown options={payment_methods} setValueFunction={setNewExpense} value={newExpense['payment_method']} rarecase="payment_method" mapper={payment_methods} /></td>
             </tr>
         </tbody>
     )

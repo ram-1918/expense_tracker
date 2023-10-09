@@ -24,6 +24,7 @@ import { selectUserid } from '../features/users/usersSlice';
 import { useSelector } from 'react-redux';
 import ViewExpenseForm from '../containers/forms/ViewExpenseForm';
 import ViewUserProfile from '../containers/forms/ViewUserProfile';
+import AdminRoute from './AdminRoute';
 
 
 const MainRoutes = () => {
@@ -32,13 +33,16 @@ const MainRoutes = () => {
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<PublicRoute />} >
+
               <Route path='/' element={<Navigate replace to='/users/login'/>} />
               <Route path='/users' element={<UsersHome />}>
                 <Route path='login' element={<Login />} />
                 <Route path='register' element={<Register />} />
               </Route>
+
             </Route>
             <Route path='/user/:userid/home/' element={<PrivateRoute />} >
+
               <Route path='/user/:userid/home/' element={<CoreHome />}>
                 <Route index element={<Navigate replace to={`/user/${userid}/home/dashboard`} /> } />
                 <Route path='dashboard' element={<Dashboard />} > 
@@ -51,10 +55,14 @@ const MainRoutes = () => {
                   <Route path='viewexpense/:expenseid' element={<ViewExpenseForm />} />
                   <Route path='viewprofile/:curruser' element={<ViewUserProfile />} />
                 </Route>
-                <Route path='requests/:type/' element={<RequestsLayout />} >
+                {/* index cannot have child routes */}
+                <Route path='requests/:type/' element={<AdminRoute />} >
+                  <Route index element={<RequestsLayout />} />
+                  <Route path='viewprofile/:curruser' element={<ViewUserProfile />} />
                   <Route path='viewexpense/:expenseid' element={<ViewExpenseForm />} />
                 </Route>
               </Route>
+
             </Route>
             <Route path='*' element={<PageNotFound />} />
           </Routes>

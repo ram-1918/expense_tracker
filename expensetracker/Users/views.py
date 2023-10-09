@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
 
 from .models import AuthorizedUsers, Company, Users
-from .serializers import GetUserSerializer, PostUserSerializer, CompanySerializer
+from .serializers import GetUserSerializer, PostUserSerializer, CompanySerializer, GetCompanySerializer
 
 from Expenses.models import Expenses
 
@@ -91,7 +91,7 @@ def getUsersView(request):
     filters = request.data['filters']
     userid, role, *others = decodeddata().values()
     adminuser = Users.objects.filter(id=decode_uuid(userid)).first()
-    users = Users.objects.all().order_by('fullname')
+    users = Users.objects.exclude(id=userid).order_by('fullname')
     print(users)
     if role == 'admin':
         users = Users.objects.filter(company = adminuser.company).filter(role = 'employee').order_by('fullname')
@@ -159,7 +159,24 @@ class GetAndUpdateUserView(APIView):
         if not user.exists():
             return {"msg": "user not found"}, 204
         userinfo = GetUserSerializer(user.first())
-        res = {**userinfo.data, 'company': user.first().company.name}
+
+        history = Expenses.objects.filter(userid__id=pk)
+        pending = history.filter(status='pending')
+        total = pending.aggregate(total=Sum('amount'))['total'] or 0
+        pending_count = pending.count() or 0
+        approval_count = history.filter(status='approvals').count()
+        rejected_count = history.filter(status='rejected').count()
+        invalidated_count = history.filter(status='invalidated').count()
+        print('+=+=++=+=+=++==+=+=', total, pending_count)
+
+        res = {**userinfo.data, 
+               'company': user.first().company.name, 
+               'total': round(total, 2), 
+               'pending_count': pending_count, 
+               'approval_count': approval_count, 
+               'rejected_count': rejected_count, 
+               'invalidated_count': invalidated_count, 
+               }
         print(res, 'FR___--_-_--_-_-_-_-_-_-__')
         return res, 200
     
@@ -175,20 +192,21 @@ class GetAndUpdateUserView(APIView):
         image = request.FILES.get('image', None)
         handleObj = HandleService()
         user = Users.objects.filter(id=pk)
+
         if not user.exists(): return {"msg": "User not found"}, 404
 
         
         # Change authorized status of the user
-        if authorized := request.data.get('authorized', None):
-            print(authorized)
-            if authorized == "accept":
-                user.update(authorized = True)
-            elif authorized == 'reject':
-                try:
-                    user.delete()
-                except:
-                    return {"msg": "no user found"}, 409
-            # return {"msg": "status changed"}, 201
+        # if authorized := request.data.get('authorized', None):
+        #     print(authorized)
+        #     if authorized == "accept":
+        #         user.update(authorized = True)
+        #     elif authorized == 'reject':
+        #         try:
+        #             user.delete()
+        #         except:
+        #             return {"msg": "no user found"}, 409
+        #     # return {"msg": "status changed"}, 201
         
         if image:
             print(image)
@@ -226,9 +244,9 @@ class GetAndUpdateUserView(APIView):
                 return {"msg": "password updated"}, 400
             data['phone'] = handledphone
         
-        # companyobj = Company.objects.filter(name = data['company']).first()
+        if companyobj := Company.objects.filter(name = data['company']).first():
+            data['company'] = companyobj.id
         try:
-            # data['company'] = companyobj.id
             print(data, user)
             user.update(**data)
         except Exception as e:
@@ -318,20 +336,23 @@ def get_registration_requests(request):
     result = [{**obj, 'company': obj['company']['name']} for obj in filteredUsers.data]
     return result, 200
 
-@api_view(['PATCH'])
+@api_view(['POST'])
 @login_required
 @admin_required
 def change_registration_status(request):
     decoded_data = decodeddata()
     role = decoded_data.get('role', None)
     given_userid = request.data.get('userid')
-    status = request.data.get('status')
-    user = Users.objects.filter(id = given_userid, authorized = False)
-    if role in ['admin', 'employee']:
+    status = request.data.pop('status')
+    user = Users.objects.filter(id = given_userid, authorized = False).first()
+    if role in ['employee']:
         return {"msg": "unauthorized"}, 400
-    if status == 'accept': user.status = True
-    else: user.status = False
-    user.save()
+    
+    if status == 'accept': 
+        user.authorized = True
+        user.save()
+    else: 
+        user.delete()
     return {"msg": "status updated"}, 200
 
 # ENDPOINT - /users/list/
@@ -361,6 +382,17 @@ def get_users_by_company(request, company):
     serializer = GetUserSerializer(users, many=True)
     return serializer.data, 200
 
+
+
+# ------------------- On startup -------------------
+
+@api_view(['GET'])
+@login_required
+def all_companies(request):
+    companies = Company.objects.all()
+    ser = GetCompanySerializer(companies, many=True)
+    result = [key['name'] for key in ser.data]
+    return result, 200
 
 # --------------- Dashboard related ----------------
 

@@ -70,6 +70,20 @@ const userslist = useSelector(state => state.expense.userslist);
 
 
 const cols = ['id', 'fullname', 'email', 'phone', 'company', 'is_active', 'role', 'created_at', 'employee_id', 'authorized', 'comment'];
+const ColumnNameMapper = {
+  'id': 'ID',
+  'fullname': 'Fullname',
+  'email': 'Email',
+  'phone': 'Phone',
+  'company': 'Company',
+  'is_active': 'Status',
+  'role': 'Role',
+  'created_at': 'Date Created',
+  'employee_id': 'Employee ID',
+  'authorized': 'Authorized',
+  'comment': 'Comment',
+}
+
 const refreshFunc = () => {
   return {
     caption: 'User Details',
@@ -90,10 +104,10 @@ const refreshFunc = () => {
                 <th className={`${th} w-20`}>Picture</th>
                 {activecolumns.map((obj, idx) => (
                 <th key={idx} className={`${th} ${obj === 'amount' ? 'w-32' : fieldStyleMapper[obj]}`}>
-                  {obj}
+                  {ColumnNameMapper[obj]}
                 </th>
                 ))}
-                {activeAction && <th className={`${th} w-32`}>{activeAction === 'update' ? "Edit" : 'Delete'}</th>}
+                {activeAction && <th className={`${th} w-20 text-center`}>{activeAction === 'update' ? "Edit" : 'Delete'}</th>}
               </tr>
               <tr className={`${th} w-28`}></tr>
           </thead>
@@ -111,7 +125,7 @@ export default UsersList;
 
 
 function View({obj, keys, fieldStyleMapper, activeAction}){
-
+  const activeColorMapper = useSelector(state => state.expense.activeColorMapper)
   const dispatch = useDispatch();
   const getStatus = (obj) => obj ? 'Active': 'Inactive';
   const getAuthorized = (obj) => obj ? 'Authorized': 'Unauthorized';
@@ -126,11 +140,12 @@ function View({obj, keys, fieldStyleMapper, activeAction}){
     dispatch(deleteuserbyadmin(id));
     dispatch(setUsersList(updatedList));
   }
+
   return (
     <tr className={`${tr}`}>
       <td className={`border-r overflow-x-hidden flex-row-style text-sm text-gray-700 px-2 w-20 justify-center`}><img srcSet={`${API_URL}${obj.image}`} alt="profile" className={profileImage}></img></td>
       {keys.map((ele, idx) => (
-        <td key={idx} className={`${td} ${fieldStyleMapper[ele]}`}>
+        <td key={idx} className={`${td} ${fieldStyleMapper[ele]} ${ele === 'is_active' && activeColorMapper[getStatus(ele)]}`}>
           {ele.includes('created_at') ? dateformater(obj[ele]) : 
           ele === 'is_active' ? getStatus(obj[ele]) : 
           ele === 'phone' ? getPhone(obj[ele]) : 
@@ -140,19 +155,20 @@ function View({obj, keys, fieldStyleMapper, activeAction}){
           obj[ele]}
         </td>
       ))}
+
+      {activeAction && 
+        <td className={`${td1} w-20 flex-row-style justify-center space-x-2`}>
+          {activeAction === 'update' ? 
+          <Link to={`./viewprofile/${obj.id}`} state={{ userdata: obj }}><i className="fa fa-edit"></i></Link> :
+          <span onClick={() => {deleteUserInfo()}}><i className="fa fa-trash"></i></span>
+          }
+        </td>
+      }
       <td className={`${td1} w-32 flex-row-style justify-center space-x-2 cursor-pointer`}>
         <Link to={`viewprofile/${obj.id}`}>
           View
         </Link>
       </td>
-      {activeAction && 
-        <td className={`${td1} w-32 flex-row-style justify-center space-x-2`}>
-          {activeAction === 'update' ? 
-          <Link to={`./updateuser/${obj.id}`} state={{ userdata: obj }}><i className="fa fa-edit"></i></Link> :
-          <span onClick={() => {deleteUserInfo()}}><i className="fa fa-trash"></i></span>
-          }
-        </td>
-      }
     </tr>
   )
 }

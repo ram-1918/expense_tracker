@@ -250,6 +250,24 @@ def get_expenses(request):
     time.sleep(1)
     return result, 200
 
+
+@api_view(['GET'])
+@login_required
+def get_all_expenses(request):
+    userid, role, *others = decodeddata()
+    expenses = Expenses.objects.all()
+    serializer = GetExpenseSerializer(expenses, many=True)
+    result = []
+    for expense in serializer.data:
+        tags = process_tags(expense['expense_tag'])
+        cat_instance = Category.objects.filter(id=expense['category']).first()
+        username = Users.objects.filter(id=expense['userid']).first()
+        result.append({**expense, 'expense_tag': tags, 'category': cat_instance.name, 'username': username.fullname, 'company': username.company.name})
+    time.sleep(1)
+    return result, 200
+
+
+
 @api_view(['GET'])
 @login_required
 def get_single_expense(request, pk):
@@ -270,6 +288,7 @@ def update_expense(request, pk):
     try: 
         category = Category.objects.filter(name = request.data['category']).first()
         request.data['category'] = category.id
+        request.data['status'] = 'pending'
         ser = PostExpenseSerializer(expense, data=request.data, partial=True)
         ser.is_valid(raise_exception=True)
         ser.save()
@@ -289,6 +308,9 @@ def update_expense_proof(request, pk):
         ser = GetExpenseProofSerializer(proof, data={'image':formattedimg, 'filename': formattedimg.name}, partial=True)
         ser.is_valid(raise_exception=True)
         ser.save()
+        print('IMAGES')
+        expense.expense.status = 'pending'
+        expense.save()
     except Exception as e: return {"msg": "error while updating " + str(e)}, 400
     return ser.data, 201
 

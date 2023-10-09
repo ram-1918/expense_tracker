@@ -11,7 +11,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 const optionStyle = 'border-r border-r-gray-300 w-12 h-7 flex-row-style justify-center';
-const contentStyle = 'p-1 text-sm cursor-pointer hover:bg-gray-200';
+const contentStyle = 'p-1 px-2 text-sm cursor-pointer hover:bg-gray-200';
 
 const Topnav = () => {
     console.info('TOPNAV');
@@ -31,7 +31,7 @@ const Topnav = () => {
     if (!userinfo){
         return <div>Loading...</div>
     }
-    const {id, image, fullname, role, employee_id} = userinfo;
+    const {id, image, fullname, role, employee_id, company, approval_count, pending_count, rejected_count, invalidated_count} = userinfo;
 
 
     return (
@@ -51,13 +51,21 @@ const Topnav = () => {
                         <span className=''>{capitalize(fullname)}</span>
                         <img src={`${API_URL}${image}`} alt="profilepic" className='object-contain w-5 h-5'/> <i className='fa fa-caret-down'></i>
                     </div>
-                    <div className='absolute right-0 w-44 shadow-xl rounded-bl-lg rounded-br-lg invisible grid grid-flow-row grid-cols-1 space-y-0 group-hover/profiledropdown:visible bg-white'>
-                        <span className={`${contentStyle}`}>Role: <span>{capitalize(role)}</span></span>
-                        <span className={`${contentStyle}`}>Emp ID: <span>{employee_id}</span></span>
-                        <span className={`${contentStyle}`}>Total approvals: 3</span>
-                        <span className={`${contentStyle}`}>Total pending: 4</span>
-                        <span className={`${contentStyle}`}>Total rejected: 6</span>
-                        <Link to={`dashboard/viewprofile/${id}`} className={`${contentStyle}`}><i className='fa fa-edit'></i> Update Profile</Link>
+                    <div className='absolute right-0 w-40 shadow-xl rounded-bl-lg rounded-br-lg invisible grid grid-flow-row grid-cols-1 space-y-0 group-hover/profiledropdown:visible bg-white'>
+                        
+                        
+                        <span className={`${contentStyle} border-b font-medium text-md`}>Quick stats</span>
+                        <span className={`${contentStyle}`}>Total approvals: {approval_count}</span>
+                        <span className={`${contentStyle}`}>Total pending: {pending_count}</span>
+                        <span className={`${contentStyle}`}>Total rejected: {rejected_count}</span>
+                        <span className={`${contentStyle} border-t`}><i className='fa fa-user'></i> <span> {capitalize(role)}</span></span>
+                        <span className={`${contentStyle} flex-row-style justify-start space-x-2`}> 
+                            <i className='fa fa-building-o'></i>
+                            <span> {company}</span>
+                            <i className='fa fa-id-card-o'></i>
+                            <span> {employee_id}</span>
+                        </span>
+                        <Link to={`dashboard/viewprofile/${id}`} className={`${contentStyle}`}><i className='fa fa-eye'></i> View Profile</Link>
                         <span onClick={() => handleSignout()} className={`${contentStyle}`}><i className='fa fa-sign-out'></i> Sign Out</span>
                     </div>
                 </div>

@@ -7,7 +7,9 @@ import dollar from '../../assets/images/addexpense.png';
 import { Link, Outlet, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectUserInfo } from '../users/usersSlice';
-import ChartComponent from './ChartComponent';
+import ChartComponent from '../plots/ChartComponent';
+import UsersVsExpenses from '../plots/UsersVsExpenses';
+import ExpensePerMonth from '../plots/ExpensePerMonth';
 
 
 let box_70 = 'border-0 w-full h-56 flex-col-style justify-between';
@@ -22,11 +24,17 @@ let cellStyle = 'border-0 p-[5px] text-left';
 
 function Dashboard() {
     return (
-          <div className="border-0 w-[97%] h-full flex-col-style justify-around space-y-8 pb-8">
-              <DisplayTasks />
-              <DisplayApprovals />
-              <Summary />
-              <Outlet />
+          <div className="border-0 w-[97%] h-full flex-col-style justify-start space-y-4 pb-8 overflow-y-scroll">
+            <span className={`${titles}`}>Dashboard</span>
+            <div className='w-full h-48 mt-2 border-b-2 flex-row-style justify-around space-x-2'>
+                <UsersVsExpenses />
+                <ChartComponent />
+                <ExpensePerMonth />
+            </div>
+            <DisplayTasks />
+            <DisplayApprovals />
+            <Summary />
+            <Outlet />
           </div>
     );
   }
@@ -37,9 +45,9 @@ function DisplayTasks(){
     box_70 = 'border-0 w-full shadow-lg my-4 flex-col-style justify-around';
     const {userid} = useParams();
     return (
-        <div className={`${box_70} h-48`}>
-            <span className={`${titles}`}>Dashboard</span>
-            <div className="border-0 w-full flex-row-style justify-around space-x-4">
+        <div className={`${box_70} `}>
+            <span className={`${titles}`}>Quick Forms</span>
+            <div className="border-0 w-full flex-row-style justify-around space-x-4 py-4">
                 <Link to={`/user/${userid}/home/dashboard/submit/addexpense`} className={`${navButtonStyles}`}>
                     <span><img src={dollar} alt="newexpense" className='w-14 h-14 flex-row-syle justify-center opacity-70'></img></span>
                     <span>New Expense</span>
@@ -106,7 +114,7 @@ function Summary(){
     return (
         <div className='border w-full h-56 flex-row-style justify-around space-x-8'>
             <div className={`${box_70} h-44`}>
-                <span className={`${titles}`}>Admin Summary Board</span>
+                <span className={`${titles}`}>Summary Board</span>
                 <div className='border-0 w-full h-full flex-row-style justify-center space-x-8'>
                     <div className={`${title_3}`}>
                         <span className={`${title_3_header}`}>Submitted and Approved</span>

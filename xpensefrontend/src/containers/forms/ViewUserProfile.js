@@ -7,12 +7,13 @@ import { useLocation, useNavigate, useOutletContext, useParams } from 'react-rou
 import BaseDropdown from '../../components/base/BaseDropdown';
 import Spinner from '../../components/base/Spinner';
 import { changeexpensestatus, fetchsingleuser, fetchusers, updateuserinfo } from '../../features/core/state/coreThunks';
-import {setUsersList} from '../../features/core/coreSlice';
-import {deleteuserbyadmin} from '../../features/core/state/coreThunks';
+import {setRegistrationRequests, setUsersList} from '../../features/core/coreSlice';
+import {deleteuserbyadmin, changeregistrationstatus} from '../../features/core/state/coreThunks';
 import { capitalize, dateformater } from '../../utils/helper';
 import { deleteExpense, listsingleexpense, updateExpense, updateExpenseProof, updateExpenseTags, updateuser, Updateuserinfobyadmin } from './apicalls';
 import ImageSlider from '../../components/base/ImageSlider';
 import { API_URL } from '../../store/constants';
+import { fetchsingleuserinfo, fetchuserinfo } from '../../features/users/usersSlice';
 
 const formStyles = 'border-r border-l w-full h-full flex-col-style justify-between space-y-8 overscroll-hidden';
 const groupStyles = 'border-0 w-fit h-fit flex-col-style space-y-2';
@@ -42,9 +43,8 @@ function ViewUserProfile() {
 
     const registrationrequests = useSelector(state => state.expense.registrationrequests);
     const users = useSelector(state => state.expense.userslist);
-    const userinfo = useSelector(state => state.user.userinfo);
-
-    const status = useSelector((state) => state.user.status);
+    const userinfo = useSelector(state => state.user.singleuserinfo);
+    const status = useSelector(state => state.expense.state);
 
     const { curruser } = useParams();
     const [user, setUser] = useState({});
@@ -72,16 +72,20 @@ function ViewUserProfile() {
     // const [newTags, setNewTags] = useState(null);
 
     useEffect(() => {
+        dispatch(fetchsingleuserinfo(curruser));
+    }, [])
+
+    useEffect(() => {
         console.log('__--_--_-_-_-_', userinfo);
-        const registrations_idx = registrationrequests.findIndex((obj) => obj.id === curruser)
-        const users_idx = users.findIndex((obj) => obj.id === curruser)
-        const singleuser = registrations_idx !== -1 ? registrationrequests[registrations_idx] : users_idx !== -1 ? users[users_idx] : userinfo
-        if (singleuser) {
-            setUser(singleuser);
-            setTags([singleuser.role, singleuser.company]);
-            setImage(singleuser['image']);
+        // const registrations_idx = registrationrequests.findIndex((obj) => obj.id === curruser)
+        // const users_idx = users.findIndex((obj) => obj.id === curruser)
+        // const singleuser = registrations_idx !== -1 ? registrationrequests[registrations_idx] : users_idx !== -1 ? users[users_idx] : userinfo
+        if (userinfo) {
+            setUser(userinfo);
+            setTags([userinfo.role, userinfo.company]);
+            setImage(userinfo['image']);
         }
-    }, [users, registrationrequests])
+    }, [userinfo])
 
     if(!user) {
         return <div>Loading...</div>
@@ -93,13 +97,15 @@ function ViewUserProfile() {
         const data = {
             'fullname': newInfo['fullname'],
             'phone': newInfo['phone'],
-            'gender': newInfo['gender']
+            'gender': newInfo['gender'],
+            'role': newInfo['role'],
+            'company': newInfo['company']
         }
         try {
             const result = await updateuser(curruser, data);
             const updatedUsers = users.filter((obj) => obj.id !== result.id);
             dispatch(setUsersList(updatedUsers));
-            setUser(result);
+            setUser(prev => ({...prev, ...data}));
             setSpinner(false);
         }
         catch(error) {
@@ -158,19 +164,17 @@ function ViewUserProfile() {
     }
 
 
-    // function handleRequest(data){
-    //     const id = expense.id;
-    //     dispatch(changeexpensestatus({...data, "expense_id":id}));
-    //     if (status === 'succeeded'){
-    //         const result = expenserequests.filter(request => request.id !== id);
-    //         dispatch(setExpenseRequests(result));
-    //         navigate('../')
-    //         console.log(expense);
-    //     }
-    //     else{
-    //         alert('Action failed')
-    //     }
-    // }
+    function handleRequest(data){
+        const id = curruser;
+        dispatch(changeregistrationstatus({...data, "userid":id}));
+        if (status === 'succeeded'){
+            alert('suc')
+            const result = registrationrequests.filter(request => request.id !== id);
+            dispatch(setRegistrationRequests(result));
+        } else{
+            alert('Action failed')
+        }
+      }
 
     const keyMapper = {
         'fullname': 'Fullname', 
@@ -204,23 +208,17 @@ function ViewUserProfile() {
 
     // const statusDiv = <span className={statusStyleMapper[expense['status']]}>{expense['status']}</span>;
 
-    // function handleStatusDisplay() {
-    //     if(expense['userid'] === curruser){
-    //         if (expense['status'] === 'pending') return <>{!updateMode ? <>{beforeUpdateOptions} {deleteButton}</> : <>{afterUpdateOptions}</>} {statusDiv} </>
-    //         if (expense['status'] === 'approved') return <>{statusDiv} </>
-    //         if (expense['status'] === 'rejected') return <>{!updateMode ? <> {beforeUpdateOptions} </> : <> {afterUpdateOptions} </>} {statusDiv} </>
-    //         if (expense['status'] === 'invalidated') return <>{statusDiv} </>
-    //     } else {
-    //         if (userinfo && ((userinfo['role'] === 'superadmin') || (userinfo['role'] === 'admin'))) {
-    //             return (
-    //                 <>
-    //                     <span onClick={() => handleRequest({status:'accept'})} className='btn-save text-sm'>Approve</span>
-    //                     <span onClick={() => handleRequest({status:'reject'})} className='btn-delete text-sm'>Reject</span>
-    //                 </>
-    //             )
-    //         }
-    //     }
-    // }
+    function handleStatusDisplay() {
+
+        // if (userinfo && ((userinfo['role'] === 'superadmin') || (userinfo['role'] === 'admin'))) {
+            return (
+                <>
+                    <span onClick={() => handleRequest({status:'accept'})} className='btn-save text-sm'>Approve</span>
+                    <span onClick={() => handleRequest({status:'reject'})} className='btn-delete text-sm'>Reject</span>
+                </>
+            )
+        // }
+    }
 
 
 
@@ -234,11 +232,10 @@ function ViewUserProfile() {
                 </div>
                 <div className='border w-full flex flex-row-style justify-center flex-grow px-2'>
                     <div className='border-r w-fit h-fit px-2'>
-                    <img src={`${API_URL}${image}`} alt='Profile picture' className={`object-cover object-center w-full h-80 flex-shrink:0 overflow-hidden`} />
+                        {image && <img src={`${API_URL}${image}`} alt='Profile picture' className={`object-cover object-center w-full h-80 flex-shrink:0 overflow-hidden`} />}
                         <div className='flex-row-style justify-around'>
                             <div className='flex-col-style justify-center'>
                                 {updateMode && <input className={fileStyles} type="file" accept=".jpeg, .jpg, .png. image/*" onChange={(e) => setNewImage(e.target.files[0])} />}
-
                             </div>
                             {updateMode && 
                             <>
@@ -270,11 +267,9 @@ function ViewUserProfile() {
                     </div>
                 </div>
                 <div className='border-t w-full flex-row-style justify-between p-2'>
-                    <span className={`border-r ${user['authorized']  ? 'w-[70%]':'w-[65%]'} h-full flex-row-style justify-start px-2 list-none`}>
-                        <span className='text-base font-medium'>TAGS: </span>
-                        {tags && tags.map((obj, idx) => <li key={idx} className={tagstyles}>{obj}</li>)}
-                        {/* {updateMode && <input type='text' value={newTags} onChange={(e) => setNewTags(e.target.value)} />} */}
-                        {/* {updateMode && <span onClick={() => {}}>Update tags</span>} */}
+                    <span className={`border-r ${user['authorized']  ? 'w-[70%]':'w-[65%]'} h-full flex-row-style justify-start space-x-2 px-2 list-none`}>
+                        <span className='font-semibold'>Expense history</span>
+                        {user.count ? <span>${user.total}/{user.count}</span> : <span>No history found</span>}
                     </span>
                     {/* 
                     1. if expense_user === current_user => 
@@ -285,7 +280,7 @@ function ViewUserProfile() {
                     2. else if role === 'superadmin' or 'admin' => approve or reject => delete
                     */}
                     <span className={`${user['authorized'] ? 'flex-grow' : 'w-[35%]'} h-full flex-row-style justify-end space-x-4 px-2 font-medium text-base`}>
-                        {/* {handleStatusDisplay()} */}
+                        {!user['authorized'] && handleStatusDisplay()}
                         
                         
                         {/* {expense['status'] === 'pending' &&
@@ -295,8 +290,8 @@ function ViewUserProfile() {
                             </>
                         } */}
                         {/* <span>{expense['status']}...</span> */}
-
-                        {!registrationrequests.length ? (updateMode ? afterUpdateOptions : beforeUpdateOptions) : ''}
+                        <span>Login Refactor needed Authorized ? </span>
+                        {!user['authorized'] ? (updateMode ? afterUpdateOptions : beforeUpdateOptions) : ''}
                         {(users.length || registrationrequests.length) ? deleteButton : ''}
 
                     </span>
@@ -311,9 +306,11 @@ export default ViewUserProfile;
 const commonIputstyles = 'w-full outline-none text-md px-2';
 
 const UpdateExpense = ({user, newInfo, setNewInfo}) => {
+    const userinfo = useSelector(state => state.user.userinfo)
     const initialValues = {
         fullname: user.fullname,
         gender: user.gender,
+        role: user.role,
         email: user.email,
         company: user.company,
         phone: user.phone,
@@ -345,7 +342,6 @@ const UpdateExpense = ({user, newInfo, setNewInfo}) => {
     const display_disabled = [
         {title: "Email", value: 'email'},
         {title: "Password", value: 'password'},
-        {title: "Company", value: 'company'},
         {title: "Employee Id", value: 'employee_id'},
         {title: "Is Active", value: 'is_active'},
         {title: "Is Authorized", value: 'authorized'},
@@ -356,11 +352,23 @@ const UpdateExpense = ({user, newInfo, setNewInfo}) => {
             {display.map((obj, idx) => (t_row(idx, obj.title, obj.value)))}
             <tr className='h-fit'>
                 <td className='h-8 text-left'>Gender</td>
-                <td className='h-8 text-left flex-row-style justify-center space-x-2'>
+                <td className='h-8 text-left flex-row-style justify-start space-x-2'>
                     <label>Male </label> <input type='radio' value='male' checked={newInfo['gender'] === 'male'} onChange={() => setNewInfo(prev => ({...prev, ['gender']: 'male'}))} /> 
                     <label>Female </label> <input type='radio' value='female' checked={newInfo['gender'] === 'female'} onChange={() => setNewInfo(prev => ({...prev, ['gender']: 'female'}))} /> 
                 </td>
             </tr>
+            <tr className='h-fit'>
+                <td className='h-8 text-left'>Role</td>
+                <td className='h-8 text-left flex-row-style justify-start space-x-2'>
+                    <label>Superadmin </label> <input type='radio' value='superadmin' checked={newInfo['role'] === 'superadmin'} onChange={() => setNewInfo(prev => ({...prev, ['role']: 'superadmin'}))} /> 
+                    <label>Admin </label> <input type='radio' value='admin' checked={newInfo['role'] === 'admin'} onChange={() => setNewInfo(prev => ({...prev, ['role']: 'admin'}))} /> 
+                    <label>Employee </label> <input type='radio' value='employee' checked={newInfo['role'] === 'employee'} onChange={() => setNewInfo(prev => ({...prev, ['role']: 'employee'}))} /> 
+                </td>
+            </tr>
+            {userinfo['role'].includes('admin') && <tr className='h-fit'>
+                <td className='h-8 text-left'>Company</td>
+                <td><input type='text' className={`${commonIputstyles} border border-gray-300 text-left`} value={newInfo['company']} onChange={(e) => setNewInfo(prev => ({...prev, ['company']: e.target.value}))} /></td>
+            </tr>}
             {display_disabled.map((obj, idx) => (t_row_disabled(idx, obj.title, obj.value)))}
         </tbody>
     )

@@ -14,20 +14,21 @@ const inner_2_1 = "border-0 w-full h-screen flex-col-style justify-center";
 
 function CoreHome() {
     const [showSideNav, setShowSideNav] = useState(true);
+
   return (
-    <>
+    <div className="b-full h-full">
         <Topnav />
         <div className={outerdiv}>
             <div className={inner_1(showSideNav)}>
                 <SideNav showSideNav={showSideNav} setShowSideNav={setShowSideNav}/>
             </div>
             <div className={inner_2(showSideNav)}>
-                <div className={inner_2_1}>
+                {/* <div className={inner_2_1}> */}
                     <Outlet />
-                </div>
+                {/* </div> */}
             </div>
         </div>
-    </>
+    </div>
   );
 }
 

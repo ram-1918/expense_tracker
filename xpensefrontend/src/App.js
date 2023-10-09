@@ -8,6 +8,11 @@ import { get_user_info } from './features/users/apicalls';
 import axios from 'axios';
 import { API_URL } from './store/constants';
 import { fetchusers, listexpenses, fetchsummaries } from './features/core/state/coreThunks';
+
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend);
+
 // import { FetchData } from './components/customhooks/FetchData';
 
 const axiosInstance = axios.create({

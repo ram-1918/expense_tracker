@@ -10,9 +10,18 @@ export const fetchuserinfo = createAsyncThunk('users/fetchuserinfo',
     }
 );
 
+export const fetchsingleuserinfo = createAsyncThunk('users/fetchsingleuserinfo', 
+    async (userid) => {
+        const response = await axios.get(`http://localhost:8000/users/user/${userid}`, {withCredentials:true});
+        // console.log(response.data, response);
+        return response.data;
+    }
+);
+
 const initialState = {
     userid: localStorage.getItem('id', null),
     userinfo: null,
+    singleuserinfo: null,
 }
 
 export const userSlice = createSlice({
@@ -24,6 +33,9 @@ export const userSlice = createSlice({
         },
         setUserInfo: (state, action) => {
             state.userinfo = action.payload;
+        },
+        setSingleUserInfo: (state, action) => {
+            state.singleuserinfo = action.payload;
         }
     },
     extraReducers(builder) {
@@ -32,10 +44,14 @@ export const userSlice = createSlice({
             state.status = "succeeded";
             state.userinfo = action.payload;
         })
+        .addCase(fetchsingleuserinfo.fulfilled, (state, action) => {
+            state.status = "succeeded";
+            state.singleuserinfo = action.payload;
+        })
     }
 }); //  extraReducers(builder) {builder.addCase()}
 
-export const {setUserid, setUserInfo} = userSlice.actions; 
+export const {setUserid, setUserInfo, setSingleUserInfo} = userSlice.actions; 
 
 export const selectUserid = (state) => state.user.userid; // 'user' is the Name of the reducer, which is used in configstore
 export const selectUserInfo = (state) => state.user.userinfo;

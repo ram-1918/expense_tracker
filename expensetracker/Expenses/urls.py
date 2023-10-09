@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import testing, post_expense_transaction, get_expenses, get_single_expense, get_approved_expenses, get_pending_expenses, change_expense_status, update_expense, update_expense_proof, update_expense_tag, delete_expense
+from .views import testing, post_expense_transaction, get_expenses, get_all_expenses, get_single_expense, get_approved_expenses, get_pending_expenses, change_expense_status, update_expense, update_expense_proof, update_expense_tag, delete_expense
 # from .views import get_expenses_by_user, get_expenses_by_role, get_expenses_by_company, get_expenses_by_date
 # from .views import update_status 
 # from .views import total_expense_requests, sum_of_approved, sum_of_pending, sum_of_reembersments
@@ -9,6 +9,7 @@ urlpatterns = [
     # section 1 - own
     path('post/', post_expense_transaction),
     path('list/', get_expenses),
+    path('listall/', get_all_expenses),
     path('list_single/<uuid:pk>', get_single_expense),
     path('list_approved/', get_approved_expenses),
     path('list_pending/', get_pending_expenses),

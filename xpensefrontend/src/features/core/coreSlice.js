@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import {listexpenses, fetchusers, fetchsingleuser, updateuserinfo, deleteuserbyadmin, registrationrequestsbyadmin, changeregistrationstatus, expenserequestsbyadmin, changeexpensestatus, fetchsummaries} from './state/coreThunks'
+import {allexpenseslist, listexpenses, fetchusers, fetchsingleuser, updateuserinfo, deleteuserbyadmin, registrationrequestsbyadmin, changeregistrationstatus, expenserequestsbyadmin, changeexpensestatus, fetchsummaries} from './state/coreThunks'
 
 
 const initialState = {
@@ -11,6 +11,7 @@ const initialState = {
     singleuserinfo: [],
     updatedInfo: [],
 
+    allexpenselist: [],
     expenselist: [],
 
     status: 'idle',
@@ -19,12 +20,28 @@ const initialState = {
     registrationrequests: [],
     expenserequests: [],
 
+    activeSideNav: 'dashboard',
+
+    statusColorMapper: {
+        'pending': 'capitalize text-blue-600 text-sm font-bold',
+        'approved': 'capitalize text-green-600 text-sm font-bold',
+        'rejected': 'capitalize text-red-600 text-sm font-bold',
+        'invalidated': 'capitalize text-gray-600 text-sm font-bold',
+    },
+    activeColorMapper: {
+        'Active': 'text-green-600 text-sm font-bold before:p-1 before:rounded-full before:bg-green-600 before:mx-1',
+        'Inactive': 'text-red-600 text-sm font-bold'
+    }
+
 }
 
 export const expenseSlice = createSlice({
     name:'expense', 
     initialState, 
     reducers:{
+        setActiveSideNav: (state, action) => {
+            state.activeSideNav = action.payload;
+        },
         setDashboardSummaries: (state, action) => {
             state.dashboard_summaries = action.payload
         },
@@ -37,6 +54,9 @@ export const expenseSlice = createSlice({
         setExpenseList: (state, action) => {
             console.log('NEW EXPENSE RECORD ADDED')
             state.expenselist = [...action.payload];
+        }, 
+        setAllExpenseList: (state, action) => {
+            state.allexpenselist = [...action.payload];
         },
         setRegistrationRequests: (state, action) => {
             state.registrationrequests = action.payload;
@@ -97,10 +117,13 @@ export const expenseSlice = createSlice({
             state.status = 'succeeded';
             state.expenselist = action.payload;
         })
+        .addCase(allexpenseslist.fulfilled, (state, action) => {
+            state.allexpenselist = action.payload;
+        })
     }
 });
 
-export const {setUsersList, setUserReport, setRegistrationRequests, setExpenseList, setExpenseRequests, setFilterStack} = expenseSlice.actions; 
+export const {setActiveSideNav, setUsersList, setUserReport, setRegistrationRequests, setExpenseList, setAllExpenseList, setExpenseRequests, setFilterStack} = expenseSlice.actions; 
 
 
 

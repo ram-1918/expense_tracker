@@ -123,3 +123,16 @@ export const listexpenses = createAsyncThunk('expenses/listexpenses',
         }
     }
 );
+
+export const allexpenseslist = createAsyncThunk('expenses/alllistexpenses', 
+    async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/expenses/listall/', {withCredentials:true});
+            console.log("all Expense data", response.data);
+            return response.data;
+        }
+        catch(errors) {
+            console.log(errors, 'alllistexpenses thunk');
+        }
+    }
+);

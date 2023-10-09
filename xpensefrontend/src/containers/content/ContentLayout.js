@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import UsersList from "./UsersList";
 import ExpenseList from "./ExpenseList";
+import AllExpenseList from "./AllExpenseList";
 import BaseDropdown from "../../components/base/BaseDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { processUsersDownloadReport, processUsersSearchData } from "../../features/core/state/processors";
@@ -55,14 +56,17 @@ function ContentLayout() {
       }, [dispatch, pageNumber, pageSize])
 
     const typeContentMapper = {
-        'expenses' : <ExpenseList activecolumns={activeExpenseCols} activeAction={list_actions[action]}/>,
         'users': <UsersList activecolumns={activeUserCols} activeAction={list_actions[action]}/>,
+        'expenses' : <ExpenseList activecolumns={activeExpenseCols} activeAction={list_actions[action]}/>,
+        'allexpenses' : <AllExpenseList activecolumns={activeExpenseCols} activeAction={list_actions[action]}/>,
     }
 
     const handleDownloadReport = () => {
         if(type === 'users'){
             processUsersDownloadReport(dispatch, users);
         } else if (type === 'expenses') {
+            processUsersDownloadReport(dispatch, users);
+        } else if (type === 'allexpenses') {
             processUsersDownloadReport(dispatch, users);
         }
     }
@@ -83,6 +87,14 @@ function ContentLayout() {
                 initialColumns: initial_expense_active_keys
 
             }
+        } else if (type === 'allexpenses') {
+            return {
+                values: activeExpenseCols,
+                setFunc: setActiveExpenseCols,
+                columns: (expenses.length && Object.keys(expenses[0]).filter((column) => !(column === 'expense_proof' || column === 'expense_tag'))) || [],
+                initialColumns: initial_expense_active_keys
+
+            }
         }
     }
 
@@ -96,6 +108,14 @@ function ContentLayout() {
                 pageSize: pageSize
             }
         } else if (type === 'expenses') {
+            return {
+                pageLimit: pageLimit,
+                setPageSize: setPageSize,
+                pageNumber: pageNumber,
+                setPageNumber: setPageNumber,
+                pageSize: pageSize
+            }
+        } else if (type === 'allexpenses') {
             return {
                 pageLimit: pageLimit,
                 setPageSize: setPageSize,
@@ -136,8 +156,10 @@ function ContentLayout() {
             </div>
             <div className="border-b w-full h-fit flex-row-style justify-between px-6 pb-4">
                 <div className="flex-row-style justify-start flex-grow space-x-2">
-                    {/* {action && <span className="opacity-70">Action </span>}<BaseDropdown options={list_actions} setValueFunction={setAction} title='Actions'/> */}
-                    {type === 'users' ? <span><FetchUsersCount /></span> : type === 'expenses' ? <span><FetchExpensesCount /></span> : <></>}
+                    {action && <span className="opacity-70">Action </span>}<BaseDropdown options={list_actions} setValueFunction={setAction} title='Actions'/>
+                    {type === 'users' ?  <span><FetchUsersCount /></span> : 
+                    type === 'expenses' ? <span><FetchExpensesCount /></span> : 
+                    type === 'allexpenses' ? <span><FetchAllExpensesCount /></span> : <></>}
                 </div>
                 <div className="w-fit flex-row-style justify-end space-x-2">
                     <Pagination args={paginationMapper()} />
@@ -154,13 +176,18 @@ export default ContentLayout;
 
 const FetchUsersCount = () => {
     const userslist = useSelector(state => state.expense.userslist);
-    return <span className="text-sm font-light">Total users: {userslist.length}</span>
+    return <span className="text-sm font-light">Total users: {userslist.length} (REAL COUNT FROM API)</span>
 }
 
 const FetchExpensesCount = () => {
     const expenselist = useSelector(state => state.expense.expenselist);
     return <span className="text-base font-light">Total expenses: {expenselist.length}</span>
 }
+
+const FetchAllExpensesCount = () => {
+    const expenselist = useSelector(state => state.expense.expenselist);
+    return <span className="text-base font-light">Total expenses: {expenselist.length}</span>
+} 
 
 const ColumnsDropdown = ({args: {values, setFunc, columns, initialColumns}}) => {
     const [showDropdownContent, setShowDropdownContent] = useState(false);

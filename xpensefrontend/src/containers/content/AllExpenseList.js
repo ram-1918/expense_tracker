@@ -7,7 +7,7 @@ import { dateformater } from "../../utils/helper";
 import FilterHeader from "./FilterHeader";
 import { Outlet, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
-import { listexpenses } from '../../features/core/state/coreThunks';
+import { allexpenseslist, listexpenses } from '../../features/core/state/coreThunks';
 
 
 // Styles
@@ -27,7 +27,7 @@ const td1 = 'w-20 text-md text-gray-500 px-2 py-[5px]';
 
 const profileImage = 'w-6 h-6 rounded-full object-cover ';
 
-function ExpensesList({activecolumns}) {
+function AllExpensesList({activecolumns}) {
   const statusColorMapper = useSelector(state => state.expense.statusColorMapper);
   const initial_active_keys = [
     "id",
@@ -70,7 +70,12 @@ function ExpensesList({activecolumns}) {
   };
 
   const dispatch = useDispatch();
-  const expenselist = useSelector((state) => state.expense.expenselist);
+
+  useEffect(() => {
+    dispatch(allexpenseslist())
+  }, [])
+
+  const expenselist = useSelector((state) => state.expense.allexpenselist);
   const [keys, setKeys] = useState(initial_active_keys);
   const [active, setActive] = useState(initial_active);
   const [toggleFilterHeader, setToggleFilterHeader] = useState(true);
@@ -141,12 +146,11 @@ function ExpensesList({activecolumns}) {
   );
 }
 
-export default ExpensesList;
+export default AllExpensesList;
 
 function View({ obj, keys, fieldStyleMapper, setviewobj }) {
   const statusColorMapper = useSelector(state => state.expense.statusColorMapper);
   const deleteUserInfo = () => {};
-  
   return (
     <tr className={`${tr}`}>
       {keys.map((ele, idx) => (
@@ -157,7 +161,7 @@ function View({ obj, keys, fieldStyleMapper, setviewobj }) {
         </td>
       ))}
       
-       {obj.status === 'pending' ? 
+      {(obj.status === 'pending' && obj.rejection_count < 1) ? 
           <td onClick={() => {deleteUserInfo()}} className={`${td1} w-20 flex-row-style justify-center space-x-2`}>
             <i className="fa fa-trash"></i>
           </td>
@@ -166,16 +170,6 @@ function View({ obj, keys, fieldStyleMapper, setviewobj }) {
             <i className="fa fa-trash"></i>
           </td> 
         }
-          {/* <Link to={`./updateuser/${obj.id}`} state={{ userdata: obj }}>
-            <i className="fa fa-edit"></i>
-          </Link> */}
-          
-          {/* <span onClick={() => {deleteUserInfo()}}>
-            {obj.status === "pending" && obj.rejection_count  1 ? 
-            <i className="fa fa-trash"></i> : 
-            <span className="relative z-0 p-2 flex-row-style justify-center after:content-[''] after:absolute after:px-0 after:py-3 after:border after:border-slate-400 after:rotate-45 "><i className="fa fa-trash"></i></span>}
-          </span> */}
-        {/* </td> */}
       {
         <td className={`${td1} w-32 flex-row-style justify-center space-x-2 cursor-pointer`}>
           

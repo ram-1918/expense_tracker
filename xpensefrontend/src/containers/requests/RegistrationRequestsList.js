@@ -12,7 +12,7 @@ import { setRegistrationRequests } from "../../features/core/coreSlice";
 import {changeregistrationstatus, registrationrequestsbyadmin} from '../../features/core/state/coreThunks';
 
 import { dateformater } from "../../utils/helper";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 
 const API_URL = 'http://127.0.0.1:8000';
 
@@ -102,6 +102,7 @@ function RegistrationRequestsList({activecolumns}) {
   function View({obj, keys, fieldStyleMapper}){
     
     const dispatch = useDispatch();
+    const location = useLocation();
     const status = useSelector((state) => state.expense.status);
     console.log(obj, 'IFNEINOINW')
     const getStatus = (obj) => obj ? 'Active': 'Inactive';
@@ -142,7 +143,9 @@ function RegistrationRequestsList({activecolumns}) {
           <span onClick={() => handleRequest({status:'reject'})} className="px-2 mx-2 border-0 w-8 h-8 rounded-full bg-red-600 text-white cursor-pointer hover:opacity-70"><i className="fa fa-close"></i></span>
         </td>
         <td className={`${td1} w-20 text-center`}>
-          View
+        <Link to={`viewprofile/${obj.id}`} >
+            <i className='fa fa-eye'></i> View
+          </Link>
         </td>
       </tr>
     )

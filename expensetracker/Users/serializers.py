@@ -38,6 +38,11 @@ class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model=Company
         fields=['id', 'name', 'location']
+    
+class GetCompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Company
+        fields=['name']
 
 class GetUserSerializer(serializers.ModelSerializer):
     company = CompanySerializer(read_only=True)
